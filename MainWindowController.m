@@ -681,7 +681,7 @@
      * be passed in at one time before deliberately grouping the next set of
      * folders again.
      *
-     * To keep things simple we don't worry about edge cases such as the
+     * To keep things simple, don't worry about edge cases such as the
      * ineffiency of processing 144 folders, only to find one remaining 145th
      * item using that style and having to process it individually. This isn't
      * common enough to be worth the effort and besides, icon creation just

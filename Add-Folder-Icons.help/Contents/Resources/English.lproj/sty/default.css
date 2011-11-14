@@ -1,0 +1,221 @@
+/* Add Folder Icons default stylesheet
+ * ===================================
+ *
+ * Colours and styles based on looking at Mail.app's help, taking sample pixel
+ * colours and so-forth. Mail was chosen as it features heavily as an example
+ * in the Apple documentation on writing application help books. The copyright
+ * message below applies to the specific implementation herein alone.
+ *
+ * Copyright 2011 Hipposoft. All rights reserved.
+ */
+
+@charset "UTF-8";
+
+/* Global style */
+
+body
+{
+  background:  #fff;
+  color:       #333;
+
+  font-family: 'Lucida Grande', Arial, sans-serif;
+  font-size:   12px;
+  line-height: 18px;
+
+  margin:      20px;
+}
+
+h1
+{
+  color:       #000;
+  font-size:   20px;
+  font-weight: bold;
+  padding:     0;
+}
+
+h2 /* See also p.columns_header_link */
+{
+  color:       #36c;
+  font-size:   13px;
+  font-weight: bold;
+  padding:     0;
+}
+
+hr
+{
+  height:             1px;
+  margin:             15px 0;
+  background:         #ececec;
+  border-top:         1px solid #ccc;
+  border-bottom:      1px solid #f4f4f4;
+  border-left-style:  none;
+  border-right-style: none;
+}
+
+a
+{
+  color:           #36c;
+  text-decoration: none;
+}
+
+a:hover
+{
+  text-decoration: underline;
+}
+
+a:visited
+{
+  color: #011e57;
+}
+
+dt
+{
+  font-weight: bold;
+}
+
+/* Navigation bar */
+
+#navigation
+{ 
+  position:         fixed;
+  top:              0;
+  left:             0;
+  width:            100%;
+  height:           19px;
+  padding-top:      1px;
+  border-bottom:    1px solid #949494;
+  background-image: -webkit-gradient( linear, left top, left bottom, from( #eaeaea), to( #d1d1d1 ) );
+  z-index:          1;
+}
+
+#navigation a
+{
+  font-size:   10px;
+  color:       #333;
+  text-shadow: #fff 0 1px 0;
+}
+
+#navigation_right
+{
+  float:         right;
+  padding-right: 20px;
+}
+
+#navigation_left
+{
+  float:        left;
+  padding-left: 20px;
+}
+
+/* Heading bar */
+
+#header, #header_subtitled
+{
+  display:            -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align:  center;
+  margin:             41px 0 20px 0; /* 41 => 21 for navigation (height + padding + bottom border), 20 general */
+}
+
+#icon
+{
+  margin-right: 20px;
+}
+
+/* Columns blocks */
+
+.columns_two
+{
+  width:               50%;
+   -webkit-box-sizing: border-box;
+}
+
+#columns_left
+{
+  float:        left;
+  padding-right: 8px;
+}
+
+#columns_right
+{
+  float:                 right;
+
+  border:                1px solid #d7d7d7;
+  -webkit-border-radius: 10px;
+  -webkit-box-shadow:    0 2px 4px #ccc;
+  padding:                20px;
+}
+
+/* Column text styles */
+
+p.columns_header_link /* See also h2 */
+{
+  margin:      0;
+  color:       #36c;
+  font-size:   13px;
+  font-weight: bold;
+}
+
+p.columns_subheader
+{
+  margin:    0 0 10px 0;
+  font-size: 11px;
+}
+
+p.columns_box_header
+{
+  text-transform: uppercase;
+  color:          #000;
+  font-size:      13px;
+  font-weight:    bold;
+  letter-spacing: 0.1em;
+  margin:         0 0 10px 0;
+}
+
+p.columns_box_link
+{
+  font-size:     11px;
+  font-weight:   bold;
+  margin-bottom: 8px;
+}
+
+p.columns_box_author
+{
+  margin: 0;
+}
+
+p.columns_box_author a
+{
+  color:     #333;
+  font-size: 11px;
+}
+
+/* General captions; white text halo is to help legibility if the caption is
+ * deliberately or accidentally placed over some dark background object
+ */
+
+span.caption
+{
+  font-size:   11px;
+  font-weight: bold;
+  text-shadow: #fff 0 0 4px;
+}
+
+/* Illustrations of windows, including drop shadow in the image data */
+
+p.illustration
+{
+  text-align: center;
+}
+
+p.illustration img
+{
+  max-width: 100%;
+  height:    auto;
+}
+
+p.illustration.window span.caption
+{
+  position: relative;
+  top:      -20px;
+}

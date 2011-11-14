@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1- transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Add Folder Icons Help: Troubleshooting</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <meta name="robots"   content="segments" />
+    <meta name="keywords" content="help, failed, broken, troubleshoot, troubleshooting, fix, wrong, pixellated, pixellate, pixelated, pixelate, low, resolution">
+
+    <link href="../sty/default.css" rel="stylesheet" type="text/css" media="all" />
+  </head>
+
+  <body>
+    <a name="troubleshooting"></a>
+    <a name="autoindex"></a>
+
+    <div id="navigation">
+      <div id="navigation_left">
+        <a href="help:anchor=access bookID=uk.org.pond.Add-Folder-Icons.help">Home</a>
+      </div>
+      <div id="navigation_right">
+        <a href="help:topic_list=autoindex bookID=uk.org.pond.Add-Folder-Icons.help template=xpgs/autoindex.html stylesheet=sty/default.css Other=Index">Index</a>
+      </div>
+    </div>
+
+    <div id="header"
+      <div id="icon">
+        <img src="../../shrd/AddFolderIcons32.png" width="32" height="32" alt="Add Folder Icons icon" />
+      </div>
+      <div id="title">
+        <h1>Troubleshooting</h1>
+      </div>
+    </div>
+
+    <div class="columns_one">
+      <h2>If things don't go smoothly...</h2>
+
+      <dl>
+        <dt>Folder icon addition doesn't work</dt>
+        <dd>
+          <p>If something goes wrong during icon addition, you'll see this message:</p>
+
+          <p class="illustration">
+            <img src="../gfx/24 - Failed.png" width="486" height="236" alt="Failed" />
+          </p>
+
+          <ul>
+            <li>
+              <p>The main reason you might see this message is due to a permissions problem on one of the folders. Make sure the currently logged in user has permission to write to each of the folders in the list.</p>
+            </li>
+
+            <li>
+              <p>Custom folder icons each take up a little bit of disc space. If your disc is very, very full and you try to add a lot of icons all at once, there's a chance the disc might fill up completely, though this is very unlikely.</p>
+            </li>
+
+            <li>
+              <p>Perhaps you've added folders to the folder list, but then renamed, moved or deleted one or more of the folders before trying to add icons to them. Such changes are deliberately not tracked automatically to avoid any chance of accidentally applying an icon to a moved or renamed folder which you may no longer wish to modify. The quickest solution is to empty the folder list and drag folders to it anew.</p>
+            </li>
+          </ul>
+        </dd>
+
+        <dt>The Finder does not show my new icons</dt>
+        <dd>
+          <p>When Add Folder Icons has finished working, it tells the whole system about any folders which have changed. This is how the Finder updates itself to show the new icons straight away.</p>
+
+          <ul>
+            <li>
+              <p>If a folder doesn't seem to have the icons you expect, the first thing to check is that the pictures inside aren't too big. To avoid taking up huge amounts of processor power and memory, Add Folder Icons skips over any pictures larger than six megabytes in file size. It also stops looking for pictures once it's already found a few thousand to choose from in a folder. Conversely, on slow filesystems, it may decide to stop looking if it thinks that the search is taking too long.</p>
+
+              <p>In the latter case, running Add Folder Icons again for the same folder might produce better results. The computer may have remembered some of the details from the previous search, so a subsequent repeated search may execute more quickly.</p>
+            </li>
+
+            <li>
+              <p>Sometimes the Finder stubbornly refuses to show new folder icons because it has "remembered" old ones. If you select a folder and press <kbd>Command</kbd> + <kbd>I</kbd> to open its information window, or press <kbd>Space</kbd> to open a QuickLook preview, you should see the new icon shown there. If not, it could be that you accidentally added the icon to a different folder from the one you are looking at in the Finder!</p>
+
+              <p>Sometimes changing Finder view style, for example to Cover Flow view, will solve the problem. Closing the Finder window showing your folders and opening a new one can help too. If all else fails, logging out and back in, or even rebooting will sort things out, but this is very rarely necessary.</p>
+            </li>
+          </ul>
+        </dd>
+
+        <dt>Folder icons seem to be pixellated</dt>
+        <dd>
+          <p>If you add a very large number of icons all at once, the Finder may start to only show low resolution, pixellated icons. This seems to be a Finder bug and it can be provoked in other ways too if web searches are anything to go by! Using the Mac OS X "Force Quit" dialogue box to relaunch the Finder will solve the problem, or reboot your computer.</p>
+        </dd>
+
+        <dt>I can't edit or delete some styles</dt>
+        <dd>
+          <p>The built-in (preset) icon styles cannot be edited or deleted.</p>
+        <dd>
+      </dl>
+    </div>
+  </body>
+</html>

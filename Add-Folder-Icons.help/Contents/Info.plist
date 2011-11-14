@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en_GB</string>
+	<key>CFBundleIdentifier</key>
+	<string>uk.org.pond.Add-Folder-Icons.help</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Add-Folder-Icons-Help</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2</string>
+	<key>CFBundleSignature</key>
+	<string>hbwr</string>
+	<key>CFBundleVersion</key>
+	<string>2</string>
+	<key>HPDBookAccessPath</key>
+	<string>Add-Folder-Icons.html</string>
+	<key>HPDBookIconPath</key>
+	<string>shrd/AddFolderIcons16.png</string>
+	<key>HPDBookTitle</key>
+	<string>Add Folder Icons Help</string>
+	<key>HPDBookType</key>
+	<string>3</string>
+</dict>
+</plist>

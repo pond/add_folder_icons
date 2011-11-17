@@ -1,5 +1,5 @@
 /*
- *  $Id: SCEventListenerProtocol.h 202 2011-04-22 19:04:02Z stuart $
+ *  $Id: SCConstants.h 195 2011-03-15 21:47:34Z stuart $
  *
  *  SCEvents
  *  http://stuconnolly.com/projects/code/
@@ -28,25 +28,16 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-@class SCEvents, SCEvent;
-
-/**
- * @protocol SCEventListenerProtocol SCEventListenerProtocol.h
- *
- * @author Stuart Connolly http://stuconnolly.com/
- *
- * SCEvents' event listenser protocol. Delegates must implement this protocol to be notified of events.
- */
-@protocol SCEventListenerProtocol
-
-/**
- * Conforming objects' implementation of this method will be called whenever an
- * event occurs. The instance of SCEvents which received the event and the event
- * itself are passed as parameters.
- *
- * @param pathwatcher The SCEvents instance that received the event
- * @param event       The actual event that occurred
- */
-- (void)pathWatcher:(SCEvents *)pathWatcher eventOccurred:(SCEvent *)event;
-
-@end
+typedef enum 
+{ 
+    SCEventStreamEventFlagNone            = 0x00000000, 
+    SCEventStreamEventFlagMustScanSubDirs = 0x00000001, 
+    SCEventStreamEventFlagUserDropped     = 0x00000002, 
+    SCEventStreamEventFlagKernelDropped   = 0x00000004, 
+    SCEventStreamEventFlagEventIdsWrapped = 0x00000008, 
+    SCEventStreamEventFlagHistoryDone     = 0x00000010, 
+    SCEventStreamEventFlagRootChanged     = 0x00000020, 
+    SCEventStreamEventFlagMount           = 0x00000040, 
+    SCEventStreamEventFlagUnmount         = 0x00000080
+} 
+SCEventFlags;

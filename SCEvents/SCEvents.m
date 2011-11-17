@@ -1,10 +1,10 @@
 /*
- *  $Id: SCEvents.m 50 2009-12-04 22:36:01Z stuart $
+ *  $Id: SCEvents.m 211 2011-08-31 20:43:52Z stuart $
  *
  *  SCEvents
+ *  http://stuconnolly.com/projects/code/
  *
- *  Copyright (c) 2009 Stuart Connolly
- *  http://stuconnolly.com/projects/source-code/
+ *  Copyright (c) 2011 Stuart Connolly. All rights reserved.
  *
  *  Permission is hereby granted, free of charge, to any person
  *  obtaining a copy of this software and associated documentation
@@ -30,118 +30,124 @@
 
 #import "SCEvents.h"
 #import "SCEvent.h"
-#import "SCEventListenerProtocol.h"
+#import "pthread.h"
 
-@interface SCEvents (PrivateAPI)
+// Constants
+static const CGFloat SCEventsDefaultNotificationLatency = 3.0;
+static const NSUInteger SCEventsDefaultIgnoreEventsFromSubDirs = 1;
 
-- (void)_setupEventsStream;
-static void _SCEventsCallBack(ConstFSEventStreamRef streamRef, void *clientCallBackInfo, size_t numEvents, void *eventPaths, const FSEventStreamEventFlags eventFlags[], const FSEventStreamEventId eventIds[]);
+/**
+ * Private API
+ */
+@interface SCEvents ()
+
+static FSEventStreamRef _create_events_stream(SCEvents *watcher,
+											  CFArrayRef paths, 
+											  CFTimeInterval latency,
+											  FSEventStreamEventId sinceWhen);
+
+static void _events_callback(ConstFSEventStreamRef streamRef, 
+							 void *clientCallBackInfo, 
+							 size_t numEvents, 
+							 void *eventPaths, 
+							 const FSEventStreamEventFlags eventFlags[], 
+							 const FSEventStreamEventId eventIds[]);
+
+static CFStringRef _strip_trailing_slash(CFStringRef string);
 
 @end
 
-static SCEvents *_sharedPathWatcher = nil;
-
 @implementation SCEvents
 
-@synthesize delegate;
-@synthesize isWatchingPaths;
-@synthesize ignoreEventsFromSubDirs;
-@synthesize lastEvent;
-@synthesize notificationLatency;
-@synthesize watchedPaths;
-@synthesize excludedPaths;
+@synthesize _delegate;
+@synthesize _isWatchingPaths;
+@synthesize _ignoreEventsFromSubDirs;
+@synthesize _lastEvent;
+@synthesize _notificationLatency;
+@synthesize _watchedPaths;
+@synthesize _excludedPaths;
+@synthesize _resumeFromEventId;
 
-/**
- * Returns the shared singleton instance of SCEvents.
- */
-+ (id)sharedPathWatcher
-{
-    @synchronized(self) {
-        if (_sharedPathWatcher == nil) {
-            [[self alloc] init];
-        }
-    }
-    
-    return _sharedPathWatcher;
-}
-
-/**
- * allocWithZone:
- */
-+ (id)allocWithZone:(NSZone *)zone
-{
-    @synchronized(self) {
-        if (_sharedPathWatcher == nil) {
-            _sharedPathWatcher = [super allocWithZone:zone];
-            
-            return _sharedPathWatcher;
-        }
-    }
-    
-	// On subsequent allocation attempts return nil
-    return nil;
-}
+#pragma mark -
+#pragma mark Initialisation
 
 /**
  * Initializes an instance of SCEvents setting its default values.
+ *
+ * @return The initialized SCEvents instance
  */
 - (id)init
 {
     if ((self = [super init])) {
-        isWatchingPaths = NO;
+        _isWatchingPaths = NO;
+		
+		pthread_mutex_init(&_eventsLock, NULL);
         
-        [self setNotificationLatency:3.0];
-        [self setIgnoreEventsFromSubDirs:YES]; 
+		[self setResumeFromEventId:kFSEventStreamEventIdSinceNow];
+        [self setNotificationLatency:SCEventsDefaultNotificationLatency];
+        [self setIgnoreEventsFromSubDirs:SCEventsDefaultIgnoreEventsFromSubDirs];
     }
     
     return self;
 }
 
-/**
- * The following base protocol methods are implemented to ensure
- * the singleton status of this class.
- */ 
-
-- (id)copyWithZone:(NSZone *)zone { return self; }
-
-- (id)retain { return self; }
-
-- (NSUInteger)retainCount { return NSUIntegerMax; }
-
-- (id)autorelease { return self; }
-
-- (void)release { }
+#pragma mark -
+#pragma mark Public API
 
 /**
  * Flushes the event stream synchronously by sending events that have already 
  * occurred but not yet delivered.
+ *
+ * @return A BOOL indicating the sucess or failure
  */
 - (BOOL)flushEventStreamSync
 {
-    if (!isWatchingPaths) return NO;
+	pthread_mutex_lock(&_eventsLock);
+	
+    if (!_isWatchingPaths) {
+		pthread_mutex_unlock(&_eventsLock);
+		
+		return NO;
+	}
     
-    FSEventStreamFlushSync(eventStream);
+    FSEventStreamFlushSync(_eventStream);
     
+	pthread_mutex_unlock(&_eventsLock);
+	
     return YES;
 }
 
 /**
  * Flushes the event stream asynchronously by sending events that have already 
  * occurred but not yet delivered.
+ *
+ * @return A BOOL indicating the sucess or failure
  */
 - (BOOL)flushEventStreamAsync
 {
-    if (!isWatchingPaths) return NO;
+    pthread_mutex_lock(&_eventsLock);
+	
+    if (!_isWatchingPaths) {
+		pthread_mutex_unlock(&_eventsLock);
+		
+		return NO;
+	}
     
-    FSEventStreamFlushAsync(eventStream);
+    FSEventStreamFlushAsync(_eventStream);
     
+	pthread_mutex_unlock(&_eventsLock);
+	
     return YES;
 }
 
 /**
  * Starts watching the supplied array of paths for events on the current run loop.
+ *
+ * @param paths An array of paths to watch
+ *
+ * @return A BOOL indicating the success or failure
  */
-- (BOOL)startWatchingPaths:(NSMutableArray *)paths
+- (BOOL)startWatchingPaths:(NSArray *)paths
 {
     return [self startWatchingPaths:paths onRunLoop:[NSRunLoop currentRunLoop]];
 }
@@ -151,22 +157,38 @@ static SCEvents *_sharedPathWatcher = nil;
  * A boolean value is returned to indicate the success of starting the stream. If 
  * there are no paths to watch or the stream is already running then false is
  * returned.
+ *
+ * @param paths   An array of paths to watch
+ * @param runLoop The runloop the events stream is to be scheduled on
+ *
+ * @return A BOOL indicating the success or failure
  */
-- (BOOL)startWatchingPaths:(NSMutableArray *)paths onRunLoop:(NSRunLoop *)runLoop
+- (BOOL)startWatchingPaths:(NSArray *)paths onRunLoop:(NSRunLoop *)runLoop
 {
-    if (([paths count] == 0) || (isWatchingPaths)) return NO;
+	pthread_mutex_lock(&_eventsLock);
+	
+	_runLoop = [runLoop getCFRunLoop];
+	
+    if (([paths count] == 0) || (_isWatchingPaths)) {
+		pthread_mutex_unlock(&_eventsLock);
+		
+		return NO;
+	}
     
     [self setWatchedPaths:paths];
-    [self _setupEventsStream];
+    
+	_eventStream = _create_events_stream(self, ((CFArrayRef)_watchedPaths), _notificationLatency, _resumeFromEventId);
     
     // Schedule the event stream on the supplied run loop
-    FSEventStreamScheduleWithRunLoop(eventStream, [runLoop getCFRunLoop], kCFRunLoopDefaultMode);
+    FSEventStreamScheduleWithRunLoop(_eventStream, _runLoop, kCFRunLoopDefaultMode);
     
     // Start the event stream
-    FSEventStreamStart(eventStream);
+    FSEventStreamStart(_eventStream);
     
-    isWatchingPaths = YES;
+    _isWatchingPaths = YES;
     
+	pthread_mutex_unlock(&_eventsLock);
+	
     return YES;
 }
 
@@ -174,74 +196,109 @@ static SCEvents *_sharedPathWatcher = nil;
  * Stops the event stream from watching the set paths. A boolean value is returned
  * to indicate the success of stopping the stream. False is return if this method 
  * is called when the stream is not already running.
+ *
+ * @return A BOOL indicating the success or failure
  */
 - (BOOL)stopWatchingPaths
 {
-    if (!isWatchingPaths) return NO;
-	    
-    FSEventStreamStop(eventStream);
-    FSEventStreamInvalidate(eventStream);
+	pthread_mutex_lock(&_eventsLock);
 	
-	if (eventStream) FSEventStreamRelease(eventStream), eventStream = nil;
+    if (!_isWatchingPaths) {
+		pthread_mutex_lock(&_eventsLock);
+		
+		return NO;
+	}
+	    
+    FSEventStreamStop(_eventStream);
+	
+	if (_runLoop) FSEventStreamUnscheduleFromRunLoop(_eventStream, _runLoop, kCFRunLoopDefaultMode);
+	
+    FSEventStreamInvalidate(_eventStream);
+	
+	if (_eventStream) FSEventStreamRelease(_eventStream), _eventStream = NULL;
     
-    isWatchingPaths = NO;
+    _isWatchingPaths = NO;
     
+	pthread_mutex_unlock(&_eventsLock);
+	
     return YES;
 }
 
+/**
+ * Provides a description of the event stream. Useful for debugging purposes.
+ *
+ * @return The descroption string
+ */
 - (NSString *)streamDescription
 {
-	if (!isWatchingPaths) return @"The event stream is not running. Start it by calling: startWatchingPaths:";
+	pthread_mutex_lock(&_eventsLock);
 	
-	return (NSString *)FSEventStreamCopyDescription(eventStream);
+	NSString *description = (_isWatchingPaths) ? (NSString *)FSEventStreamCopyDescription(_eventStream) : nil;
+	
+	pthread_mutex_unlock(&_eventsLock);
+	
+	return [description autorelease];
 }
+
+#pragma mark -
+#pragma mark Other
 
 /**
  * Provides the string used when printing this object in NSLog, etc. Useful for
  * debugging purposes.
+ *
+ * @return The description string
  */
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ { watchedPaths = %@, excludedPaths = %@ } >", [self className], watchedPaths, excludedPaths];
+    return [NSString stringWithFormat:@"<%@ { watchedPaths = %@, excludedPaths = %@ } >", [self className], _watchedPaths, _excludedPaths];
 }
 
-/**
- * dealloc
- */
+#pragma mark -
+
 - (void)dealloc
 {
-	delegate = nil;
+	_delegate = nil;
 	
 	// Stop the event stream if it's still running
-	if (isWatchingPaths) [self stopWatchingPaths];
+	if (_isWatchingPaths) [self stopWatchingPaths];
         
-	[lastEvent release], lastEvent = nil;
-    [watchedPaths release], watchedPaths = nil;
-    [excludedPaths release], excludedPaths = nil;
+	pthread_mutex_destroy(&_eventsLock);
+	
+	[_lastEvent release], _lastEvent = nil;
+    [_watchedPaths release], _watchedPaths = nil;
+    [_excludedPaths release], _excludedPaths = nil;
     
     [super dealloc];
 }
 
-@end
-
-@implementation SCEvents (PrivateAPI)
+#pragma mark -
+#pragma mark Private API
 
 /**
- * Constructs the events stream.
+ * Creates and returns the initialised events stream.
+ *
+ * @param watcher The watcher instance that is to be supplied to the callback function  
+ * @param paths   The paths that are to be 'watched'
+ * @param latency The notification latency
  */
-- (void)_setupEventsStream
+static FSEventStreamRef _create_events_stream(SCEvents *watcher, CFArrayRef paths, CFTimeInterval latency, FSEventStreamEventId sinceWhen)
 {
-    FSEventStreamContext callbackInfo;
+	FSEventStreamContext callbackInfo;
 	
 	callbackInfo.version = 0;
-	callbackInfo.info    = (void*)self;
+	callbackInfo.info    = (void *)watcher;
 	callbackInfo.retain  = NULL;
 	callbackInfo.release = NULL;
 	callbackInfo.copyDescription = NULL;
-	
-	if (eventStream) FSEventStreamRelease(eventStream);
     
-    eventStream = FSEventStreamCreate(kCFAllocatorDefault, &_SCEventsCallBack, &callbackInfo, ((CFArrayRef)watchedPaths), kFSEventStreamEventIdSinceNow, notificationLatency, kFSEventStreamCreateFlagUseCFTypes | kFSEventStreamCreateFlagWatchRoot);
+    return FSEventStreamCreate(kCFAllocatorDefault, 
+							   &_events_callback,
+							   &callbackInfo, 
+							   paths, 
+							   sinceWhen, 
+							   latency, 
+							   kFSEventStreamCreateFlagUseCFTypes | kFSEventStreamCreateFlagWatchRoot);
 }
 
 /**
@@ -250,12 +307,25 @@ static SCEvents *_sharedPathWatcher = nil;
  * called depends upon the notification latency value. This callback is usually
  * called with more than one event and so multiple instances of SCEvent are created
  * and the delegate notified.
+ *
+ * @param streamRef          The calling stream reference
+ * @param clientCallBackInfo Any client callback info that was supplied when the stream was created
+ * @param numEvents          The number of events being supplied
+ * @param eventPaths         An array of the event's paths
+ * @param eventFlags         An array of flags associated with the events
+ * @param eventIds           An array of IDs associated with the events
  */
-static void _SCEventsCallBack(ConstFSEventStreamRef streamRef, void *clientCallBackInfo, size_t numEvents, void *eventPaths, const FSEventStreamEventFlags eventFlags[], const FSEventStreamEventId eventIds[])
+static void _events_callback(ConstFSEventStreamRef streamRef, 
+							  void *clientCallBackInfo, 
+							  size_t numEvents, 
+							  void *eventPaths, 
+							  const FSEventStreamEventFlags eventFlags[], 
+							  const FSEventStreamEventId eventIds[])
 {
     NSUInteger i;
     BOOL shouldIgnore = NO;
     
+	CFArrayRef paths = (CFArrayRef)eventPaths;
     SCEvents *pathWatcher = (SCEvents *)clientCallBackInfo;
     
     for (i = 0; i < numEvents; i++) 
@@ -276,22 +346,23 @@ static void _SCEventsCallBack(ConstFSEventStreamRef streamRef, void *clientCallB
          * calling this callback more frequently.
          */
         
-        NSString *eventPath = [((NSArray *)eventPaths) objectAtIndex:i];
-        NSMutableArray *excludedPaths = [pathWatcher excludedPaths];
+		NSArray *excludedPaths = [pathWatcher excludedPaths];
+        CFStringRef eventPath = CFArrayGetValueAtIndex(paths, (CFIndex)i);
         
         // Check to see if the event should be ignored if it's path is in the exclude list
-        if ([excludedPaths containsObject:eventPath]) {
+        if ([excludedPaths containsObject:(NSString *)eventPath]) {
             shouldIgnore = YES;
         }
         else {
             // If we did not find an exact match in the exclude list and we are to ignore events from
             // sub-directories then see if the exclude paths match as a prefix of the event path.
             if ([pathWatcher ignoreEventsFromSubDirs]) {
-                for (NSString *path in [pathWatcher excludedPaths]) {
-                    if ([[(NSArray *)eventPaths objectAtIndex:i] hasPrefix:path]) {
-                        shouldIgnore = YES;
+                for (NSString *path in [pathWatcher excludedPaths]) 
+				{
+					if (CFStringHasPrefix(eventPath, (CFStringRef)path)) {
+						shouldIgnore = YES;
                         break;
-                    }
+					}
                 }
             }
         }
@@ -299,12 +370,12 @@ static void _SCEventsCallBack(ConstFSEventStreamRef streamRef, void *clientCallB
         if (!shouldIgnore) {
 			
 			// If present remove the path's trailing slash
-			if ([eventPath hasSuffix:@"/"]) {
-				eventPath = [eventPath substringToIndex:([[((NSArray *)eventPaths) objectAtIndex:i] length] - 1)];
-			}
+			eventPath = _strip_trailing_slash(eventPath);
             
-            SCEvent *event = [SCEvent eventWithEventId:eventIds[i] eventDate:[NSDate date] eventPath:eventPath eventFlag:eventFlags[i]];
-                
+            SCEvent *event = [SCEvent eventWithEventId:(NSUInteger)eventIds[i] eventDate:[NSDate date] eventPath:(NSString *)eventPath eventFlags:(SCEventFlags)eventFlags[i]];
+			
+			CFRelease(eventPath);
+			
             if ([[pathWatcher delegate] conformsToProtocol:@protocol(SCEventListenerProtocol)]) {
                 [[pathWatcher delegate] pathWatcher:pathWatcher eventOccurred:event];
             }
@@ -314,6 +385,25 @@ static void _SCEventsCallBack(ConstFSEventStreamRef streamRef, void *clientCallB
             }
         }
     }
+}
+
+/**
+ * If present, strips the trailing slash from the supplied string. Note, that the caler is
+ * responsible for freeing the associate memory.
+ *
+ * @param string The string that is to be stripped
+ *
+ @ @return The resulting string
+ */
+static CFStringRef _strip_trailing_slash(CFStringRef string)
+{
+	CFStringRef stripped = string;
+	
+	if (CFStringHasSuffix((CFStringRef)stripped, CFSTR("/"))) {
+		stripped = CFStringCreateWithSubstring(kCFAllocatorDefault, stripped, CFRangeMake(0, (CFStringGetLength(stripped) - 1)));				
+	}
+	
+	return (stripped) ? CFMakeCollectable(stripped) : string;
 }
 
 @end

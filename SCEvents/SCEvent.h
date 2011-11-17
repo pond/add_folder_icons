@@ -1,10 +1,10 @@
 /*
- *  $Id: SCEvent.h 36 2009-09-08 21:36:02Z stuart $
+ *  $Id: SCEvent.h 195 2011-03-15 21:47:34Z stuart $
  *
  *  SCEvents
+ *  http://stuconnolly.com/projects/code/
  *
- *  Copyright (c) 2009 Stuart Connolly
- *  http://stuconnolly.com/projects/source-code/
+ *  Copyright (c) 2011 Stuart Connolly. All rights reserved.
  *
  *  Permission is hereby granted, free of charge, to any person
  *  obtaining a copy of this software and associated documentation
@@ -31,21 +31,51 @@
 #import <Foundation/Foundation.h>
 #import <CoreServices/CoreServices.h>
 
+#import "SCConstants.h"
+
+/**
+ * @class SCEvent SCEvent.h
+ *
+ * @author Stuart Connolly http://stuconnolly.com/
+ *
+ * Class representing a single file system event.
+ */
 @interface SCEvent : NSObject 
 {
-    NSUInteger eventId;
-    NSDate *eventDate;
-    NSString *eventPath;
-    FSEventStreamEventFlags eventFlag;
+    NSUInteger _eventId;
+    NSDate *_eventDate;
+    NSString *_eventPath;
+    SCEventFlags _eventFlags;
 }
 
-@property (readwrite, assign) NSUInteger eventId;
-@property (readwrite, retain) NSDate *eventDate;
-@property (readwrite, retain) NSString *eventPath;
-@property (readwrite, assign) FSEventStreamEventFlags eventFlag;
+/**
+ * @property _eventId The ID of the event.
+ */
+@property (readwrite, assign, getter=eventId, setter=setEventId:) NSUInteger _eventId;
 
-+ (SCEvent *)eventWithEventId:(NSUInteger)identifier eventDate:(NSDate *)date eventPath:(NSString *)path eventFlag:(FSEventStreamEventFlags)flag;
+/**
+ * @property _eventDate The date of the event.
+ */
+@property (readwrite, retain, getter=eventDate, setter=setEventDate:) NSDate *_eventDate;
 
-- (id)initWithEventId:(NSUInteger)identifier eventDate:(NSDate *)date eventPath:(NSString *)path eventFlag:(FSEventStreamEventFlags)flag;
+/**
+ * @property _eventPath The file system path of the event.
+ */
+@property (readwrite, retain, getter=eventPath, setter=setEventPath:) NSString *_eventPath;
+
+/**
+ * @property _eventFlag The flags that are associated with the event.
+ */
+@property (readwrite, assign, getter=eventFlags, setter=setEventFlags:) SCEventFlags _eventFlags;
+
++ (SCEvent *)eventWithEventId:(NSUInteger)identifier 
+					eventDate:(NSDate *)date 
+					eventPath:(NSString *)path 
+					eventFlags:(SCEventFlags)flags;
+
+- (id)initWithEventId:(NSUInteger)identifier 
+			eventDate:(NSDate *)date 
+			eventPath:(NSString *)path 
+			eventFlags:(SCEventFlags)flags;
 
 @end

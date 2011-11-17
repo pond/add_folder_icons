@@ -35,6 +35,7 @@
     [ slipCoverDefinitions        release ];
 
     [ slipCoverCaseFolderWatcher  stopWatchingPaths ];
+    [ slipCoverCaseFolderWatcher  release           ];
 
     [ super dealloc ];
 }
@@ -102,7 +103,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
 
         /* Watch SlipCover paths to make sure definitions don't change */
 
-        slipCoverCaseFolderWatcher = [ SCEvents sharedPathWatcher ];
+        slipCoverCaseFolderWatcher = [ [ SCEvents alloc ] init ];
         [ slipCoverCaseFolderWatcher setDelegate: self ];
         [ slipCoverCaseFolderWatcher startWatchingPaths: [ SlipCoverSupport searchPathsForCovers ] ];
     }

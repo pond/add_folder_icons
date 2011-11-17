@@ -1,10 +1,10 @@
 /*
- *  $Id: SCEvent.m 36 2009-09-08 21:36:02Z stuart $
+ *  $Id: SCEvent.m 195 2011-03-15 21:47:34Z stuart $
  *
  *  SCEvents
+ *  http://stuconnolly.com/projects/code/
  *
- *  Copyright (c) 2009 Stuart Connolly
- *  http://stuconnolly.com/projects/source-code/
+ *  Copyright (c) 2011 Stuart Connolly. All rights reserved.
  *
  *  Permission is hereby granted, free of charge, to any person
  *  obtaining a copy of this software and associated documentation
@@ -32,50 +32,81 @@
 
 @implementation SCEvent
 
-@synthesize eventId;
-@synthesize eventDate;
-@synthesize eventPath;
-@synthesize eventFlag;
+@synthesize _eventId;
+@synthesize _eventDate;
+@synthesize _eventPath;
+@synthesize _eventFlags;
+
+#pragma mark -
+#pragma mark Initialisation
 
 /**
- * Returns an initialized instance of SCEvent using the supplied event ID, path 
+ * Returns an initialized instance of SCEvent using the supplied event ID, date, path 
  * and flag.
+ *
+ * @param identifer The ID of the event
+ * @param date      The date of the event
+ * @param path      The file system path of the event
+ * @param flags     The flags associated with the event
+ *
+ * @return The initialized (autoreleased) instance
  */
-+ (SCEvent *)eventWithEventId:(NSUInteger)identifier eventDate:(NSDate *)date eventPath:(NSString *)path eventFlag:(FSEventStreamEventFlags)flag
++ (SCEvent *)eventWithEventId:(NSUInteger)identifier 
+					eventDate:(NSDate *)date 
+					eventPath:(NSString *)path 
+				   eventFlags:(SCEventFlags)flags
 {
-    return [[[SCEvent alloc] initWithEventId:identifier eventDate:date eventPath:path eventFlag:flag] autorelease];
+    return [[[SCEvent alloc] initWithEventId:identifier eventDate:date eventPath:path eventFlags:flags] autorelease];
 }
 
 /**
  * Initializes an instance of SCEvent using the supplied event ID, path and flag.
+ *
+ * @param identifer The ID of the event
+ * @param date      The date of the event
+ * @param path      The file system path of the event
+ * @param flags     The flags associated with the event
+ *
+ * @return The initialized instance
  */
-- (id)initWithEventId:(NSUInteger)identifier eventDate:(NSDate *)date eventPath:(NSString *)path eventFlag:(FSEventStreamEventFlags)flag
+- (id)initWithEventId:(NSUInteger)identifier 
+			eventDate:(NSDate *)date 
+			eventPath:(NSString *)path 
+		   eventFlags:(SCEventFlags)flags
 {
     if ((self = [super init])) {
         [self setEventId:identifier];
         [self setEventDate:date];
         [self setEventPath:path];
-        [self setEventFlag:flag];
+        [self setEventFlags:flags];
     }
     
     return self;
 }
 
+#pragma mark -
+#pragma mark Other
+
 /**
  * Provides the string used when printing this object in NSLog, etc. Useful for
  * debugging purposes.
+ *
+ * @return The description string
  */
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"<%@ { eventId = %ld, eventPath = %@, eventFlag = %ld } >", [self className], ((unsigned long)eventId), [self eventPath], ((unsigned long)eventFlag)];
+	return [NSString stringWithFormat:@"<%@ { eventId = %ld, eventPath = %@, eventFlags = %ld } >", 
+			[self className], 
+			((unsigned long)_eventId), 
+			[self eventPath], 
+			((unsigned long)_eventFlags)];
 }
 
-/**
- * dealloc
- */
+#pragma mark -
+
 - (void)dealloc
 {
-    [eventDate release], eventDate = nil;
+    [_eventDate release], _eventDate = nil;
 	
     [super dealloc];
 }

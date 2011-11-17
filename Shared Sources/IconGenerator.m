@@ -813,7 +813,7 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
                         (
                             layerCtx,
                             CGSizeMake( 0, -( BLUR_OFFSET / 2 ) ),
-                            BLUR_RADIUS * ( BLUR_OFFSET / 2 ),
+                            ( BLUR_RADIUS / 3 ) * ( BLUR_OFFSET / 2 ),
                             c
                         );
 

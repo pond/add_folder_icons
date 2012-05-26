@@ -20,11 +20,11 @@
  * If you change these, make sure you update "locations" below too.
  */
 
-#define CANVAS_SIZE  512
-#define THUMB_BORDER  20
-#define BLUR_RADIUS   16
-#define BLUR_OFFSET    8
-#define ROTATION_PAD  40
+#define CANVAS_SIZE   512
+#define THUMB_BORDER   20
+#define BLUR_RADIUS    16
+#define BLUR_OFFSET     8
+#define ROTATION_PAD   40
 
 /* Image search loop exit conditions (values are inclusive); zero equals
  * unlimited in either case (not recommended...).
@@ -67,7 +67,7 @@
  *      images and thus needs no custom icon, or NULL being returned because an
  *      error was encountered while attempting to generate the custom icon;
  *
- *      Pointer to an initialised IconParameters structure describing the way
+ *      Pointer to an initialised IconParameters instance describing the way
  *      in which to generate the icons.
  *
  * Out: CGImageRef pointing to thumbnail image or NULL if there is an error, or

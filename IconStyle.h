@@ -15,24 +15,24 @@
 
 /* Mandatory properties */
 
-@property ( nonatomic, retain ) NSDate   * createdAt;
-@property ( nonatomic, retain ) NSString * name;
-@property ( nonatomic, retain ) NSNumber * isPreset;               /* Treat as BOOL */
-@property ( nonatomic, retain ) NSNumber * usesSlipCover;          /* Treat as BOOL */
+@property ( nonatomic, strong ) NSDate   * createdAt;
+@property ( nonatomic, strong ) NSString * name;
+@property ( nonatomic, strong ) NSNumber * isPreset;               /* Treat as BOOL */
+@property ( nonatomic, strong ) NSNumber * usesSlipCover;          /* Treat as BOOL */
  
 /* Properties only valid if style usesSlipCover */
 
-@property ( nonatomic, retain ) NSString * slipCoverName;
+@property ( nonatomic, strong ) NSString * slipCoverName;
 
 /* Properties only valid unless style usesSlipCover */
 
-@property ( nonatomic, retain ) NSNumber * cropToSquare;           /* Treat as BOOL */
-@property ( nonatomic, retain ) NSNumber * whiteBackground;        /* Treat as BOOL */
-@property ( nonatomic, retain ) NSNumber * dropShadow;             /* Treat as BOOL */
-@property ( nonatomic, retain ) NSNumber * randomRotation;         /* Treat as BOOL */
-@property ( nonatomic, retain ) NSNumber * onlyUseCoverArt;        /* Treat as BOOL */
-@property ( nonatomic, retain ) NSNumber * maxImages;              /* Treat as NSUInteger */
-@property ( nonatomic, retain ) NSNumber * showFolderInBackground; /* Treat as IconStyleShowFolderInBackground */
+@property ( nonatomic, strong ) NSNumber * cropToSquare;           /* Treat as BOOL */
+@property ( nonatomic, strong ) NSNumber * whiteBackground;        /* Treat as BOOL */
+@property ( nonatomic, strong ) NSNumber * dropShadow;             /* Treat as BOOL */
+@property ( nonatomic, strong ) NSNumber * randomRotation;         /* Treat as BOOL */
+@property ( nonatomic, strong ) NSNumber * onlyUseCoverArt;        /* Treat as BOOL */
+@property ( nonatomic, strong ) NSNumber * maxImages;              /* Treat as NSUInteger */
+@property ( nonatomic, strong ) NSNumber * showFolderInBackground; /* Treat as IconStyleShowFolderInBackground */
 
 /* Useful methods */
 

@@ -51,9 +51,9 @@
     CGImageRef                          cachedFolderImage;
 }
 
-@property (            retain, readonly ) IconStyleManager       * iconStyleManager;
-@property ( nonatomic, retain, readonly ) NSManagedObjectContext * managedObjectContext;
-@property ( nonatomic, retain, readonly ) NSManagedObjectModel   * managedObjectModel;
+@property (            strong, readonly ) IconStyleManager       * iconStyleManager;
+@property ( nonatomic, strong, readonly ) NSManagedObjectContext * managedObjectContext;
+@property ( nonatomic, strong, readonly ) NSManagedObjectModel   * managedObjectModel;
 
 /* Actions */
 

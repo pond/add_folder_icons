@@ -15,7 +15,7 @@
 
 + (id)caseDefinitionFromPath:(NSString *)path
 {
-  return [[[CaseDefinition alloc] initFromPath:path] autorelease];
+  return [[CaseDefinition alloc] initFromPath:path];
 }
 
 // 2011-01-06 (ADH): Fixed to remove deprecations and replace extensions of
@@ -47,7 +47,7 @@
     
     @try {
 
-      NSFileManager * fileManager = [[[NSFileManager alloc] init] autorelease];
+      NSFileManager * fileManager = [[NSFileManager alloc] init];
       images = [[NSMutableDictionary alloc] init];
       masks  = [[NSMutableDictionary alloc] init];
       
@@ -56,7 +56,7 @@
       NSArray *names      = [fileManager contentsOfDirectoryAtPath:imagePath error:NULL];
       for (NSString *n in names) {
         if ([n characterAtIndex:0] == '.') continue;
-        NSImage *img = [[[NSImage alloc] initWithContentsOfFile:[imagePath stringByAppendingPathComponent:n]] autorelease];
+        NSImage *img = [[NSImage alloc] initWithContentsOfFile:[imagePath stringByAppendingPathComponent:n]];
         [images setValue:img forKey:[n stringByDeletingPathExtension]];
       }
       
@@ -65,7 +65,7 @@
       names              = [fileManager contentsOfDirectoryAtPath:maskPath error:NULL];
       for (NSString *n in names) {
         if ([n characterAtIndex:0] == '.') continue;
-        NSImage *img = [[[NSImage alloc] initWithContentsOfFile:[maskPath stringByAppendingPathComponent:n]] autorelease];
+        NSImage *img = [[NSImage alloc] initWithContentsOfFile:[maskPath stringByAppendingPathComponent:n]];
         [masks setValue:img forKey:[n stringByDeletingPathExtension]];
       }
       
@@ -76,7 +76,7 @@
       [rects setValue:nil forKey:@"imageRendering"];
 
       //very last step...
-      if ([images count] > 0 && [rects count] > 0) name = [[[path stringByDeletingPathExtension] lastPathComponent] retain];
+      if ([images count] > 0 && [rects count] > 0) name = [[path stringByDeletingPathExtension] lastPathComponent];
     }
     @catch (NSException * e) {
       (void ) e;

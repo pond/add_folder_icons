@@ -1,5 +1,5 @@
 /*
- *  $Id: SCEvents.m 211 2011-08-31 20:43:52Z stuart $
+ *  $Id: SCEvents.m 218 2012-04-12 19:16:38Z stuart $
  *
  *  SCEvents
  *  http://stuconnolly.com/projects/code/
@@ -53,7 +53,7 @@ static void _events_callback(ConstFSEventStreamRef streamRef,
 							 const FSEventStreamEventFlags eventFlags[], 
 							 const FSEventStreamEventId eventIds[]);
 
-static CFStringRef _strip_trailing_slash(CFStringRef string);
+static CFStringRef _strip_trailing_slash_from_path(CFStringRef path);
 
 @end
 
@@ -169,7 +169,7 @@ static CFStringRef _strip_trailing_slash(CFStringRef string);
 	
 	_runLoop = [runLoop getCFRunLoop];
 	
-    if (([paths count] == 0) || (_isWatchingPaths)) {
+    if ([paths count] == 0 || _isWatchingPaths) {
 		pthread_mutex_unlock(&_eventsLock);
 		
 		return NO;
@@ -204,7 +204,7 @@ static CFStringRef _strip_trailing_slash(CFStringRef string);
 	pthread_mutex_lock(&_eventsLock);
 	
     if (!_isWatchingPaths) {
-		pthread_mutex_lock(&_eventsLock);
+		pthread_mutex_unlock(&_eventsLock);
 		
 		return NO;
 	}
@@ -345,7 +345,7 @@ static void _events_callback(ConstFSEventStreamRef streamRef,
          * The drawback to this approach however, is the increased resources required
          * calling this callback more frequently.
          */
-        
+		
 		NSArray *excludedPaths = [pathWatcher excludedPaths];
         CFStringRef eventPath = CFArrayGetValueAtIndex(paths, (CFIndex)i);
         
@@ -368,13 +368,14 @@ static void _events_callback(ConstFSEventStreamRef streamRef,
         }
     
         if (!shouldIgnore) {
-			
+						
 			// If present remove the path's trailing slash
-			eventPath = _strip_trailing_slash(eventPath);
-            
-            SCEvent *event = [SCEvent eventWithEventId:(NSUInteger)eventIds[i] eventDate:[NSDate date] eventPath:(NSString *)eventPath eventFlags:(SCEventFlags)eventFlags[i]];
-			
-			CFRelease(eventPath);
+			eventPath = _strip_trailing_slash_from_path(eventPath);
+					
+            SCEvent *event = [SCEvent eventWithEventId:(NSUInteger)eventIds[i] 
+											 eventDate:[NSDate date] 
+											 eventPath:(NSString *)eventPath 
+											eventFlags:(SCEventFlags)eventFlags[i]];
 			
             if ([[pathWatcher delegate] conformsToProtocol:@protocol(SCEventListenerProtocol)]) {
                 [[pathWatcher delegate] pathWatcher:pathWatcher eventOccurred:event];
@@ -388,22 +389,19 @@ static void _events_callback(ConstFSEventStreamRef streamRef,
 }
 
 /**
- * If present, strips the trailing slash from the supplied string. Note, that the caler is
- * responsible for freeing the associate memory.
+ * If present, strips the trailing slash from the supplied string.
  *
  * @param string The string that is to be stripped
  *
  @ @return The resulting string
  */
-static CFStringRef _strip_trailing_slash(CFStringRef string)
+static CFStringRef _strip_trailing_slash_from_path(CFStringRef path)
 {
-	CFStringRef stripped = string;
+	NSString *string = (NSString *)path;
+
+	NSUInteger length = [string length];
 	
-	if (CFStringHasSuffix((CFStringRef)stripped, CFSTR("/"))) {
-		stripped = CFStringCreateWithSubstring(kCFAllocatorDefault, stripped, CFRangeMake(0, (CFStringGetLength(stripped) - 1)));				
-	}
-	
-	return (stripped) ? CFMakeCollectable(stripped) : string;
+	return (length > 1 && [string hasSuffix:@"/"]) ? (CFStringRef)[string substringToIndex:length - 1] : path;
 }
 
 @end

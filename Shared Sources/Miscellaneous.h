@@ -3,7 +3,7 @@
  *
  * Miscellaneous useful functions.
  *
- * (C) Hipposoft 2009, 2010, 2011 <ahodgkin@rowing.org.uk>
+ * (C) Hipposoft 2009-2012 <ahodgkin@rowing.org.uk>
 \******************************************************************************/
 
 #import <Cocoa/Cocoa.h>
@@ -78,3 +78,18 @@ Boolean isImageFile( NSString * fullPosixPath );
 \******************************************************************************/
 
 OSErr sendFinderAppleEvent( AliasHandle aliasH, AEEventID appleEventID );
+
+/******************************************************************************\
+ * dpiValue()
+ *
+ * When given a value representing part of a position or object dimension for
+ * graphics, return an equivalent value taking into account high DPI ("retina")
+ * displays if the OS supports it (in short, conditionally multiply by 2!).
+ *
+ * In:  Uncorrected (standard pixel density) value.
+ *
+ * Out: Input value, or input value multiplied by 2 on "new enough" OS
+ *      versions (10.7 "Lion" or later).
+\******************************************************************************/
+
+NSInteger dpiValue( NSInteger uncorrectedValue );

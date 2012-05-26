@@ -32,17 +32,6 @@
                             withObject: nil ];
 }
 
-- ( void ) dealloc
-{
-    [ iconStyleManager     release ];
-    [ managedObjectContext release ];
-    [ managedObjectModel   release ];
-
-    [ tableContents        release ];
-    [ openPanel            release ];
-
-    [ super dealloc ];
-}
 
 /******************************************************************************\
  * -initWithWindowNibName:
@@ -64,9 +53,9 @@
 {
     if ( ( self = [ super initWithWindowNibName: windowNibName ] ) )
     {
-        iconStyleManager     = [ [ IconStyleManager iconStyleManager     ] retain ];
-        managedObjectContext = [ [ iconStyleManager managedObjectContext ] retain ];
-        managedObjectModel   = [ [ iconStyleManager managedObjectModel   ] retain ];
+        iconStyleManager     = [ IconStyleManager iconStyleManager     ];
+        managedObjectContext = [ iconStyleManager managedObjectContext ];
+        managedObjectModel   = [ iconStyleManager managedObjectModel   ];
 
         [ [ self window ] center ];
         [ [ self window ] makeKeyAndOrderFront: nil ];
@@ -133,7 +122,7 @@
 {
     NSString * home = [ @"~" stringByExpandingTildeInPath ];
 
-    openPanel = [ [ NSOpenPanel openPanel ] retain ];
+    openPanel = [ NSOpenPanel openPanel ];
 
     [ openPanel setMessage: NSLocalizedString( @"Choose folders to be given new icons", @"Message shown in the Open Panel used for folder addition" ) ];
     [ openPanel setPrompt:  NSLocalizedString( @"Add",                                  @"Button text in the Open Panel used for folder addition"   ) ];
@@ -164,17 +153,15 @@
 
 - ( void ) doCommsThread
 {
-    NSAutoreleasePool * threadAutoReleasePool = [ [ NSAutoreleasePool alloc ] init ];
-    NSConnection      * connection            = [ [ NSConnection new ] autorelease ];
+    @autoreleasepool
+    {
+        NSConnection * connection = [ NSConnection new ];
 
-    [ connection setRootObject: self ];
-    [ connection registerName: APP_SERVER_CONNECTION_NAME ];
+        [ connection setRootObject: self ];
+        [ connection registerName: APP_SERVER_CONNECTION_NAME ];
 
-    [ [ NSRunLoop currentRunLoop ] run ];
-
-    /* We never reach here, but if we did, we'd do this... */
-
-    [ threadAutoReleasePool drain ];
+        [ [ NSRunLoop currentRunLoop ] run ];
+    }
 }
 
 /******************************************************************************\
@@ -276,7 +263,6 @@
      * to 'NSApp'.
      */
 
-    [ workerThread release ];
 
     /* Close the progress panel */
 
@@ -397,142 +383,141 @@
 
 - ( void ) addSubFoldersOf: ( NSDictionary * ) parentFolders
 {
-    NSAutoreleasePool * threadAutoReleasePool = [ [ NSAutoreleasePool alloc ] init ];
-    NSArray           * parentFolderArray     = [ parentFolders objectForKey: @"urls" ];
-    NSNumber          * firstIndex            = [ parentFolders objectForKey: @"firstIndex" ];
-    BOOL                isURLs                = YES;
-    NSUInteger          startRow, currentRow;
-
-    if ( firstIndex != nil ) startRow = currentRow = [ firstIndex unsignedLongValue ];
-    else                     startRow = currentRow = [ tableContents count ];
-
-    if ( parentFolderArray == nil )
+    @autoreleasepool
     {
-        parentFolderArray = [ parentFolders objectForKey: @"strings" ];
-        isURLs            = NO;
-    }
+        NSArray    * parentFolderArray     = [ parentFolders objectForKey: @"urls" ];
+        NSNumber   * firstIndex            = [ parentFolders objectForKey: @"firstIndex" ];
+        BOOL         isURLs                = YES;
+        NSUInteger   startRow, currentRow;
 
-    for ( id parentItem in parentFolderArray )
-    {
-        /* For convenience, the folder array can specify paths as POSIX path
-         * strings or URLs. Due to the NSFileManager API not providing a way
-         * to enumerate based on string with options, only by URL with options,
-         * we have to convert any strings into URLs.
-         */
+        if ( firstIndex != nil ) startRow = currentRow = [ firstIndex unsignedLongValue ];
+        else                     startRow = currentRow = [ tableContents count ];
 
-        NSURL * parentPath;
-
-        if ( isURLs ) parentPath = ( NSURL * ) parentItem;
-        else          parentPath = [ NSURL fileURLWithPath: ( NSString * ) parentItem
-                                               isDirectory: YES ];
-
-        /* We're not interested in enumerating package contents or hidden
-         * files; we do want to know if something is a directory.
-         */
-
-        NSFileManager         * fileManager = [ [ [ NSFileManager alloc ] init ] autorelease ]; /* Since [NSFileManager defaultManager] is not thread-safe; see Apple docs */
-        NSDirectoryEnumerator * dirEnum =
-        [
-            fileManager enumeratorAtURL: parentPath
-             includingPropertiesForKeys: [ NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLIsPackageKey, nil ]
-                                options: NSDirectoryEnumerationSkipsHiddenFiles |
-                                         NSDirectoryEnumerationSkipsPackageDescendants
-                           errorHandler: nil
-        ];
-
-        for ( NSURL * url in dirEnum )
+        if ( parentFolderArray == nil )
         {
-            /* Keep checking for thread cancellation in case the user hits
-             * the 'stop' button in the progress panel.
+            parentFolderArray = [ parentFolders objectForKey: @"strings" ];
+            isURLs            = NO;
+        }
+
+        for ( id parentItem in parentFolderArray )
+        {
+            /* For convenience, the folder array can specify paths as POSIX path
+             * strings or URLs. Due to the NSFileManager API not providing a way
+             * to enumerate based on string with options, only by URL with options,
+             * we have to convert any strings into URLs.
+             */
+
+            NSURL * parentPath;
+
+            if ( isURLs ) parentPath = ( NSURL * ) parentItem;
+            else          parentPath = [ NSURL fileURLWithPath: ( NSString * ) parentItem
+                                                   isDirectory: YES ];
+
+            /* We're not interested in enumerating package contents or hidden
+             * files; we do want to know if something is a directory.
+             */
+
+            NSFileManager         * fileManager = [ [ NSFileManager alloc ] init ]; /* Since [NSFileManager defaultManager] is not thread-safe; see Apple docs */
+            NSDirectoryEnumerator * dirEnum =
+            [
+                fileManager enumeratorAtURL: parentPath
+                 includingPropertiesForKeys: [ NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLIsPackageKey, nil ]
+                                    options: NSDirectoryEnumerationSkipsHiddenFiles |
+                                             NSDirectoryEnumerationSkipsPackageDescendants
+                               errorHandler: nil
+            ];
+
+            for ( NSURL * url in dirEnum )
+            {
+                /* Keep checking for thread cancellation in case the user hits
+                 * the 'stop' button in the progress panel.
+                 */
+                 
+                if ( [ [ NSThread currentThread ] isCancelled ] == YES ) break;
+
+                /* Don't add packaged folders */
+
+                NSNumber * isDirectory;
+                NSNumber * isPackage;
+                NSError  * error = nil;
+
+                [ url getResourceValue: &isPackage
+                                forKey: NSURLIsPackageKey
+                                 error: &error ];
+
+                if ( error == nil && [ isPackage boolValue ] == YES )
+                {
+                    continue;
+                }
+
+                /* Only add (not packaged, see above) folders */
+
+                [ url getResourceValue: &isDirectory
+                                forKey: NSURLIsDirectoryKey
+                                 error: &error ];
+
+                if ( error == nil && [ isDirectory boolValue ] == YES )
+                {
+                    /* Folder list additions can cause GUI updates and these
+                     * are only truly 'safe' if done in the main thread.
+                     *
+                     * This slows things down a fair bit, but generally the
+                     * bottleneck is still the filesystem, not the CPU.
+                     */
+
+                    if ( firstIndex != nil )
+                    {
+                        NSDictionary * dictionary =
+                        [
+                            NSDictionary dictionaryWithObjectsAndKeys:
+                                [ url path                                    ], @"path",
+                                [ NSNumber numberWithUnsignedLong: currentRow ], @"index",
+                                nil
+                        ];
+
+                        [ self performSelectorOnMainThread: @selector( insertFolderByDictionary: )
+                                                withObject: dictionary
+                                             waitUntilDone: YES ];
+                    }
+                    else
+                    {
+                        [ self performSelectorOnMainThread: @selector( addFolder: )
+                                                withObject: [ url path ]
+                                             waitUntilDone: YES ];
+                    }
+
+                    currentRow ++;
+                }            
+            }
+
+            /* Keep checking for thread cancellation in this outer loop too, again
+             * in case the user hits the 'stop' button in the progress panel - we
+             * may have just dropped out of the inner loop above because of that.
              */
              
             if ( [ [ NSThread currentThread ] isCancelled ] == YES ) break;
-
-            /* Don't add packaged folders */
-
-            NSNumber * isDirectory;
-            NSNumber * isPackage;
-            NSError  * error = nil;
-
-            [ url getResourceValue: &isPackage
-                            forKey: NSURLIsPackageKey
-                             error: &error ];
-
-            if ( error == nil && [ isPackage boolValue ] == YES )
-            {
-                continue;
-            }
-
-            /* Only add (not packaged, see above) folders */
-
-            [ url getResourceValue: &isDirectory
-                            forKey: NSURLIsDirectoryKey
-                             error: &error ];
-
-            if ( error == nil && [ isDirectory boolValue ] == YES )
-            {
-                /* Folder list additions can cause GUI updates and these
-                 * are only truly 'safe' if done in the main thread.
-                 *
-                 * This slows things down a fair bit, but generally the
-                 * bottleneck is still the filesystem, not the CPU.
-                 */
-
-                if ( firstIndex != nil )
-                {
-                    NSDictionary * dictionary =
-                    [
-                        NSDictionary dictionaryWithObjectsAndKeys:
-                            [ url path                                    ], @"path",
-                            [ NSNumber numberWithUnsignedLong: currentRow ], @"index",
-                            nil
-                    ];
-
-                    [ self performSelectorOnMainThread: @selector( insertFolderByDictionary: )
-                                            withObject: dictionary
-                                         waitUntilDone: YES ];
-                }
-                else
-                {
-                    [ self performSelectorOnMainThread: @selector( addFolder: )
-                                            withObject: [ url path ]
-                                         waitUntilDone: YES ];
-                }
-
-                currentRow ++;
-            }            
         }
 
-        /* Keep checking for thread cancellation in this outer loop too, again
-         * in case the user hits the 'stop' button in the progress panel - we
-         * may have just dropped out of the inner loop above because of that.
+        /* Build ranges for the array start to just before the insertion row;
+         * for the inserted rows; and for just after the inserted rows to the
+         * end of the array. Then amalgamate the first and last of those so
+         * we have an array of indices of 'old' and 'new' items.
          */
-         
-        if ( [ [ NSThread currentThread ] isCancelled ] == YES ) break;
-    }
 
-    /* Build ranges for the array start to just before the insertion row;
-     * for the inserted rows; and for just after the inserted rows to the
-     * end of the array. Then amalgamate the first and last of those so
-     * we have an array of indices of 'old' and 'new' items.
-     */
+        NSMutableIndexSet * beforeAddition = [ NSMutableIndexSet indexSetWithIndexesInRange: NSMakeRange( 0, startRow ) ];
+        NSIndexSet        * duringAddition = [ NSIndexSet        indexSetWithIndexesInRange: NSMakeRange( startRow, currentRow - startRow ) ];
+        NSIndexSet        * afterAddition  = [ NSIndexSet        indexSetWithIndexesInRange: NSMakeRange( currentRow, [ tableContents count ] - currentRow ) ];
 
-    NSMutableIndexSet * beforeAddition = [ NSMutableIndexSet indexSetWithIndexesInRange: NSMakeRange( 0, startRow ) ];
-    NSIndexSet        * duringAddition = [ NSIndexSet        indexSetWithIndexesInRange: NSMakeRange( startRow, currentRow - startRow ) ];
-    NSIndexSet        * afterAddition  = [ NSIndexSet        indexSetWithIndexesInRange: NSMakeRange( currentRow, [ tableContents count ] - currentRow ) ];
+        [ beforeAddition addIndexes: afterAddition ];
 
-    [ beforeAddition addIndexes: afterAddition ];
+        /* Use these results to call the duplicates removal routine, then tell
+         * the folder list table view about the changes.
+         */
 
-    /* Use these results to call the duplicates removal routine, then tell
-     * the folder list table view about the changes.
-     */
+        [ self removeDuplicatesFromIndices: beforeAddition
+                           comparedAgainst: duringAddition ];
 
-    [ self removeDuplicatesFromIndices: beforeAddition
-                       comparedAgainst: duringAddition ];
-
-    /* We're finished with the pool now */
-
-    [ threadAutoReleasePool drain ];
+    } // @autoreleasepool
 
     /* Tell the main thread to finish modal operation. Since this is happening
      * outside the modal window's modal run loop, we must use "abortModal"
@@ -603,197 +588,196 @@
 
 - ( void ) createFolderIcons: ( NSArray * ) constArrayOfDictionaries
 {
-    NSAutoreleasePool * threadAutoReleasePool = [ [ NSAutoreleasePool alloc ] init ];
-    NSUserDefaults    * standardUserDefaults  = [ NSUserDefaults standardUserDefaults ];
-    NSArray           * coverArtFilenames     = [ standardUserDefaults arrayForKey: @"coverArtFilenames" ];
-    BOOL                includeColourLabels   = [ standardUserDefaults boolForKey: @"colourLabelsIndicateCoverArt" ];
-
-    /* Take a copy of and sort the array, grouping it by icon style. Using a
-     * copy avoids thread safety issues / cross-thread communication delays
-     * with trying to update 'tableContents' (and the related table view in
-     * 'folderList') in the main thread. It also means we can modify the array
-     * without disturbing the GUI - handy if we get cancelled. Of course on
-     * the downside, it wastes RAM and CPU cycles to do the copy.
-     */
-
-    NSMutableArray * arrayOfDictionaries = [ NSMutableArray arrayWithArray: constArrayOfDictionaries ];
-
-    [
-        arrayOfDictionaries sortUsingComparator: ^ ( NSDictionary * obj1, NSDictionary * obj2 )
-        {
-            IconStyle * s1 = [ obj1 objectForKey: @"style" ];
-            IconStyle * s2 = [ obj2 objectForKey: @"style" ];
-
-            return [ [ [ [ s1 objectID ] URIRepresentation ] absoluteString ]
-            compare: [ [ [ s2 objectID ] URIRepresentation ] absoluteString ] ];
-        }
-    ];
-
-    /* Avoid code duplication below by using this little block as a task
-     * runner function. It's passed the path of the CLI tool and an alloc'd
-     * mutable array of arguments. It runs the CLi tool with those arguments,
-     * calls "-release" on the arguments and waits for the task to exit.
-     *
-     * Returns EXIT_SUCCESS if everything worked, else EXIT_FAILURE for any
-     * problems.
-     */
-
-	int ( ^ taskRunner ) ( NSString *, NSMutableArray * ) = ^ ( NSString * path, NSMutableArray * arguments )
-	{
-        /* We just sit here and wait until the task exits for any reason. The
-         * task can talk back to us through the communications thread (see e.g.
-         * "-doCommsThread"). It asks us if there has been early cancellation
-         * using the protocol implemented by that communications thread and
-         * will exit if so, allowing this thread to resume processing and
-         * handle the cancellation condition itself.
-         */
-
-        NSTask * task = [ NSTask launchedTaskWithLaunchPath: path
-                                                  arguments: arguments ];
-        [ arguments release ];
-        [ task waitUntilExit ];
-
-        /* Success or failure? Would like to return a BOOL but the compiler
-         * insists that such code is actually returning an int, yet refuses
-         * to recognise that in the same way if the block is declared as
-         * returning a BOOL rather than an int. To keep it simple, we just
-         * return something which is semantically really defined as a simple
-         * int; an old-style exit status.
-         */
-
-        return ( [ task terminationReason ] == NSTaskTerminationReasonExit &&
-                 [ task terminationStatus ] == EXIT_SUCCESS )
-                 ?
-                 EXIT_SUCCESS
-                 :
-                 EXIT_FAILURE;
-    };
-
-    /* Process folders in batches grouped by icon style, so that we can pass a
-     * long command line with multiple folders simultaneously specified in one
-     * go to the command line tool. This allows it to employ whatever parallel
-     * processing tricks it can.
-     *
-     * Mindful of command line length limits (AFAII ~256K on Mac OS 10.6) as
-     * well as general sanity in attempting to compile truly vast command line
-     * strings and to avoid potentially large peak RAM overheads, no more than
-     * 144 (divides cleanly between 2, 4, 6, 8, 12, 16... cores) folders will
-     * be passed in at one time before deliberately grouping the next set of
-     * folders again.
-     *
-     * To keep things simple, don't worry about edge cases such as the
-     * ineffiency of processing 144 folders, only to find one remaining 145th
-     * item using that style and having to process it individually. This isn't
-     * common enough to be worth the effort and besides, icon creation just
-     * isn't that time-critical a process!
-     */
-
-    NSString       * toolPath      = [ ApplicationSupport auxiliaryExecutablePathFor: @"addfoldericons" ];
-    NSMutableArray * toolArgs      = nil;
-    IconStyle      * currentStyle  = nil;
-    NSUInteger       addedCount    = 0;
-    int              taskStatus    = EXIT_SUCCESS;
-
-    while ( [ arrayOfDictionaries count ] > 0 )
+    @autoreleasepool
     {
-        /* The grouping loop runs quickly so doesn't check for cancellation.
-         * That's done whenever the icon generator task is run.
+        NSUserDefaults * standardUserDefaults  = [ NSUserDefaults standardUserDefaults ];
+        NSArray        * coverArtFilenames     = [ standardUserDefaults arrayForKey: @"coverArtFilenames" ];
+        BOOL             includeColourLabels   = [ standardUserDefaults boolForKey: @"colourLabelsIndicateCoverArt" ];
+
+        if ( [ coverArtFilenames count ] == 0 )
+        {
+            coverArtFilenames = [ NSArray arrayWithObjects: @"cover", @"folder", nil ];
+        }
+
+        /* Take a copy of and sort the array, grouping it by icon style. Using a
+         * copy avoids thread safety issues / cross-thread communication delays
+         * with trying to update 'tableContents' (and the related table view in
+         * 'folderList') in the main thread. It also means we can modify the array
+         * without disturbing the GUI - handy if we get cancelled. Of course on
+         * the downside, it wastes RAM and CPU cycles to do the copy.
          */
 
-        NSDictionary * folder = [ arrayOfDictionaries lastObject ];
-        NSString     * path   = [ folder objectForKey: @"path"   ];
-        IconStyle    * style  = [ folder objectForKey: @"style"  ];
+        NSMutableArray * arrayOfDictionaries = [ NSMutableArray arrayWithArray: constArrayOfDictionaries ];
 
-        if ( [ currentStyle objectID ] != [ style objectID ] )
+        [
+            arrayOfDictionaries sortUsingComparator: ^ ( NSDictionary * obj1, NSDictionary * obj2 )
+            {
+                IconStyle * s1 = [ obj1 objectForKey: @"style" ];
+                IconStyle * s2 = [ obj2 objectForKey: @"style" ];
+
+                return [ [ [ [ s1 objectID ] URIRepresentation ] absoluteString ]
+                compare: [ [ [ s2 objectID ] URIRepresentation ] absoluteString ] ];
+            }
+        ];
+
+        /* Avoid code duplication below by using this little block as a task
+         * runner function. It's passed the path of the CLI tool and an alloc'd
+         * mutable array of arguments. It runs the CLi tool with those arguments,
+         * calls "-release" on the arguments and waits for the task to exit.
+         *
+         * Returns EXIT_SUCCESS if everything worked, else EXIT_FAILURE for any
+         * problems.
+         */
+
+        int ( ^ taskRunner ) ( NSString *, NSMutableArray * ) = ^ ( NSString * path, NSMutableArray * arguments )
         {
-            /* First, is there an old group to now process? */
+            /* We just sit here and wait until the task exits for any reason. The
+             * task can talk back to us through the communications thread (see e.g.
+             * "-doCommsThread"). It asks us if there has been early cancellation
+             * using the protocol implemented by that communications thread and
+             * will exit if so, allowing this thread to resume processing and
+             * handle the cancellation condition itself.
+             */
+
+            NSTask * task = [ NSTask launchedTaskWithLaunchPath: path
+                                                      arguments: arguments ];
+            [ task waitUntilExit ];
+
+            /* Success or failure? Would like to return a BOOL but the compiler
+             * insists that such code is actually returning an int, yet refuses
+             * to recognise that in the same way if the block is declared as
+             * returning a BOOL rather than an int. To keep it simple, we just
+             * return something which is semantically really defined as a simple
+             * int; an old-style exit status.
+             */
+
+            return ( [ task terminationReason ] == NSTaskTerminationReasonExit &&
+                     [ task terminationStatus ] == EXIT_SUCCESS )
+                     ?
+                     EXIT_SUCCESS
+                     :
+                     EXIT_FAILURE;
+        };
+
+        /* Process folders in batches grouped by icon style, so that we can pass a
+         * long command line with multiple folders simultaneously specified in one
+         * go to the command line tool. This allows it to employ whatever parallel
+         * processing tricks it can.
+         *
+         * Mindful of command line length limits (AFAII ~256K on Mac OS 10.6) as
+         * well as general sanity in attempting to compile truly vast command line
+         * strings and to avoid potentially large peak RAM overheads, no more than
+         * 144 (divides cleanly between 2, 4, 6, 8, 12, 16... cores) folders will
+         * be passed in at one time before deliberately grouping the next set of
+         * folders again.
+         *
+         * To keep things simple, don't worry about edge cases such as the
+         * ineffiency of processing 144 folders, only to find one remaining 145th
+         * item using that style and having to process it individually. This isn't
+         * common enough to be worth the effort and besides, icon creation just
+         * isn't that time-critical a process!
+         */
+
+        NSString       * toolPath      = [ ApplicationSupport auxiliaryExecutablePathFor: @"addfoldericons" ];
+        NSMutableArray * toolArgs      = nil;
+        IconStyle      * currentStyle  = nil;
+        NSUInteger       addedCount    = 0;
+        int              taskStatus    = EXIT_SUCCESS;
+
+        while ( [ arrayOfDictionaries count ] > 0 )
+        {
+            /* The grouping loop runs quickly so doesn't check for cancellation.
+             * That's done whenever the icon generator task is run.
+             */
+
+            NSDictionary * folder = [ arrayOfDictionaries lastObject ];
+            NSString     * path   = [ folder objectForKey: @"path"   ];
+            IconStyle    * style  = [ folder objectForKey: @"style"  ];
+
+            if ( [ currentStyle objectID ] != [ style objectID ] )
+            {
+                /* First, is there an old group to now process? */
+
+                if ( addedCount > 0 )
+                {
+                    taskStatus = taskRunner( toolPath, toolArgs ); /* taskRunner() deals with calling [toolArgs release] */
+
+                    /* Did that fail? */
+                    
+                    if ( taskStatus == EXIT_FAILURE ) break;
+
+                    /* We may have been cancelled while the task was running (see
+                     * also comments within the definition of the 'taskRunner'
+                     * block above).
+                     */
+
+                    if ( [ [ NSThread currentThread ] isCancelled ] == YES ) break;
+                }
+
+                /* Next, start the new group */
+
+                addedCount   = 0;
+                currentStyle = style;
+                toolArgs   = [ style allocArgumentsUsing: coverArtFilenames
+                              withColourLabelsAsCoverArt: includeColourLabels ];
+            }
+
+            [ toolArgs addObject: path ];
+            [ arrayOfDictionaries removeLastObject ];
+            addedCount ++;
+
+            /* If we've added 144 folders, reset the current style to provoke the
+             * start of a new group on the next trip around the loop.
+             */
+
+            if ( addedCount >= 144 ) currentStyle = nil;
+        }
+
+        if ( [ [ NSThread currentThread ] isCancelled ] == NO )
+        {
+            /* Anything left over for processing as a result of the last group
+             * encountered in the loop above? No need to check for cancellation
+             * after this, since we're going to exit anyway.
+             */
 
             if ( addedCount > 0 )
             {
                 taskStatus = taskRunner( toolPath, toolArgs ); /* taskRunner() deals with calling [toolArgs release] */
-
-                /* Did that fail? */
-                
-                if ( taskStatus == EXIT_FAILURE ) break;
-
-                /* We may have been cancelled while the task was running (see
-                 * also comments within the definition of the 'taskRunner'
-                 * block above).
-                 */
-
-                if ( [ [ NSThread currentThread ] isCancelled ] == YES ) break;
             }
-
-            /* Next, start the new group */
-
-            addedCount   = 0;
-            currentStyle = style;
-            toolArgs   = [ style allocArgumentsUsing: coverArtFilenames
-                          withColourLabelsAsCoverArt: includeColourLabels ];
         }
 
-        [ toolArgs addObject: path ];
-        [ arrayOfDictionaries removeLastObject ];
-        addedCount ++;
-
-        /* If we've added 144 folders, reset the current style to provoke the
-         * start of a new group on the next trip around the loop.
+        /* If things went wrong tell the user in a modal alert opened from within
+         * this modal loop, so the progress panel is still visible as an indication
+         * of continuity between the addition process and the alert.
+         *
+         * The shell tool exits and flags an error if the controlling thread is
+         * cancelled (discovered via the FolderProcessNotification protocol), so
+         * only report errors for non-cancelled cases. The edge-case of a thread
+         * being cancelled just as a real error happened to arise does result in
+         * a "missed" error, but since the user cancelled the operation anyway we
+         * don't really care about that.
+         *
+         * If things went *right*, ask the main thread to consider removing folders
+         * from the folder list (depending on preferences it may or may not do so).
          */
 
-        if ( addedCount >= 144 ) currentStyle = nil;
-    }
-
-    if ( [ [ NSThread currentThread ] isCancelled ] == NO )
-    {
-        /* Anything left over for processing as a result of the last group
-         * encountered in the loop above? No need to check for cancellation
-         * after this, since we're going to exit anyway.
-         */
-
-        if ( addedCount > 0 )
+        if ( [ [ NSThread currentThread ] isCancelled ] == NO && taskStatus == EXIT_FAILURE )
         {
-            taskStatus = taskRunner( toolPath, toolArgs ); /* taskRunner() deals with calling [toolArgs release] */
+            [ self performSelectorOnMainThread: @selector( showAdditionFailureAlert )
+                                    withObject: nil
+                                 waitUntilDone: YES ];
         }
-    }
+        else
+        {
+            [ self performSelectorOnMainThread: @selector( considerEmptyingFolderList )
+                                    withObject: nil
+                                 waitUntilDone: YES ];
+        }
 
-    /* If things went wrong tell the user in a modal alert opened from within
-     * this modal loop, so the progress panel is still visible as an indication
-     * of continuity between the addition process and the alert.
-     *
-     * The shell tool exits and flags an error if the controlling thread is
-     * cancelled (discovered via the FolderProcessNotification protocol), so
-     * only report errors for non-cancelled cases. The edge-case of a thread
-     * being cancelled just as a real error happened to arise does result in
-     * a "missed" error, but since the user cancelled the operation anyway we
-     * don't really care about that.
-     *
-     * If things went *right*, ask the main thread to consider removing folders
-     * from the folder list (depending on preferences it may or may not do so).
-     */
+    } // @autoreleasepool
 
-    if ( [ [ NSThread currentThread ] isCancelled ] == NO && taskStatus == EXIT_FAILURE )
-    {
-        NSRunCriticalAlertPanel
-        (
-            NSLocalizedString( @"Icon Addition Failure", @"Title of alert reporting a failure to add all icons" ),
-            NSLocalizedString( @"One or more of the folder addition attempts failed. You could try again with the existing folder list, clear the folder list and try with a new set of folders, or add fewer folders at a time.", @"Message shown in alert reporting a failure to add all icons "),
-            NSLocalizedString( @"Continue", @"Button shown in alert reporting a failure to add all icons" ),
-            nil,
-            nil
-        );
-    }
-    else
-    {
-        [ self performSelectorOnMainThread: @selector( considerEmptyingFolderList )
-                                withObject: nil
-                             waitUntilDone: YES ];
-    }
+    /* See "-addSubFoldersOf:" for the rationale behind this next call */
 
-    /* See "-addSubFoldersOf:" for the rationale behind the rest of this
-     * method's code.
-     */
-
-    [ threadAutoReleasePool drain ];
     [ NSApp performSelectorOnMainThread: @selector( abortModal )
                              withObject: nil
                           waitUntilDone: NO ];
@@ -895,35 +879,35 @@
 
 - ( void ) removeFolderIcons: ( NSArray * ) constArrayOfDictionaries
 {
-    NSAutoreleasePool * threadAutoReleasePool = [ [ NSAutoreleasePool alloc ] init ];
-    NSWorkspace       * workspace             = [ NSWorkspace sharedWorkspace ];
-
-    /* No attempt is made to run this in parallel as it isn't clear if
-     * NSWorkspace is sufficiently re-entrant/thread-safe and it runs
-     * very quickly anyway.
-     */
-
-    for ( NSDictionary * folder in constArrayOfDictionaries )
+    @autoreleasepool
     {
-        NSString * path = [ folder objectForKey: @"path" ];
-            
-        [ workspace setIcon: nil forFile: path options: 0 ];
-        if ( [ [ NSThread currentThread ] isCancelled ] == YES ) break;
+        NSWorkspace * workspace = [ NSWorkspace sharedWorkspace ];
 
-        [ self performSelectorOnMainThread: @selector( advanceProgressBarFor: )
-                                withObject: path
+        /* No attempt is made to run this in parallel as it isn't clear if
+         * NSWorkspace is sufficiently re-entrant/thread-safe and it runs
+         * very quickly anyway.
+         */
+
+        for ( NSDictionary * folder in constArrayOfDictionaries )
+        {
+            NSString * path = [ folder objectForKey: @"path" ];
+                
+            [ workspace setIcon: nil forFile: path options: 0 ];
+            if ( [ [ NSThread currentThread ] isCancelled ] == YES ) break;
+
+            [ self performSelectorOnMainThread: @selector( advanceProgressBarFor: )
+                                    withObject: path
+                                 waitUntilDone: YES ];
+        }
+
+        [ self performSelectorOnMainThread: @selector( considerEmptyingFolderList )
+                                withObject: nil
                              waitUntilDone: YES ];
-    }
 
-    [ self performSelectorOnMainThread: @selector( considerEmptyingFolderList )
-                            withObject: nil
-                         waitUntilDone: YES ];
+    } // @autoreleasepool
 
-    /* See "-addSubFoldersOf:" for the rationale behind the rest of this
-     * method's code.
-     */
+    /* See "-addSubFoldersOf:" for the rationale behind this next call */
 
-    [ threadAutoReleasePool drain ];
     [ NSApp performSelectorOnMainThread: @selector( abortModal )
                              withObject: nil
                           waitUntilDone: NO ];
@@ -948,6 +932,27 @@
     {
         [ tableContents removeAllObjects ];
     }
+}
+
+/******************************************************************************\
+ * -showAdditionFailureAlert
+ *
+ * Call if folder processing failed. Raises an NSAlert warning the user that
+ * something went wrong. This is done in a separate method so that a processing
+ * thread can ask to call here in the main thread, since NSAlert does not
+ * support being run from any other thread context.
+\******************************************************************************/
+
+- ( void ) showAdditionFailureAlert
+{
+    NSRunCriticalAlertPanel
+    (
+        NSLocalizedString( @"Icon Addition Failure", @"Title of alert reporting a failure to add all icons" ),
+        NSLocalizedString( @"One or more of the folder addition attempts failed. You could try again with the existing folder list, clear the folder list and try with a new set of folders, or add fewer folders at a time.", @"Message shown in alert reporting a failure to add all icons "),
+        NSLocalizedString( @"Continue", @"Button shown in alert reporting a failure to add all icons" ),
+        nil,
+        nil
+    );
 }
 
 //------------------------------------------------------------------------------

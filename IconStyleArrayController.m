@@ -77,8 +77,6 @@
 
     [ self setSortDescriptors: iconStyleSortDescriptors ];
 
-    [ byNameDescriptor release ];
-    [ byDateDescriptor release ];
 }
 
 @end

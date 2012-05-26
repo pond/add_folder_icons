@@ -27,7 +27,7 @@ enum ImageRendering {
   NSMutableDictionary *images;
   NSMutableDictionary *rects;
   NSMutableDictionary *masks;
-  NSString     *name;
+  NSString            *name;
   
   int imageRendering;
   

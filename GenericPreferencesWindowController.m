@@ -16,14 +16,6 @@
 
 @implementation GenericPreferencesWindowController
 
-- ( void ) dealloc
-{
-    [ toolbarLabels release ];
-    [ toolbarViews  release ];
-    [ toolbarItems  release ];
-    
-    [ super dealloc ];
-}
 
 /******************************************************************************\
  * +allocPreferencesWindowController
@@ -96,14 +88,11 @@ static id preferencesWindowControllerSingletonInstance = nil;
 
 - ( void ) addView: ( NSView * ) view label: ( NSString * ) label image: ( NSImage * ) image
 {
-    NSString      * labelCopy = [ [ label copy ] autorelease ];
+    NSString      * labelCopy = [ label copy ];
     NSToolbarItem * item      =
     [
-        [
             [ NSToolbarItem alloc ] initWithItemIdentifier: labelCopy
-        ]
-        autorelease
-    ];
+        ];
 
     [ item setLabel:  label                       ];
     [ item setImage:  image                       ];
@@ -168,7 +157,6 @@ static id preferencesWindowControllerSingletonInstance = nil;
 {
     NSWindow * window =
     [
-        [
             /* Size must be "big", to avoid cropping subviews. According to the
              * documentation, the window server limits sizes to 10000 itself,
              * so that's a good value. This is just an initial setting anyway;
@@ -183,9 +171,7 @@ static id preferencesWindowControllerSingletonInstance = nil;
                                                     )
                                            backing: NSBackingStoreBuffered
                                              defer: YES
-        ]
-        autorelease
-    ];
+        ];
     
     /* With the call below, the parent creates its own copy of the window and
      * assumes ownership. Thereafter, we can make no assumptions about the
@@ -201,11 +187,8 @@ static id preferencesWindowControllerSingletonInstance = nil;
 
     subview =
     [
-        [
             [ NSView alloc ] initWithFrame: [ [ [ self window ] contentView ] frame ]
-        ]
-        autorelease
-    ];
+        ];
 
     [ subview setAutoresizingMask: ( NSViewMinYMargin | NSViewWidthSizable ) ];
     [ [ [ self window ] contentView ] addSubview: subview ];
@@ -240,7 +223,6 @@ static id preferencesWindowControllerSingletonInstance = nil;
         [ toolbar setDelegate:                self                             ];
 
         [ [ self window ] setToolbar: toolbar ];
-        [ toolbar release ];
     
         /* Select the first tab */
         

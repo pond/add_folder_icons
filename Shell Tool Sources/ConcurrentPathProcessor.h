@@ -14,10 +14,11 @@
 
 @interface ConcurrentPathProcessor : NSOperation
 {
-    NSString       * pathData;
-    CGImageRef       backgroundRef;
-    IconParameters * iconParameters;
 }
+
+@property ( strong, nonatomic ) NSString       * pathData;
+@property                       CGImageRef       backgroundRef;
+@property ( strong, nonatomic ) IconParameters * iconParameters;
 
 /* Initialise the class by passing a full POSIX path to the folder of interest
  * and a background image or NULL. For more on this second parameter, see the

@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
+		230BA02614DD8AB100CC9DFC /* container-migration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 230BA02514DD8AB100CC9DFC /* container-migration.plist */; };
+		230BA02714DD95E100CC9DFC /* container-migration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 230BA02514DD8AB100CC9DFC /* container-migration.plist */; };
+		230BA02814DD95E400CC9DFC /* Add Folder Icons.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 235D7A0814DD82B100CD503D /* Add Folder Icons.entitlements */; };
+		230BA02914DD95FA00CC9DFC /* Add Folder Icons.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 235D7A0814DD82B100CD503D /* Add Folder Icons.entitlements */; };
 		230EE19C12E3501B00C9F14E /* IconStyle.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 230EE19B12E3501B00C9F14E /* IconStyle.xcdatamodel */; };
 		2311B0331302AD4500644100 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2311B0321302AD4500644100 /* Carbon.framework */; };
 		2311B03C1302AF6200644100 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2311B03B1302AF6200644100 /* Sparkle.framework */; };
@@ -19,6 +23,10 @@
 		232C2C8913018D9B00786507 /* ApplicationSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2349142712FAB6AF00A59086 /* ApplicationSupport.m */; };
 		232F57AA12E0718F00FEB1C2 /* ManageStylesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 232F57A912E0718F00FEB1C2 /* ManageStylesWindowController.m */; };
 		233D820C115FF0E900D62B8C /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 233D820A115FF0E900D62B8C /* MainWindowController.m */; };
+		2341099815714DD800AF9999 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2341099715714DD800AF9999 /* QuartzCore.framework */; };
+		2341099915714DD800AF9999 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2341099715714DD800AF9999 /* QuartzCore.framework */; };
+		2341099C15714F0400AF9999 /* WhiteBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2341099B15714F0400AF9999 /* WhiteBackgroundView.m */; };
+		2341099D15714F0400AF9999 /* WhiteBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2341099B15714F0400AF9999 /* WhiteBackgroundView.m */; };
 		234912A912F3857000A59086 /* GlobalSemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912A512F3857000A59086 /* GlobalSemaphore.m */; };
 		234912AA12F3857000A59086 /* Icons.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912A612F3857000A59086 /* Icons.m */; };
 		234912AB12F3857000A59086 /* Miscellaneous.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912A712F3857000A59086 /* Miscellaneous.m */; };
@@ -26,6 +34,9 @@
 		234912B112F3857C00A59086 /* ConcurrentPathProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912AF12F3857C00A59086 /* ConcurrentPathProcessor.m */; };
 		234912B212F3857C00A59086 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912B012F3857C00A59086 /* main.m */; };
 		2349142812FAB6AF00A59086 /* ApplicationSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2349142712FAB6AF00A59086 /* ApplicationSupport.m */; };
+		235D7A0514DD4A3200CD503D /* IconParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 235D7A0414DD4A3200CD503D /* IconParameters.m */; };
+		235D7A0614DD519B00CD503D /* IconParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 235D7A0414DD4A3200CD503D /* IconParameters.m */; };
+		235D7A0714DD51A200CD503D /* IconParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 235D7A0414DD4A3200CD503D /* IconParameters.m */; };
 		236315C913055DE400F84A22 /* addfoldericons in Copy Shell Tool */ = {isa = PBXBuildFile; fileRef = 23C1583112F37D2900D99934 /* addfoldericons */; };
 		2364AF0212ED8E98007C6521 /* IconStyleArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2364AF0112ED8E98007C6521 /* IconStyleArrayController.m */; };
 		2364AF8612EDBA8A007C6521 /* IconStyleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2364AF8512EDBA8A007C6521 /* IconStyleManager.m */; };
@@ -37,13 +48,19 @@
 		2370F3E71302ACE200448013 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2370F3E61302ACE200448013 /* Cocoa.framework */; };
 		237F3835133A3B8800A23219 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 237F3834133A3B8800A23219 /* Add-Folder-Icons.help */; };
 		237F3836133A3B8800A23219 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 237F3834133A3B8800A23219 /* Add-Folder-Icons.help */; };
+		2382900915712962005C60A5 /* SplashWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23A86A2F1560111E000B2861 /* SplashWindow.xib */; };
+		2382900B1571414B005C60A5 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 2382900A1571414B005C60A5 /* splash.png */; };
+		2382900C1571414B005C60A5 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 2382900A1571414B005C60A5 /* splash.png */; };
+		2382900F15714395005C60A5 /* SplashWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2382900E15714395005C60A5 /* SplashWindowController.m */; };
+		2382901015714395005C60A5 /* SplashWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2382900E15714395005C60A5 /* SplashWindowController.m */; };
 		2389C661114D6AC3003466DE /* Sparkle.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2389C660114D6AC3003466DE /* Sparkle.icns */; };
 		2397AF781305761B00931AD3 /* UpdateHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2397AF761305761B00931AD3 /* UpdateHelper.m */; };
 		2397AF7C130578FA00931AD3 /* Updates.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2397AF7A130578FA00931AD3 /* Updates.xib */; };
+		23A86A311560111E000B2861 /* SplashWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23A86A2F1560111E000B2861 /* SplashWindow.xib */; };
 		23AED30A12FF3E13003181D8 /* SlipCoverSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED30912FF3E13003181D8 /* SlipCoverSupport.m */; };
 		23AED30B12FF54EA003181D8 /* CaseDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED2FD12FF2601003181D8 /* CaseDefinition.m */; };
-		23AED32A12FFF104003181D8 /* SCEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32612FFF104003181D8 /* SCEvent.m */; };
-		23AED32B12FFF104003181D8 /* SCEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32912FFF104003181D8 /* SCEvents.m */; };
+		23AED32A12FFF104003181D8 /* SCEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32612FFF104003181D8 /* SCEvent.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		23AED32B12FFF104003181D8 /* SCEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32912FFF104003181D8 /* SCEvents.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		23BD71AF12E8A1D700BE620C /* IconStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 23BD71AE12E8A1D700BE620C /* IconStyle.m */; };
 		23BD73F412E9FFA100BE620C /* CoreDataObjectIDTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 23BD73F312E9FFA100BE620C /* CoreDataObjectIDTransformer.m */; };
 		23CB8B4812E09E9200E66CDA /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23CB8B4612E09E9200E66CDA /* Preferences.xib */; };
@@ -75,8 +92,8 @@
 		23D3FB4F13055044004FDA09 /* ApplicationSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2349142712FAB6AF00A59086 /* ApplicationSupport.m */; };
 		23D3FB5013055044004FDA09 /* SlipCoverSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED30912FF3E13003181D8 /* SlipCoverSupport.m */; };
 		23D3FB5113055044004FDA09 /* CaseDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED2FD12FF2601003181D8 /* CaseDefinition.m */; };
-		23D3FB5213055044004FDA09 /* SCEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32612FFF104003181D8 /* SCEvent.m */; };
-		23D3FB5313055044004FDA09 /* SCEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32912FFF104003181D8 /* SCEvents.m */; };
+		23D3FB5213055044004FDA09 /* SCEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32612FFF104003181D8 /* SCEvent.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		23D3FB5313055044004FDA09 /* SCEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32912FFF104003181D8 /* SCEvents.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		23D3FB5413055044004FDA09 /* DSClickableURLTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 232A213C13006066005CFBED /* DSClickableURLTextField.m */; };
 		23D3FB5513055044004FDA09 /* GlobalSemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912A512F3857000A59086 /* GlobalSemaphore.m */; };
 		23D3FB5613055044004FDA09 /* Miscellaneous.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912A712F3857000A59086 /* Miscellaneous.m */; };
@@ -162,6 +179,7 @@
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		230BA02514DD8AB100CC9DFC /* container-migration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "container-migration.plist"; sourceTree = "<group>"; };
 		230EE19B12E3501B00C9F14E /* IconStyle.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; path = IconStyle.xcdatamodel; sourceTree = "<group>"; };
 		2311B0321302AD4500644100 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2311B03B1302AF6200644100 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
@@ -171,6 +189,9 @@
 		232F57A912E0718F00FEB1C2 /* ManageStylesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManageStylesWindowController.m; sourceTree = "<group>"; };
 		233D820A115FF0E900D62B8C /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
 		233D820B115FF0E900D62B8C /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
+		2341099715714DD800AF9999 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2341099A15714F0400AF9999 /* WhiteBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhiteBackgroundView.h; sourceTree = "<group>"; };
+		2341099B15714F0400AF9999 /* WhiteBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WhiteBackgroundView.m; sourceTree = "<group>"; };
 		234912A112F3857000A59086 /* GlobalSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalSemaphore.h; path = "Shared Sources/GlobalSemaphore.h"; sourceTree = SOURCE_ROOT; };
 		234912A212F3857000A59086 /* Icons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Icons.h; path = "Shared Sources/Icons.h"; sourceTree = SOURCE_ROOT; };
 		234912A312F3857000A59086 /* Miscellaneous.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Miscellaneous.h; path = "Shared Sources/Miscellaneous.h"; sourceTree = SOURCE_ROOT; };
@@ -188,6 +209,8 @@
 		2349142612FAB6AF00A59086 /* ApplicationSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationSupport.h; sourceTree = "<group>"; };
 		2349142712FAB6AF00A59086 /* ApplicationSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationSupport.m; sourceTree = "<group>"; };
 		2349168412FDCCDD00A59086 /* FolderProcessNotificationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderProcessNotificationProtocol.h; sourceTree = "<group>"; };
+		235D7A0414DD4A3200CD503D /* IconParameters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconParameters.m; sourceTree = "<group>"; };
+		235D7A0814DD82B100CD503D /* Add Folder Icons.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Add Folder Icons.entitlements"; sourceTree = "<group>"; };
 		2364AF0012ED8E98007C6521 /* IconStyleArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconStyleArrayController.h; sourceTree = "<group>"; };
 		2364AF0112ED8E98007C6521 /* IconStyleArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconStyleArrayController.m; sourceTree = "<group>"; };
 		2364AF8412EDBA8A007C6521 /* IconStyleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconStyleManager.h; sourceTree = "<group>"; };
@@ -200,10 +223,14 @@
 		2370F3E41302ACCF00448013 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2370F3E61302ACE200448013 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		237F3834133A3B8800A23219 /* Add-Folder-Icons.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Add-Folder-Icons.help"; sourceTree = "<group>"; };
+		2382900A1571414B005C60A5 /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash.png; sourceTree = "<group>"; };
+		2382900D15714395005C60A5 /* SplashWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashWindowController.h; sourceTree = "<group>"; };
+		2382900E15714395005C60A5 /* SplashWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashWindowController.m; sourceTree = "<group>"; };
 		2389C660114D6AC3003466DE /* Sparkle.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Sparkle.icns; sourceTree = "<group>"; };
 		2397AF751305761B00931AD3 /* UpdateHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateHelper.h; sourceTree = "<group>"; };
 		2397AF761305761B00931AD3 /* UpdateHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpdateHelper.m; sourceTree = "<group>"; };
 		2397AF7B130578FA00931AD3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Updates.xib; sourceTree = "<group>"; };
+		23A86A301560111E000B2861 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SplashWindow.xib; sourceTree = "<group>"; };
 		23AED2FC12FF2601003181D8 /* CaseDefinition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaseDefinition.h; sourceTree = "<group>"; };
 		23AED2FD12FF2601003181D8 /* CaseDefinition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaseDefinition.m; sourceTree = "<group>"; };
 		23AED2FE12FF2601003181D8 /* CaseGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaseGenerator.h; sourceTree = "<group>"; };
@@ -262,6 +289,7 @@
 			files = (
 				23D3FB5D13055044004FDA09 /* Carbon.framework in Frameworks */,
 				23D3FB5E13055044004FDA09 /* Cocoa.framework in Frameworks */,
+				2341099915714DD800AF9999 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +300,7 @@
 				2311B03C1302AF6200644100 /* Sparkle.framework in Frameworks */,
 				2311B0331302AD4500644100 /* Carbon.framework in Frameworks */,
 				2370F3E71302ACE200448013 /* Cocoa.framework in Frameworks */,
+				2341099815714DD800AF9999 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,10 +310,12 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				233D820B115FF0E900D62B8C /* MainWindowController.h */,
-				233D820A115FF0E900D62B8C /* MainWindowController.m */,
 				256AC3D80F4B6AC300CF3369 /* Add_Folder_IconsAppDelegate.h */,
 				256AC3D90F4B6AC300CF3369 /* Add_Folder_IconsAppDelegate.m */,
+				233D820B115FF0E900D62B8C /* MainWindowController.h */,
+				233D820A115FF0E900D62B8C /* MainWindowController.m */,
+				2382900D15714395005C60A5 /* SplashWindowController.h */,
+				2382900E15714395005C60A5 /* SplashWindowController.m */,
 				23F8928F12DE096B00C022EE /* GenericPreferencesWindowController.h */,
 				23F8929012DE096B00C022EE /* GenericPreferencesWindowController.m */,
 				23F8931012DF00C000C022EE /* ApplicationSpecificPreferencesWindowController.h */,
@@ -295,6 +326,8 @@
 				2364AF0112ED8E98007C6521 /* IconStyleArrayController.m */,
 				23F0B0781304062A0085A876 /* MainMenuController.h */,
 				23F0B0791304062A0085A876 /* MainMenuController.m */,
+				2341099A15714F0400AF9999 /* WhiteBackgroundView.h */,
+				2341099B15714F0400AF9999 /* WhiteBackgroundView.m */,
 				2397AF751305761B00931AD3 /* UpdateHelper.h */,
 				2397AF761305761B00931AD3 /* UpdateHelper.m */,
 			);
@@ -324,6 +357,7 @@
 		2311B0341302AD4C00644100 /* Frameworks (Application) */ = {
 			isa = PBXGroup;
 			children = (
+				2341099715714DD800AF9999 /* QuartzCore.framework */,
 				2311B0321302AD4500644100 /* Carbon.framework */,
 				2370F3E61302ACE200448013 /* Cocoa.framework */,
 				2311B03B1302AF6200644100 /* Sparkle.framework */,
@@ -401,6 +435,7 @@
 				2349168412FDCCDD00A59086 /* FolderProcessNotificationProtocol.h */,
 				2349133B12F5DE5600A59086 /* IconStyleShowFolderInBackground.h */,
 				2349135212F5EF2F00A59086 /* IconParameters.h */,
+				235D7A0414DD4A3200CD503D /* IconParameters.m */,
 				234912A112F3857000A59086 /* GlobalSemaphore.h */,
 				234912A512F3857000A59086 /* GlobalSemaphore.m */,
 				234912A212F3857000A59086 /* Icons.h */,
@@ -452,8 +487,12 @@
 			isa = PBXGroup;
 			children = (
 				8D1107310486CEB800E47090 /* Add_Folder_Icons-Info.plist */,
+				235D7A0814DD82B100CD503D /* Add Folder Icons.entitlements */,
+				230BA02514DD8AB100CC9DFC /* container-migration.plist */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
 				23CBD7B512E203F20024A106 /* MainWindow.xib */,
+				23A86A2F1560111E000B2861 /* SplashWindow.xib */,
+				2382900A1571414B005C60A5 /* splash.png */,
 				23CBD71012E1ED270024A106 /* ManageStyles.xib */,
 				23CB8B4612E09E9200E66CDA /* Preferences.xib */,
 				2397AF7A130578FA00931AD3 /* Updates.xib */,
@@ -541,7 +580,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = Hipposoft;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Add Folder Icons" */;
@@ -570,6 +609,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				230BA02814DD95E400CC9DFC /* Add Folder Icons.entitlements in Resources */,
+				230BA02714DD95E100CC9DFC /* container-migration.plist in Resources */,
 				23D3FB3313055044004FDA09 /* InfoPlist.strings in Resources */,
 				23D3FB3413055044004FDA09 /* MainMenu.xib in Resources */,
 				23D3FB3713055044004FDA09 /* Preferences.xib in Resources */,
@@ -584,6 +625,8 @@
 				23D3FB7C13055B6B004FDA09 /* CreditsMAS.rtf in Resources */,
 				23D3FB8013055B6B004FDA09 /* CreditsTop.rtf in Resources */,
 				237F3836133A3B8800A23219 /* Add-Folder-Icons.help in Resources */,
+				2382900915712962005C60A5 /* SplashWindow.xib in Resources */,
+				2382900C1571414B005C60A5 /* splash.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -591,6 +634,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				230BA02914DD95FA00CC9DFC /* Add Folder Icons.entitlements in Resources */,
+				230BA02614DD8AB100CC9DFC /* container-migration.plist in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				2389C661114D6AC3003466DE /* Sparkle.icns in Resources */,
@@ -607,6 +652,8 @@
 				23D3FB7F13055B6B004FDA09 /* CreditsTop.rtf in Resources */,
 				2397AF7C130578FA00931AD3 /* Updates.xib in Resources */,
 				237F3835133A3B8800A23219 /* Add-Folder-Icons.help in Resources */,
+				23A86A311560111E000B2861 /* SplashWindow.xib in Resources */,
+				2382900B1571414B005C60A5 /* splash.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,6 +704,7 @@
 				234912AB12F3857000A59086 /* Miscellaneous.m in Sources */,
 				234912AC12F3857000A59086 /* IconGenerator.m in Sources */,
 				234912B112F3857C00A59086 /* ConcurrentPathProcessor.m in Sources */,
+				235D7A0714DD51A200CD503D /* IconParameters.m in Sources */,
 				234912B212F3857C00A59086 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -688,6 +736,9 @@
 				23D3FB5813055044004FDA09 /* IconGenerator.m in Sources */,
 				23D3FB5913055044004FDA09 /* CaseGenerator.m in Sources */,
 				23D3FB5A13055044004FDA09 /* MainMenuController.m in Sources */,
+				235D7A0614DD519B00CD503D /* IconParameters.m in Sources */,
+				2382901015714395005C60A5 /* SplashWindowController.m in Sources */,
+				2341099D15714F0400AF9999 /* WhiteBackgroundView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -719,6 +770,9 @@
 				23FF74E21301D76000D656DB /* CaseGenerator.m in Sources */,
 				23F0B07A1304062A0085A876 /* MainMenuController.m in Sources */,
 				2397AF781305761B00931AD3 /* UpdateHelper.m in Sources */,
+				235D7A0514DD4A3200CD503D /* IconParameters.m in Sources */,
+				2382900F15714395005C60A5 /* SplashWindowController.m in Sources */,
+				2341099C15714F0400AF9999 /* WhiteBackgroundView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -760,6 +814,14 @@
 				2397AF7B130578FA00931AD3 /* English */,
 			);
 			name = Updates.xib;
+			sourceTree = "<group>";
+		};
+		23A86A2F1560111E000B2861 /* SplashWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				23A86A301560111E000B2861 /* English */,
+			);
+			name = SplashWindow.xib;
 			sourceTree = "<group>";
 		};
 		23CB8B4612E09E9200E66CDA /* Preferences.xib */ = {
@@ -825,6 +887,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -848,6 +911,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -870,6 +934,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
+				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -891,6 +958,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
+				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -909,6 +979,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -933,6 +1004,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -954,7 +1026,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: MR A D HODGKINSON";
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer: MR A D HODGKINSON (8FS7LN83WA)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_GC = unsupported;
@@ -962,9 +1035,11 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
-				SDKROOT = macosx10.6;
+				PROVISIONING_PROFILE = "5F3D3201-571E-4B3C-8961-7931250BD3B5";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -972,15 +1047,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: MR A D HODGKINSON";
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer: MR A D HODGKINSON (8FS7LN83WA)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "";
-				SDKROOT = macosx10.6;
+				PROVISIONING_PROFILE = "5F3D3201-571E-4B3C-8961-7931250BD3B5";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};

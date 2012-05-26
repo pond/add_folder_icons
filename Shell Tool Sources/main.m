@@ -38,149 +38,147 @@ static void printVersion ( void );
 
 int main( int argc, const char * argv[] )
 {
-    NSAutoreleasePool * pool = [ [ NSAutoreleasePool alloc ] init ];
-
-    /* Establish default parameters which command line arguments can override */
-
-    IconParameters params;
-
-    params.commsChannel           = nil;
-    params.previewMode            = NO;
-
-    params.slipCoverCase          = nil;
-    params.crop                   = NO;
-    params.border                 = NO;
-    params.shadow                 = NO;
-    params.rotate                 = NO;
-    params.maxImages              = 4;
-    params.showFolderInBackground = StyleShowFolderInBackgroundForOneOrTwoImages;
-    params.singleImageMode        = NO;
-    params.useColourLabels        = NO;
-    params.coverArtNames          =
-    [
-        NSMutableArray arrayWithObjects: [ NSString stringWithUTF8String: "folder" ],
-                                         [ NSString stringWithUTF8String: "cover"  ],
-                                         nil
-    ];
-
-    int arg = 1;
-    while ( arg < argc )
+    @autoreleasepool
     {
-        /* Simple boolean switches */
-    
-        if      ( ! strcmp( argv[ arg ], "--crop"   ) ) params.crop            = YES;
-        else if ( ! strcmp( argv[ arg ], "--border" ) ) params.border          = YES;
-        else if ( ! strcmp( argv[ arg ], "--shadow" ) ) params.shadow          = YES;
-        else if ( ! strcmp( argv[ arg ], "--rotate" ) ) params.rotate          = YES;
-        else if ( ! strcmp( argv[ arg ], "--single" ) ) params.singleImageMode = YES;
-        else if ( ! strcmp( argv[ arg ], "--labels" ) ) params.useColourLabels = YES;
 
-        /* Numerical parameters */
+        /* Establish default parameters which command line arguments can override */
 
-        else if ( ! strcmp( argv[ arg ], "--maximages"  ) && ( ++ arg ) < argc ) params.maxImages              = atoi( argv[ arg ] );
-        else if ( ! strcmp( argv[ arg ], "--showfolder" ) && ( ++ arg ) < argc ) params.showFolderInBackground = atoi( argv[ arg ] );
+        IconParameters * params = [ [ IconParameters alloc ] init ];
 
-        /* String parameters */
-        
-        else if ( ! strcmp( argv[ arg ], "--communicate" ) && ( ++ arg ) < argc )
+        params.commsChannel           = nil;
+        params.previewMode            = NO;
+
+        params.slipCoverCase          = nil;
+        params.crop                   = NO;
+        params.border                 = NO;
+        params.shadow                 = NO;
+        params.rotate                 = NO;
+        params.maxImages              = 4;
+        params.showFolderInBackground = StyleShowFolderInBackgroundForOneOrTwoImages;
+        params.singleImageMode        = NO;
+        params.useColourLabels        = NO;
+        params.coverArtNames          =
+        [
+            NSMutableArray arrayWithObjects: [ NSString stringWithUTF8String: "folder" ],
+                                             [ NSString stringWithUTF8String: "cover"  ],
+                                             nil
+        ];
+
+        int arg = 1;
+        while ( arg < argc )
         {
-            /* The public usage string does not print this argument out as it
-             * is for internal use between the CLI tool and application. The
-             * application provides its NSConnection server name here.
+            /* Simple boolean switches */
+        
+            if      ( ! strcmp( argv[ arg ], "--crop"   ) ) params.crop            = YES;
+            else if ( ! strcmp( argv[ arg ], "--border" ) ) params.border          = YES;
+            else if ( ! strcmp( argv[ arg ], "--shadow" ) ) params.shadow          = YES;
+            else if ( ! strcmp( argv[ arg ], "--rotate" ) ) params.rotate          = YES;
+            else if ( ! strcmp( argv[ arg ], "--single" ) ) params.singleImageMode = YES;
+            else if ( ! strcmp( argv[ arg ], "--labels" ) ) params.useColourLabels = YES;
+
+            /* Numerical parameters */
+
+            else if ( ! strcmp( argv[ arg ], "--maximages"  ) && ( ++ arg ) < argc ) params.maxImages              = atoi( argv[ arg ] );
+            else if ( ! strcmp( argv[ arg ], "--showfolder" ) && ( ++ arg ) < argc ) params.showFolderInBackground = atoi( argv[ arg ] );
+
+            /* String parameters */
+            
+            else if ( ! strcmp( argv[ arg ], "--communicate" ) && ( ++ arg ) < argc )
+            {
+                /* The public usage string does not print this argument out as it
+                 * is for internal use between the CLI tool and application. The
+                 * application provides its NSConnection server name here.
+                 */
+
+                params.commsChannel = [ NSString stringWithUTF8String: argv[ arg ] ];
+            }
+
+            /* SlipCover definition - this one is more complicated as we have to
+             * generate the case definition from the name and store the definition
+             * reference in the icon style parameters.
              */
 
-            params.commsChannel = [ NSString stringWithUTF8String: argv[ arg ] ];
-        }
-
-        /* SlipCover definition - this one is more complicated as we have to
-         * generate the case definition from the name and store the definition
-         * reference in the icon style parameters.
-         */
-
-        else if ( ! strcmp( argv[ arg ], "--slipcover" ) && ( ++ arg ) < argc )
-        {
-            NSString       * requestedName   = [ NSString stringWithUTF8String: argv[ arg ] ];
-            CaseDefinition * foundDefinition = [ SlipCoverSupport findDefinitionFromName: requestedName ];
-
-            if ( foundDefinition == nil )
+            else if ( ! strcmp( argv[ arg ], "--slipcover" ) && ( ++ arg ) < argc )
             {
-                printVersion();
-                printf( "SlipCover case name '%s' is not recognised.\n", argv[ arg ] );
-                [ pool drain ];
-                return EX_USAGE;
+                NSString       * requestedName   = [ NSString stringWithUTF8String: argv[ arg ] ];
+                CaseDefinition * foundDefinition = [ SlipCoverSupport findDefinitionFromName: requestedName ];
+
+                if ( foundDefinition == nil )
+                {
+                    printVersion();
+                    printf( "SlipCover case name '%s' is not recognised.\n", argv[ arg ] );
+                    return EX_USAGE;
+                }
+
+                params.slipCoverCase = foundDefinition;
             }
 
-            params.slipCoverCase = foundDefinition;
-        }
-
-        /* Array - the second parameter after the switch is the number of
-         * items, followed by the items themselves.
-         */
-        
-        else if ( ! strcmp( argv[ arg ], "--coverart" ) && ( arg + 2 ) < argc )
-        {
-            int              count = atoi( argv[ ++ arg ] );
-            NSMutableArray * array = [ NSMutableArray arrayWithCapacity: count ];
-
-            for ( int i = 0; i < count && arg + 1 < argc; i ++ )
+            /* Array - the second parameter after the switch is the number of
+             * items, followed by the items themselves.
+             */
+            
+            else if ( ! strcmp( argv[ arg ], "--coverart" ) && ( arg + 2 ) < argc )
             {
-                ++ arg; /* Must be careful to leave 'arg' pointing at last "used" argument */
-                [ array addObject: [ NSString stringWithUTF8String: argv[ arg ] ] ];
+                int              count = atoi( argv[ ++ arg ] );
+                NSMutableArray * array = [ NSMutableArray arrayWithCapacity: count ];
+
+                for ( int i = 0; i < count && arg + 1 < argc; i ++ )
+                {
+                    ++ arg; /* Must be careful to leave 'arg' pointing at last "used" argument */
+                    [ array addObject: [ NSString stringWithUTF8String: argv[ arg ] ] ];
+                }
+
+                params.coverArtNames = array;
             }
 
-            params.coverArtNames = array;
+            else break; /* Assume a folder name */
+
+            ++ arg;
         }
 
-        else break; /* Assume a folder name */
+        /* If parameters are out of range or we've run out of arguments so no
+         * folder filenames were supplied, complain.
+         */
 
-        ++ arg;
-    }
+        if ( arg >= argc || params.maxImages < 1 || params.maxImages > 4 || params.showFolderInBackground > StyleShowFolderInBackgroundAlways )
+        {
+            printVersion();
+            printHelp();
+            return EX_USAGE;
+        }
 
-    /* If parameters are out of range or we've run out of arguments so no
-     * folder filenames were supplied, complain.
-     */
+        /* Prerequisites */
 
-    if ( arg >= argc || params.maxImages < 1 || params.maxImages > 4 || params.showFolderInBackground > StyleShowFolderInBackgroundAlways )
-    {
-        printVersion();
-        printHelp();
-        [ pool drain ];
-        return EX_USAGE;
-    }
+        NSOperationQueue * queue           = [ [ NSOperationQueue  alloc ] init ];
+        CGImageRef         backgroundImage = allocFolderIcon();
 
-    /* Prerequisites */
+        globalSemaphoreInit();
 
-    NSOperationQueue * queue           = [ [ NSOperationQueue  alloc ] init ];
-    CGImageRef         backgroundImage = allocFolderIcon();
+        /* Process pathnames and add Grand Central Dispatch operations for each */
 
-    globalSemaphoreInit();
+        for ( int i = arg; i < argc; i ++ )
+        {
+            NSString * fullPosixPath =
+            [
+                NSString stringWithUTF8String: argv[ i ]
+            ];
 
-    /* Process pathnames and add Grand Central Dispatch operations for each */
+            ConcurrentPathProcessor * processThisPath =
+            [
+                [ ConcurrentPathProcessor alloc ] initWithPath: fullPosixPath
+                                                 andBackground: backgroundImage
+                                                 andParameters: params
+            ];
 
-    for ( int i = arg; i < argc; i ++ )
-    {
-        NSString * fullPosixPath =
-        [
-            NSString stringWithUTF8String: argv[ i ]
-        ];
+            NSArray * oneOp = [ NSArray arrayWithObject: processThisPath ];
+            [ queue addOperations: oneOp waitUntilFinished: NO ];
+        }
 
-        ConcurrentPathProcessor * processThisPath =
-        [
-            [ ConcurrentPathProcessor alloc ] initWithPath: fullPosixPath
-                                             andBackground: backgroundImage
-                                             andParameters: & params
-        ];
+        [ queue waitUntilAllOperationsAreFinished ];
 
-        NSArray * oneOp = [ NSArray arrayWithObject: processThisPath ];
-        [ queue addOperations: oneOp waitUntilFinished: NO ];
-        [ processThisPath release ];
-    }
+        CFRelease( backgroundImage );
 
-    [ queue waitUntilAllOperationsAreFinished ];
-    [ queue release ];
-
-    CFRelease( backgroundImage );
-    [ pool drain ];
+    } // @autoreleasepool
 
     return ( globalErrorFlag == YES ) ? EXIT_FAILURE : EXIT_SUCCESS;
 }

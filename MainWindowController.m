@@ -726,11 +726,17 @@
             [ arrayOfDictionaries removeLastObject ];
             addedCount ++;
 
-            /* If we've added 144 folders, reset the current style to provoke the
-             * start of a new group on the next trip around the loop.
+            /* If we've added 24 folders, reset the current style to provoke the
+             * start of a new group on the next trip around the loop. It is
+             * important to check the thread cancellation quite often without
+             * queueing too much in Grand Central - Snow Leopard shows no issues
+             * but on Lion things seem to lock up (GCD just never completes all
+             * of its operations).
+             *
+             * 24 concurrent operations should easily soak a 12-core machine.
              */
 
-            if ( addedCount >= 144 ) currentStyle = nil;
+            if ( addedCount >= 24 ) currentStyle = nil;
         }
 
         if ( [ [ NSThread currentThread ] isCancelled ] == NO )
@@ -761,17 +767,20 @@
          * from the folder list (depending on preferences it may or may not do so).
          */
 
-        if ( [ [ NSThread currentThread ] isCancelled ] == NO && taskStatus == EXIT_FAILURE )
+        if ( [ [ NSThread currentThread ] isCancelled ] == NO )
         {
-            [ self performSelectorOnMainThread: @selector( showAdditionFailureAlert )
-                                    withObject: nil
-                                 waitUntilDone: YES ];
-        }
-        else
-        {
-            [ self performSelectorOnMainThread: @selector( considerEmptyingFolderList )
-                                    withObject: nil
-                                 waitUntilDone: YES ];
+            if ( taskStatus == EXIT_FAILURE )
+            {
+                [ self performSelectorOnMainThread: @selector( showAdditionFailureAlert )
+                                        withObject: nil
+                                     waitUntilDone: YES ];
+            }
+            else
+            {
+                [ self performSelectorOnMainThread: @selector( considerEmptyingFolderList )
+                                        withObject: nil
+                                     waitUntilDone: YES ];
+            }
         }
 
     } // @autoreleasepool

@@ -1,4 +1,4 @@
-// 
+//
 //  IconStyle.m
 //  Add Folder Icons
 //
@@ -115,7 +115,7 @@
         if ( notNilCount > 0 )
         {
             [ arguments addObject: @"--coverart" ];
-            [ arguments addObject: [ NSString stringWithFormat: @"%d", notNilCount ] ];
+            [ arguments addObject: [ NSString stringWithFormat: @"%lu", ( unsigned long ) notNilCount ] ];
             
             for ( NSDictionary * entry in coverArtFilenames )
             {

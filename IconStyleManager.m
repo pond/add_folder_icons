@@ -382,7 +382,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
 
     [ slipCoverDefinitions release ];
     slipCoverDefinitions = [ [ SlipCoverSupport enumerateSlipCoverDefinitions ] retain ];
-    NSArray * caseNames  = [ slipCoverDefinitions valueForKeyPath: @"@unionOfObjects.name" ]; /* http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueCoding/Concepts/ArrayOperators.html#//apple_ref/doc/uid/20002176-SW5 */
+    NSArray * caseNames  = [ slipCoverDefinitions valueForKeyPath: @"@unionOfObjects.name" ]; /* http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueCoding/Articles/CollectionOperators.html#//apple_ref/doc/uid/20002176-SW2 */
 
     /* Make sure that all styles use valid names */
 

@@ -10,6 +10,7 @@
 
 #import "IconStyleManager.h"
 #import "MainMenuController.h"
+#import "SplashWindowController.h"
 #import "MainWindowController.h"
 #import "ManageStylesWindowController.h"
 #import "ApplicationSpecificPreferencesWindowController.h"
@@ -18,6 +19,7 @@
     #import "UpdateHelper.h"
 #endif
 
+#define SPLASH_WINDOW_CONTROLLER_NIB_NAME @"SplashWindow"
 #define MAIN_WINDOW_CONTROLLER_NIB_NAME   @"MainWindow"
 #define MANAGE_STYLES_CONTROLLER_NIB_NAME @"ManageStyles"
 
@@ -28,6 +30,7 @@
     IconStyleManager             * iconStyleManager;
     MainWindowController         * mainWindowController;
     ManageStylesWindowController * manageStylesWindowController;
+    SplashWindowController       * splashWindowController;
 
     #ifdef UPDATABLE
         UpdateHelper             * updateHelper;

@@ -12,20 +12,21 @@
 
 /* Simple structure to convey icon generation parameters */
 
-typedef struct IconParameters
+@interface IconParameters : NSObject
 {
-    NSString                        * commsChannel; /* Used when in slave mode to the GUI */
-    BOOL                              previewMode;  /* Used for GUI icon style preview generation */
-
-    CaseDefinition                  * slipCoverCase;
-    BOOL                              crop;
-    BOOL                              border;
-    BOOL                              shadow;
-    BOOL                              rotate;
-    NSUInteger                        maxImages;
-    IconStyleShowFolderInBackground   showFolderInBackground;
-    BOOL                              singleImageMode;
-    BOOL                              useColourLabels;
-    NSMutableArray                  * coverArtNames;
 }
-IconParameters;
+
+@property ( strong, nonatomic ) NSString                        * commsChannel;
+@property                       BOOL                              previewMode;
+@property ( strong, nonatomic ) CaseDefinition                  * slipCoverCase;
+@property                       BOOL                              crop;
+@property                       BOOL                              border;
+@property                       BOOL                              shadow;
+@property                       BOOL                              rotate;
+@property                       NSUInteger                        maxImages;
+@property                       IconStyleShowFolderInBackground   showFolderInBackground;
+@property                       BOOL                              singleImageMode;
+@property                       BOOL                              useColourLabels;
+@property ( strong, nonatomic ) NSMutableArray                  * coverArtNames;
+
+@end

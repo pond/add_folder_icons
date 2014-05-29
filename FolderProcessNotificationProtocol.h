@@ -15,7 +15,7 @@
  * (YES) or not (NO) it should cancel its processing and exit.
  */
 
-#define APP_SERVER_CONNECTION_NAME @"uk.org.pond.Add-Folder-Icons"
+#define APP_SERVER_CONNECTION_NAME @"uk.org.pond.Add-Folder-Icons" /* If this changes, be sure to update the corresponding temporary Mach service entitlement in "Add Folder Icons.entitlements" */
 
 @protocol FolderProcessNotification
 

@@ -38,7 +38,7 @@
     cover = [cover sharpenedImage];
   
   if (!maskImage) {
-    maskImage = [[[NSImage alloc] initWithSize:[caseImage size]] autorelease];
+    maskImage = [[NSImage alloc] initWithSize:[caseImage size]];
     [maskImage lockFocus];
     [[NSColor blackColor] set];
     NSRectFill(NSMakeRect(0, 0, [caseImage size].width, [caseImage size].height));
@@ -69,8 +69,8 @@
   
   [NSGraphicsContext restoreGraphicsState];
   [caseImage unlockFocus];
-  [caseImage autorelease];
-    
+  // [caseImage autorelease]; // 2012-02-04 (ADH): Commented out; this is implicit under ARC
+
   return caseImage;
 }
 

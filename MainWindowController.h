@@ -51,9 +51,9 @@
     NSManagedObjectModel              * managedObjectModel;
 }
 
-@property (            retain, readonly ) IconStyleManager       * iconStyleManager;
-@property ( nonatomic, retain, readonly ) NSManagedObjectContext * managedObjectContext;
-@property ( nonatomic, retain, readonly ) NSManagedObjectModel   * managedObjectModel;
+@property (            strong, readonly ) IconStyleManager       * iconStyleManager;
+@property ( nonatomic, strong, readonly ) NSManagedObjectContext * managedObjectContext;
+@property ( nonatomic, strong, readonly ) NSManagedObjectModel   * managedObjectModel;
 
 /* Actions */
 
@@ -86,6 +86,7 @@
 - ( void ) createFolderIcons:             ( NSArray      * ) constArrayOfDictionaries;
 - ( void ) advanceProgressBarFor:         ( NSString     * ) fullPOSIXPath;
 - ( void ) considerEmptyingFolderList;
+- ( void ) showAdditionFailureAlert;
 
 /* Folder list and related table view management */
 

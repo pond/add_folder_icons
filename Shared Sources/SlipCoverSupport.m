@@ -59,6 +59,38 @@
     ];
 
     [ appSupport insertObject: caseFolder atIndex: 0 ];
+
+    /* Is the application running in a sandbox? This is the only way I can find
+     * to figure it out, even though it's clearly awful :-(
+     */
+
+    BOOL isSandboxed = NO;
+
+    for ( NSString * path in appSupport )
+    {
+        NSRange found = [ path rangeOfString: @"/Library/Containers/" ];
+
+        if ( found.location != NSNotFound )
+        {
+            isSandboxed = YES;
+            break;
+        }
+    }
+
+    /* If we *are* sandboxed, hard-code an additional path to the user's
+     * non-sandbox library for SlipCover styles there - again, I can't find
+     * any other way to do this (we can't use migrations as they move files
+     * rather than copying them, so instead we use temporary read-only file
+     * entitlements on specific known paths to attempt some kind of legacy
+     * SlipCover support from within a sandbox).
+     */
+
+    if ( isSandboxed )
+    {
+        NSString * nonSandboxPath = [ NSString stringWithFormat: @"/Users/%@/Library/Application Support/SlipCover", NSUserName() ];
+        [ appSupport insertObject: nonSandboxPath atIndex: 0 ];
+    }
+
     return appSupport;
 }
 
@@ -104,8 +136,6 @@
             }
         }
     }
-
-    [ fileManager release ];
 
     if ( [ caseDefinitions count ] == 0 ) return nil;
     else                                  return caseDefinitions;

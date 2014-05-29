@@ -174,7 +174,7 @@
     NSString      * sourcePathname;
     NSString      * targetFolder   = [ ApplicationSupport applicationSupportDirectory ];
     NSString      * targetPathname = [ targetFolder stringByAppendingPathComponent: leafname ];
-    NSFileManager * fileManager    = [ [ [ NSFileManager alloc ] init ] autorelease ]; /* Result is thread safe; result of "+defaultManager" is not */
+    NSFileManager * fileManager    = [ [ NSFileManager alloc ] init ]; /* Result is thread safe; result of "+defaultManager" is not */
 
     if ( isExecutable ) sourcePathname = [ self auxiliaryExecutablePathFor: leafname ];
     else                sourcePathname = [ self resourcePathFor:            leafname ];

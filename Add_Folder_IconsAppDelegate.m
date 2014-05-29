@@ -16,15 +16,6 @@
     @synthesize updateHelper;
 #endif
 
-- ( void ) dealloc
-{
-    [ iconStyleManager             release ];
-    [ mainWindowController         release ];
-    [ manageStylesWindowController release ];
-
-    [ super dealloc ];
-}
-
 - ( void ) applicationDidFinishLaunching: ( NSNotification * ) aNotification
 {
     /* The icon generator needs the global semaphore system */
@@ -52,6 +43,19 @@
     [
         [ MainWindowController alloc ] initWithWindowNibName: MAIN_WINDOW_CONTROLLER_NIB_NAME
     ];
+
+    /* Create the plash window, which opens above the main window */
+
+    NSUserDefaults * defaults      = [ NSUserDefaults standardUserDefaults ];
+    NSString       * showSplashKey = @"showSplashScreenAtStartup";
+
+    if ( [ defaults boolForKey: showSplashKey ] != NO )
+    {
+        splashWindowController =
+        [
+            [ SplashWindowController alloc ] initWithWindowNibName: SPLASH_WINDOW_CONTROLLER_NIB_NAME
+        ];
+    }
 }
 
 - ( BOOL ) applicationShouldTerminateAfterLastWindowClosed: ( NSApplication * ) theApplication
@@ -95,6 +99,7 @@
     NSDictionary * appDefaults =
     [
         NSDictionary dictionaryWithObjectsAndKeys:
+            @"YES",            @"showSplashScreenAtStartup",
             @"NO",             @"addSubFolders",
             @"NO",             @"emptyListIfSuccessful",
             @"YES",            @"colourLabelsIndicateCoverArt",
@@ -208,7 +213,6 @@
         [ alert addButtonWithTitle: cancelButton ];
 
         NSInteger answer = [ alert runModal ];
-        [ alert release ];
         alert = nil;
         
         if ( answer == NSAlertSecondButtonReturn ) return NSTerminateCancel;

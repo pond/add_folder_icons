@@ -19,14 +19,6 @@
             managedObjectContext,
             managedObjectModel;
 
-- ( void ) dealloc
-{
-    [ iconStyleManager     release ];
-    [ managedObjectContext release ];
-    [ managedObjectModel   release ];
-
-    [ super dealloc ];
-}
 
 /******************************************************************************\
  * +applicationSpecificPreferencesWindowController:
@@ -75,9 +67,9 @@ static ApplicationSpecificPreferencesWindowController * applicationSpecificPrefe
 {
     if ( ( self = [ super initWithWindowNibName: windowNibName ] ) )
     {
-        iconStyleManager     = [ [ IconStyleManager iconStyleManager     ] retain ];
-        managedObjectContext = [ [ iconStyleManager managedObjectContext ] retain ];
-        managedObjectModel   = [ [ iconStyleManager managedObjectModel   ] retain ];
+        iconStyleManager     = [ IconStyleManager iconStyleManager     ];
+        managedObjectContext = [ iconStyleManager managedObjectContext ];
+        managedObjectModel   = [ iconStyleManager managedObjectModel   ];
 
         /* If an Icon Style is deleted we need to know about it, as the
          * preferences might have specified that style as a default value.

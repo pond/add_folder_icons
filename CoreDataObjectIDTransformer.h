@@ -39,6 +39,6 @@
     NSPersistentStoreCoordinator * persistentStoreCoordinator;
 }
 
-@property ( nonatomic, retain ) NSPersistentStoreCoordinator * persistentStoreCoordinator;
+@property ( nonatomic, strong ) NSPersistentStoreCoordinator * persistentStoreCoordinator;
 
 @end

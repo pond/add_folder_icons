@@ -273,3 +273,28 @@ bailOut:
 
     return err;
 }
+
+/******************************************************************************\
+ * dpiValue()
+ *
+ * When given a value representing part of a position or object dimension for
+ * graphics, return an equivalent value taking into account high DPI ("retina")
+ * displays if the OS supports it (in short, conditionally multiply by 2!).
+ *
+ * In:  Uncorrected (standard pixel density) value.
+ *
+ * Out: Input value, or input value multiplied by 2 on "new enough" OS
+ *      versions (10.7 "Lion" or later).
+\******************************************************************************/
+
+NSInteger dpiValue( NSInteger uncorrectedValue )
+{
+    if ( floor( NSAppKitVersionNumber ) > NSAppKitVersionNumber10_6 )
+    {
+        return uncorrectedValue * 2;
+    }
+    else
+    {
+        return uncorrectedValue;
+    }
+}

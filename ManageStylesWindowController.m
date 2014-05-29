@@ -20,14 +20,9 @@
 
 - ( void ) dealloc
 {
-    [ iconStyleManager     release ];
-    [ managedObjectContext release ];
-    [ managedObjectModel   release ];
 
-    [ styleObservableKeyPaths release ];
     CFRelease( cachedFolderImage );
 
-    [ super dealloc ];
 }
 
 /******************************************************************************\
@@ -48,7 +43,7 @@
 {
     /* Attributes for a link to the SlipCover web site */
 
-    NSString     * url     = NSLocalizedString( @"http://www.bohemiancoding.com/slipcover", @"SlipCover web site URL" );
+    NSString     * url     = NSLocalizedString( @"http://www.macupdate.com/app/mac/31676/slipcover", @"SlipCover web site URL" );
     NSNumber     * uFlags  = [ NSNumber numberWithUnsignedInteger: NSUnderlinePatternSolid | NSUnderlineStyleSingle ];
     NSDictionary * attrs   =
     [
@@ -64,23 +59,17 @@
     NSString           * isLink  = NSLocalizedString( @"Is it installed?", @"Second part of message shown when SlipCover cannot be found. Turned into a link to the SlipCover web site." );
     NSAttributedString * isLinkStr =
     [
-        [
             [ NSAttributedString alloc ] initWithString: isLink
                                              attributes: attrs
-        ]
-        autorelease
-    ];
+        ];
 
     /* Start the overall string with the non-link text */
 
     NSString                  * nonLink    = NSLocalizedString( @"Cannot find cases for SlipCover. ", @"First part of message shown when SlipCover can't be found, including a trailing space. This is kept as plain text." );
     NSMutableAttributedString * overallStr =
     [
-        [
             [ NSMutableAttributedString alloc ] initWithString: nonLink
-        ]
-        autorelease
-    ];
+        ];
 
     /* Finally append the link text. Cocoa is a funny beast really. Some things
      * are so easy; complex dialogue boxes bound via Core Data to database
@@ -114,9 +103,9 @@
 {
     if ( ( self = [ super initWithWindowNibName: windowNibName ] ) )
     {
-        iconStyleManager     = [ [ IconStyleManager iconStyleManager     ] retain ];
-        managedObjectContext = [ [ iconStyleManager managedObjectContext ] retain ];
-        managedObjectModel   = [ [ iconStyleManager managedObjectModel   ] retain ];
+        iconStyleManager     = [ IconStyleManager iconStyleManager     ];
+        managedObjectContext = [ iconStyleManager managedObjectContext ];
+        managedObjectModel   = [ iconStyleManager managedObjectModel   ];
 
         [ [ self window ] center ];
 
@@ -127,8 +116,7 @@
          */
 
         styleObservableKeyPaths =
-        [   
-            [
+        [
                 NSArray arrayWithObjects: @"usesSlipCover",
                                           @"slipCoverName",
                                           @"cropToSquare",
@@ -139,9 +127,7 @@
                                           @"maxImages",
                                           @"showFolderInBackground",
                                           nil
-            ]
-            retain
-        ];
+            ];
 
         cachedFolderImage = allocFolderIcon();
     }
@@ -389,7 +375,7 @@
      * IconParameters structure.
      */
 
-    IconParameters params;
+    IconParameters * params = [ [ IconParameters alloc ] init ];
 
     params.commsChannel           = nil;
     params.previewMode            = YES;
@@ -431,7 +417,7 @@
         YES, /* Skip package-like folders */
         cachedFolderImage,
         & status,
-        & params
+        params
     );
 
     if ( imageRef != NULL ) preview = [ [ NSImage alloc ] initWithCGImage: imageRef size: NSZeroSize ];
@@ -443,7 +429,6 @@
     if ( preview != nil )
     {
         [ editStylePreview setImage: preview ];
-        [ preview release ];
     }
     
     if ( imageRef != nil ) CFRelease( imageRef );

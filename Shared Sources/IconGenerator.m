@@ -76,8 +76,6 @@ static CGRect locations[ 4 ][ 4 ] =
     }
 };
 
-static CGRect fullArea = { .origin.x = 0, .origin.y = 0, .size.width = 512, .size.height = 512 };
-
 /******************************************************************************\
  * allocFoundImagePathArray()
  *
@@ -119,7 +117,7 @@ static CGRect fullArea = { .origin.x = 0, .origin.y = 0, .size.width = 512, .siz
  *      images and thus needs no custom icon, or NULL being returned because an
  *      error was encountered while attempting to generate the custom icon;
  *
- *      Pointer to an initialised IconParameters structure describing the way
+ *      Pointer to an initialised IconParameters instance describing the way
  *      in which to generate the icons, which in turn influences the image
  *      search (e.g. for multiple images, or a single cover art image).
  *
@@ -143,7 +141,7 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
      * or if using SlipCover code for icon generation.
      */
      
-    BOOL singleImageMode = ( params->singleImageMode == YES || params->slipCoverCase != nil ) ? YES : NO;
+    BOOL singleImageMode = ( params.singleImageMode == YES || params.slipCoverCase != nil ) ? YES : NO;
 
     /* Directory enumeration is needed in multiple image mode and may be needed
      * in single image mode; besides, this gives us a quick way to discover if
@@ -236,11 +234,30 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
                     {
                         NSString * leaf = [ [ fullPath lastPathComponent ] stringByDeletingPathExtension ];
 
-                        if (
-                             [ leaf isEqualToString: @"cover"  ] ||
-                             [ leaf isEqualToString: @"folder" ] ||
-                             labelColour != nil
-                           )
+                        if ( labelColour != nil && params.useColourLabels )
+                        {
+                            found = fullPath;
+                            break;
+                        }
+
+                        NSUInteger foundIndex =
+                        [
+                            params.coverArtNames indexOfObjectWithOptions: NSEnumerationConcurrent
+                                                              passingTest: ^BOOL ( NSString * obj, NSUInteger idx, BOOL * stop )
+                            {
+                                if ( [ obj localizedCaseInsensitiveCompare: leaf ] == NSOrderedSame )
+                                {
+                                    *stop = YES;
+                                    return YES;
+                                }
+                                else
+                                {
+                                    return NO;
+                                }
+                            }
+                        ];
+
+                        if ( foundIndex != NSNotFound )
                         {
                             found = fullPath;
                             break;
@@ -258,8 +275,6 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
         {
             globalSemaphoreRelease();
         }
-
-        [ enumPathAsURL release ];
 
         if ( found ) [ images addObject: found ];
     }
@@ -357,7 +372,7 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
 
     /* Otherwise, choose up to four images at random */
 
-    NSUInteger maxImages = params -> maxImages;
+    NSUInteger maxImages = params.maxImages;
 
     if      ( maxImages < 1 ) maxImages = 1;
     else if ( maxImages > 4 ) maxImages = 4;
@@ -372,8 +387,8 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
 
         NSUInteger randomIndex;
 
-        if ( params->previewMode == YES ) randomIndex = 0;
-        else                              randomIndex = random() % [ images count ];
+        if ( params.previewMode == YES ) randomIndex = 0;
+        else                             randomIndex = random() % [ images count ];
 
         [ chosenImages addObject: [ images objectAtIndex: randomIndex ] ];
         [ images removeObjectAtIndex: randomIndex ];
@@ -381,7 +396,7 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
 
 nothingToDo:
 
-    [ fileMgr release ];
+    ;
     return chosenImages;
 }
 
@@ -457,7 +472,7 @@ static BOOL paintImage( CFStringRef  fullPosixPath,
          *   http://developer.apple.com/library/mac/#samplecode/CGRotation/Introduction/Intro.html
          */
         
-        NSDictionary * metadata = ( NSDictionary * /* Toll-free bridge */ )
+        NSDictionary * metadata = (__bridge_transfer  NSDictionary * /* Toll-free bridge */ )
                                   CGImageSourceCopyPropertiesAtIndex( imageSource, 0, NULL );
 
         if ( metadata )
@@ -477,8 +492,6 @@ static BOOL paintImage( CFStringRef  fullPosixPath,
             val  = [ metadata objectForKey: ( id ) kCGImagePropertyOrientation ];
             orientation = [ val intValue ];
             if ( orientation < 1 || orientation > 8 ) orientation = 1;
-
-            [ metadata release ];
 
             CGFloat x = ( ydpi > xdpi ) ? ydpi / xdpi : 1;
             CGFloat y = ( xdpi > ydpi ) ? xdpi / ydpi : 1;
@@ -516,8 +529,8 @@ static BOOL paintImage( CFStringRef  fullPosixPath,
                     NULL,
                     contextWidth,
                     contextHeight,
-                    8, /* Bits per colour component */
-                    0,
+                    8,                /* Bits per component */
+                    contextWidth * 4, /* Bytes per row      */
                     CGImageGetColorSpace( image ),
                     kCGImageAlphaPremultipliedFirst
                 );
@@ -646,7 +659,7 @@ static BOOL paintImage( CFStringRef  fullPosixPath,
  *      images and thus needs no custom icon, or NULL being returned because an
  *      error was encountered while attempting to generate the custom icon;
  *
- *      Pointer to an initialised IconParameters structure describing the way
+ *      Pointer to an initialised IconParameters instance describing the way
  *      in which to generate the icons.
  *
  * Out: CGImageRef pointing to thumbnail image or NULL if there is an error, or
@@ -666,7 +679,7 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
      * or if using SlipCover code for icon generation.
      */
      
-    BOOL singleImageMode = ( params->singleImageMode == YES || params->slipCoverCase != nil ) ? YES : NO;
+    BOOL singleImageMode = ( params.singleImageMode == YES || params.slipCoverCase != nil ) ? YES : NO;
 
     /**************************************************************************\
      * Create layers representing thumbnails of the images
@@ -680,8 +693,9 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
      * get it, regardless of context).
      */
 
-    CGSize          pixelSize  = CGSizeMake(       CANVAS_SIZE, CANVAS_SIZE );
-    CGRect          pixelRect  = CGRectMake( 0, 0, CANVAS_SIZE, CANVAS_SIZE );
+    NSUInteger      canvasSize = dpiValue( CANVAS_SIZE );
+    CGSize          pixelSize  = CGSizeMake(       canvasSize, canvasSize );
+    CGRect          pixelRect  = CGRectMake( 0, 0, canvasSize, canvasSize );
     CGContextRef    context    = NULL;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 
@@ -689,11 +703,11 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
     {
         context = CGBitmapContextCreate
         (
-            NULL,            /* OS X 10.3 or later => CG allocates for us */
-            CANVAS_SIZE,
-            CANVAS_SIZE,
-            8,               /* Bits per component */
-            CANVAS_SIZE * 4, /* Bytes per row      */
+            NULL,           /* OS X 10.3 or later => CG allocates for us */
+            canvasSize,
+            canvasSize,
+            8,              /* Bits per component */
+            canvasSize * 4, /* Bytes per row      */
             colorSpace,
             kCGImageAlphaPremultipliedFirst
         );
@@ -701,7 +715,7 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
         CGColorSpaceRelease( colorSpace );
     }
 
-    require( context, haveNoContext );
+    if ( ! context ) return nil; // Note early exit!
 
     CGContextSetShouldAntialias      ( context, true                 );
     CGContextSetInterpolationQuality ( context, kCGInterpolationHigh );
@@ -754,23 +768,23 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
              * thumbnail fits within the canvas, even with any effects applied.
              */
 
-            CGFloat thumbSize = CANVAS_SIZE;
+            CGFloat thumbSize = canvasSize;
 
             /* Paint in a transparency layer using a shadow offset to the bottom
              * and right by BLUR_OFFSET with a radius of BLUR_RADIUS.
              */
 
             CGContextBeginTransparencyLayer( layerCtx, NULL );
-            CGContextTranslateCTM( layerCtx, CANVAS_SIZE / 2, CANVAS_SIZE / 2 );
+            CGContextTranslateCTM( layerCtx, canvasSize / 2, canvasSize / 2 );
 
-            if ( params->rotate == YES )
+            if ( params.rotate == YES )
             {
                 CGContextRotateCTM( layerCtx, ( ( random() % 300 ) - 150 ) / 2000.0 );
 
-                thumbSize -= ROTATION_PAD;
+                thumbSize -= dpiValue( ROTATION_PAD );
             }
 
-            if ( params->shadow == YES )
+            if ( params.shadow == YES )
             {
                 /* Go for a symmetrical border-like drop shadow in multi-image
                  * mode, else for the larger icon-filling single-image mode,
@@ -783,8 +797,8 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
                     CGContextSetShadow
                     (
                         layerCtx,
-                        CGSizeMake( 0, -BLUR_OFFSET ),
-                        BLUR_RADIUS
+                        CGSizeMake( 0, dpiValue( -BLUR_OFFSET ) ),
+                        dpiValue( BLUR_RADIUS )
                     );
 
                     /* "* 2" on the blur offset is basically a fudge factor.
@@ -794,7 +808,7 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
                      * extra room is provided.
                      */
 
-                    thumbSize -= BLUR_RADIUS + BLUR_OFFSET * 2;
+                    thumbSize -= dpiValue( BLUR_RADIUS + BLUR_OFFSET * 2 );
                 }
                 else
                 {
@@ -812,8 +826,8 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
                         CGContextSetShadowWithColor
                         (
                             layerCtx,
-                            CGSizeMake( 0, -( BLUR_OFFSET / 2 ) ),
-                            ( BLUR_RADIUS / 3 ) * ( BLUR_OFFSET / 2 ),
+                            CGSizeMake( 0, dpiValue( -( BLUR_OFFSET / 2 ) ) ),
+                            dpiValue( ( BLUR_RADIUS / 3 ) * ( BLUR_OFFSET / 2 ) ),
                             c
                         );
 
@@ -823,7 +837,7 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
                          * radius and offset is sufficient for some reason.
                          */
 
-                        thumbSize -= BLUR_RADIUS * ( BLUR_OFFSET / 2 ) + ( BLUR_OFFSET / 2 );
+                        thumbSize -= dpiValue( BLUR_RADIUS * ( BLUR_OFFSET / 2 ) + ( BLUR_OFFSET / 2 ) );
                     }
                 }
             }
@@ -832,10 +846,10 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
              * putting the shadow beneath the image.
              */
 
-            if ( params->border == YES )
+            if ( params.border == YES )
             {
                 CGFloat borderSize = thumbSize;
-                thumbSize -= THUMB_BORDER * 2;
+                thumbSize -= dpiValue( THUMB_BORDER * 2 );
 
                 CGContextSetRGBFillColor( layerCtx, 1, 1, 1, 1.0 );
                 CGContextFillRect
@@ -865,7 +879,7 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
 
             BOOL success = paintImage
             (
-                ( CFStringRef ) currFile, /* Toll-free bridge */
+                ( __bridge CFStringRef ) currFile, /* Toll-free bridge */
                 CGRectMake
                 (
                     -thumbSize / 2,
@@ -874,7 +888,7 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
                     thumbSize
                 ),
                 layerCtx,
-                params->crop
+                params.crop
             );
 
             CGContextEndTransparencyLayer( layerCtx );
@@ -932,18 +946,24 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
          * the standard folder icon underneath.
          */
 
-        if ( singleImageMode == NO && layerCount <= params->showFolderInBackground && backgroundImage )
+        if ( singleImageMode == NO && layerCount <= params.showFolderInBackground && backgroundImage )
         {
             CGContextDrawImage( context, pixelRect, backgroundImage );
         }
 
         /* Now plot the thumbnails themselves */
 
-        if ( params->singleImageMode )
+        if ( params.singleImageMode )
         {
             CGLayerRef layer = ( CGLayerRef ) CFArrayGetValueAtIndex( layers, 0 );
 
-            CGContextDrawLayerInRect( context, fullArea, layer );
+            CGContextDrawLayerInRect
+            (
+                context,
+                CGRectMake( 0, 0, canvasSize, canvasSize ),
+                layer
+            );
+
             CGLayerRelease( layer );
         }
         else
@@ -961,8 +981,8 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
                 locations[ layerCount - 1 ][ 3 ]
             };
 
-            if ( params->shadow == YES ) adjustSize += ( BLUR_RADIUS + BLUR_OFFSET * 2 );
-            if ( params->rotate == YES ) adjustSize += ROTATION_PAD;
+            if ( params.shadow == YES ) adjustSize += ( BLUR_RADIUS + BLUR_OFFSET * 2 );
+            if ( params.rotate == YES ) adjustSize += ROTATION_PAD;
 
             if ( adjustSize > 0 )
             {
@@ -1029,15 +1049,16 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
 
             for ( CFIndex index = 0; index < layerCount; index ++ )
             {
-                CGLayerRef layer = ( CGLayerRef ) CFArrayGetValueAtIndex( layers, index );
+                CGLayerRef layer    = ( CGLayerRef ) CFArrayGetValueAtIndex( layers, index );
+                CGRect     thisRect = adjustedLocations[ index ];
+                CGRect     dpiRect  = CGRectMake(
+                                                    dpiValue( thisRect.origin.x    ),
+                                                    dpiValue( thisRect.origin.y    ),
+                                                    dpiValue( thisRect.size.width  ),
+                                                    dpiValue( thisRect.size.height )
+                                                );
 
-                CGContextDrawLayerInRect
-                (
-                    context,
-                    adjustedLocations[ index ],
-                    layer
-                );
-
+                CGContextDrawLayerInRect( context, dpiRect, layer );
                 CGLayerRelease( layer );
             }
         }
@@ -1062,8 +1083,6 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
 
     CFRelease( layers  );
     CFRelease( context );
-
-haveNoContext:
 
     return finalImage;
 
@@ -1093,7 +1112,7 @@ haveNoContext:
  *      images and thus needs no custom icon, or NULL being returned because an
  *      error was encountered while attempting to generate the custom icon;
  *
- *      Pointer to an initialised IconParameters structure describing the way
+ *      Pointer to an initialised IconParameters instance describing the way
  *      in which to generate the icons (only the SlipCover case definition part
  *      of this is consulted).
  *
@@ -1115,14 +1134,14 @@ static CGImageRef allocSlipCoverIcon( NSMutableArray * chosenImages,
         sourceImage = [ [ NSImage alloc ] initByReferencingFile: [ chosenImages objectAtIndex: 0 ] ];
         caseImage   = [ CaseGenerator caseImageAtSize: case512
                                                 cover: sourceImage
-                                       caseDefinition: params->slipCoverCase ];
+                                       caseDefinition: params.slipCoverCase ];
     }
     @catch ( NSException * exception )
     {
         ( void ) exception; /* Ignore exception; caseImage is 'nil' */
     }
 
-    require( caseImage != nil, imageGenerationFailed );
+    if ( ! caseImage ) return nil; // Note early exit!
 
     /* The custom generator has historically always used CoreGraphics calls
      * directly and deals with CGImageRef values rather than NSImage pointers.
@@ -1136,14 +1155,14 @@ static CGImageRef allocSlipCoverIcon( NSMutableArray * chosenImages,
 
     if ( data != nil )
     {
-        CGImageSourceRef imageSourceRef = CGImageSourceCreateWithData( ( CFDataRef ) data, NULL );
+        CGImageSourceRef imageSourceRef = CGImageSourceCreateWithData( ( __bridge CFDataRef ) data, NULL );
         finalImage = CGImageSourceCreateImageAtIndex( imageSourceRef, 0, NULL );
         CFRelease( imageSourceRef );
     }
 
 imageGenerationFailed:
 
-    [ sourceImage release ];
+    ;
     return finalImage;
 }
 
@@ -1180,7 +1199,7 @@ imageGenerationFailed:
  *      images and thus needs no custom icon, or NULL being returned because an
  *      error was encountered while attempting to generate the custom icon;
  *
- *      Pointer to an initialised IconParameters structure describing the way
+ *      Pointer to an initialised IconParameters instance describing the way
  *      in which to generate the icons.
  *
  * Out: CGImageRef pointing to thumbnail image or NULL if there is an error, or
@@ -1216,7 +1235,7 @@ CGImageRef allocIconForFolder( NSString       * fullPosixPath,
      * or the custom painting routines.
      */
 
-    if ( params->slipCoverCase == nil )
+    if ( params.slipCoverCase == nil )
     {
         generatedImage = allocCustomIcon
         (
@@ -1240,7 +1259,6 @@ CGImageRef allocIconForFolder( NSString       * fullPosixPath,
     /* Clear the precautionary pre-flagged error if everything looks OK */
     
     if ( generatedImage != NULL ) *thumbState = noErr;
-    [ chosenImages release ];
 
 nothingToDo:
 

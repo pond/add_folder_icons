@@ -58,8 +58,9 @@ CGImageRef allocFolderIcon( void )
          * icon. The OS selects the best image.
          */
 
-        NSRect     imageRect = NSMakeRect( 0, 0, CANVAS_SIZE, CANVAS_SIZE );
-        CGImageRef folderRef = 
+        NSInteger  canvasSize = dpiValue( CANVAS_SIZE );
+        NSRect     imageRect  = NSMakeRect( 0, 0, canvasSize, canvasSize );
+        CGImageRef folderRef  = 
         [
             folder CGImageForProposedRect: &imageRect
                                   context: nil
@@ -483,12 +484,22 @@ static OSStatus addImages( IconFamilyHandle iconHnd,
      * this under general use and scaling down a 128x128 icon at run-time is
      * a fair bit quicker than scaling down a 512x512 icon.
      *
+     * If the DPI value translation routine seems to be returning updated
+     * values, add in the additional icon size of 1024x1024 for high DPI modes
+     * modes (for 'correctness', the translated value of 512x512 is used, just
+     * in case the translation factor ever differs from multiply-by-two).
+     *
      * Comment or uncomment lines below to include or exclude sizes. All
      * relevant colour and mask variations are handled automatically for any
-     * given size out of 512, 256, 128, 32 or 16.
+     * given size out of dpiValue(512), 512, 256, 128, 32 or 16.
      */
 
     OSStatus err = noErr;
+
+    if ( dpiValue( 1 ) != 1 )
+    {
+        if ( err == noErr ) err = addImage( iconHnd, cgImage, cgColourSpace, dpiValue( 512 ) );
+    }
 
     if ( err == noErr ) err = addImage( iconHnd, cgImage, cgColourSpace, 512 );
 
@@ -613,15 +624,18 @@ static OSStatus addImageOrMask( IconFamilyHandle iconHnd,
 
         switch( width )
         {
-            default:  type = kIconServices512PixelDataARGB; break; /* 512 or unknown */
-            case 256: type = kIconServices256PixelDataARGB; break;
-            case 128: type = kThumbnail32BitData;           break;
-            case 32:  type = kLarge32BitData;               break;
-            case 16:  type = kSmall32BitData;               break;
+            default:   type = kIconServices512PixelDataARGB;  break; /* 512 or unknown     */
+            case 1024: type = kIconServices1024PixelDataARGB; break; /* OS X 10.7 or later */
+            case 256:  type = kIconServices256PixelDataARGB;  break;
+            case 128:  type = kThumbnail32BitData;            break;
+            case 32:   type = kLarge32BitData;                break;
+            case 16:   type = kSmall32BitData;                break;
         }
     }
 
-    if ( width > CANVAS_SIZE ) width = CANVAS_SIZE;
+    NSInteger canvasSize = dpiValue( CANVAS_SIZE );
+    if ( width > canvasSize ) width = canvasSize;
+
     dataSize = width * width * pixelSize;
 
     /* Clear the paint buffer and create a context within it */

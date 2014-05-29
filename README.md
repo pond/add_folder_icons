@@ -5,7 +5,7 @@ Add Folder Icons is a small Mac OS X utility that adds generated icons to batche
 
 - http://itunes.apple.com/app/add-folder-icons/id420629463
 
-Some versions are also available for download and installation manually without the Mac App Store, though since the store is available on all versions of OS X supported by Add Folder Icons (10.6 or later), this is not currently the recommended way to install the software. For more, see:
+For more, see:
 
 - http://afi.pond.org.uk/
 - http://hipposoft.pond.org.uk/
@@ -13,3 +13,8 @@ Some versions are also available for download and installation manually without 
 Related historical software for OS X 10.5:
 
 - http://pond.org.uk/osx/folder_icons_quick_look/
+
+Screenshot
+==========
+
+<img align="center" src="http://pond.org.uk/osx/add_folder_icons/images/n10.png" alt="Finder customised view screenshot">

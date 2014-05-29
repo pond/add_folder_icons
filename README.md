@@ -14,9 +14,6 @@ Related historical software for OS X 10.5:
 
 - http://pond.org.uk/osx/folder_icons_quick_look/
 
-Screenshot
-==========
-
 <p align="center">
   <img src="http://pond.org.uk/osx/add_folder_icons/images/n10.png" alt="Finder customised view screenshot" width="300" height="331">
 </p>

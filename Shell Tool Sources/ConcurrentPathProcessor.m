@@ -68,7 +68,7 @@
     if ( ( self = [ super init ] ) )
     {
         self.pathData       = fullPosixPath;
-        self.backgroundRef  = CGImageCreateCopy( backgroundImage );
+        self.backgroundRef  = allocFolderIcon();//CGImageCreateCopy( backgroundImage );
         self.iconParameters = params;
     }
 
@@ -155,6 +155,8 @@
                  * semaphore is needed here, an inned try...catch construct
                  * is required to ensure it gets released whatever happens.
                  */
+
+                [ [ NSWorkspace sharedWorkspace ] setIcon: nil forFile: self.pathData options: 0 ];
 
                 IconFamilyHandle iconHnd = NULL;
                 status = createIconFamilyFromCGImage( finalImage, &iconHnd );

@@ -18,13 +18,6 @@
             managedObjectContext,
             managedObjectModel;
 
-- ( void ) dealloc
-{
-
-    CFRelease( cachedFolderImage );
-
-}
-
 /******************************************************************************\
  * -awakeFromNib
  *
@@ -133,6 +126,11 @@
     }
 
     return self;
+}
+
+- ( void ) dealloc
+{
+    CFRelease( cachedFolderImage );
 }
 
 /******************************************************************************\

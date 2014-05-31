@@ -5,8 +5,16 @@
 //  Copyright 2010, 2011 Hipposoft. All rights reserved.
 //
 
+//#import "IconParameters.h"
+
 #import "MainWindowController.h"
 #import "ApplicationSupport.h"
+
+#import "IconParameters.h"
+#import "GlobalSemaphore.h"
+#import "ConcurrentPathProcessor.h"
+
+#include <CoreFoundation/CoreFoundation.h>
 
 #define NSINDEXSET_ON_PBOARD @"NSIndexSetOnPboardType"
 
@@ -588,6 +596,8 @@
 
 - ( void ) createFolderIcons: ( NSArray * ) constArrayOfDictionaries
 {
+    globalSemaphoreInit();
+
     @autoreleasepool
     {
         NSUserDefaults * standardUserDefaults  = [ NSUserDefaults standardUserDefaults ];
@@ -639,24 +649,167 @@
              * handle the cancellation condition itself.
              */
 
-            NSTask * task = [ NSTask launchedTaskWithLaunchPath: path
-                                                      arguments: arguments ];
-            [ task waitUntilExit ];
+/* Establish default parameters which command line arguments can override */
 
-            /* Success or failure? Would like to return a BOOL but the compiler
-             * insists that such code is actually returning an int, yet refuses
-             * to recognise that in the same way if the block is declared as
-             * returning a BOOL rather than an int. To keep it simple, we just
-             * return something which is semantically really defined as a simple
-             * int; an old-style exit status.
-             */
+IconParameters * params = [ [ IconParameters alloc ] init ];
 
-            return ( [ task terminationReason ] == NSTaskTerminationReasonExit &&
-                     [ task terminationStatus ] == EXIT_SUCCESS )
-                     ?
-                     EXIT_SUCCESS
-                     :
-                     EXIT_FAILURE;
+params.commsChannel           = nil;
+params.previewMode            = NO;
+
+params.slipCoverCase          = nil;
+params.crop                   = NO;
+params.border                 = NO;
+params.shadow                 = NO;
+params.rotate                 = NO;
+params.maxImages              = 4;
+params.showFolderInBackground = StyleShowFolderInBackgroundForOneOrTwoImages;
+params.singleImageMode        = NO;
+params.useColourLabels        = NO;
+params.coverArtNames          =
+[
+    NSMutableArray arrayWithObjects: [ NSString stringWithUTF8String: "folder" ],
+                                     [ NSString stringWithUTF8String: "cover"  ],
+                                     nil
+];
+
+NSUInteger argi = 0;
+NSUInteger argc = [ arguments count ];
+
+while ( true )
+{
+    /* Simple boolean switches */
+
+    NSString * arg = ( NSString * ) arguments[ argi ];
+
+    if ( [ arg length ] <= 2 || [ arg compare: @"--" options: 0 range: NSMakeRange( 0, 2 ) ] != NSOrderedSame )
+    {
+        break;
+    }
+
+    if      ( [ arg isEqualToString: @"--crop"   ] ) params.crop            = YES;
+    else if ( [ arg isEqualToString: @"--border" ] ) params.border          = YES;
+    else if ( [ arg isEqualToString: @"--shadow" ] ) params.shadow          = YES;
+    else if ( [ arg isEqualToString: @"--rotate" ] ) params.rotate          = YES;
+    else if ( [ arg isEqualToString: @"--single" ] ) params.singleImageMode = YES;
+    else if ( [ arg isEqualToString: @"--labels" ] ) params.useColourLabels = YES;
+
+    /* Numerical parameters */
+
+    else if ( [ arg isEqualToString: @"--maximages"  ] && ( ++ argi ) < argc ) params.maxImages              = [ arguments[ argi ] intValue ];
+    else if ( [ arg isEqualToString: @"--showfolder" ] && ( ++ argi ) < argc ) params.showFolderInBackground = [ arguments[ argi ] intValue ];
+
+    /* String parameters */
+    
+    else if ( [ arg isEqualToString: @"--communicate" ] && ( ++ argi ) < argc )
+    {
+        /* The public usage string does not print this argument out as it
+         * is for internal use between the CLI tool and application. The
+         * application provides its NSConnection server name here.
+         */
+
+        params.commsChannel = arguments[ argi ];
+    }
+
+    /* SlipCover definition - this one is more complicated as we have to
+     * generate the case definition from the name and store the definition
+     * reference in the icon style parameters.
+     */
+
+//    else if ( [ arg isEqualToString: @"--slipcover" ] && ( ++ argi ) < argc )
+//    {
+//        NSString       * requestedName   = [ NSString stringWithUTF8String: argv[ arg ] ];
+//        CaseDefinition * foundDefinition = [ SlipCoverSupport findDefinitionFromName: requestedName ];
+//
+//        if ( foundDefinition == nil )
+//        {
+//            printVersion();
+//            printf( "SlipCover case name '%s' is not recognised.\n", argv[ arg ] );
+//            return EX_USAGE;
+//        }
+//
+//        params.slipCoverCase = foundDefinition;
+//    }
+
+    /* Array - the second parameter after the switch is the number of
+     * items, followed by the items themselves.
+     */
+    
+    else if ( [ arg isEqualToString: @"--coverart" ] && ( argi + 2 ) < argc )
+    {
+        int              count = [ arguments[ ++ argi ] intValue ];
+        NSMutableArray * array = [ NSMutableArray arrayWithCapacity: count ];
+
+        for ( int i = 0; i < count && argi + 1 < argc; i ++ )
+        {
+            ++ argi; /* Must be careful to leave 'arg' pointing at last "used" argument */
+            [ array addObject: arguments[ argi ] ];
+        }
+
+        params.coverArtNames = array;
+    }
+
+    else break; /* Assume a folder name */
+
+    ++ argi;
+}
+
+///* If parameters are out of range or we've run out of arguments so no
+// * folder filenames were supplied, complain.
+// */
+//
+//if ( arg >= argc || params.maxImages < 1 || params.maxImages > 4 || params.showFolderInBackground > StyleShowFolderInBackgroundAlways )
+//{
+//    printVersion();
+//    printHelp();
+//    return EXIT_FAILURE;
+//}
+
+/* Prerequisites */
+
+NSOperationQueue * queue = [ [ NSOperationQueue  alloc ] init ];
+
+/* Process pathnames and add Grand Central Dispatch operations for each */
+
+for ( int i = argi; i < argc; i ++ )
+{
+    NSString * fullPosixPath = arguments[ i ];
+
+    ConcurrentPathProcessor * processThisPath =
+    [
+        [ ConcurrentPathProcessor alloc ] initWithPath: fullPosixPath
+                                         andBackground: nil
+                                         andParameters: params
+    ];
+
+    NSArray * oneOp = [ NSArray arrayWithObject: processThisPath ];
+    [ queue addOperations: oneOp waitUntilFinished: NO ];
+}
+
+[ queue waitUntilAllOperationsAreFinished ];
+
+//return ( globalErrorFlag == YES ) ? EXIT_FAILURE : EXIT_SUCCESS;
+
+return EXIT_SUCCESS;
+
+
+//            NSTask * task = [ NSTask launchedTaskWithLaunchPath: path
+//                                                      arguments: arguments ];
+//            [ task waitUntilExit ];
+//
+//            /* Success or failure? Would like to return a BOOL but the compiler
+//             * insists that such code is actually returning an int, yet refuses
+//             * to recognise that in the same way if the block is declared as
+//             * returning a BOOL rather than an int. To keep it simple, we just
+//             * return something which is semantically really defined as a simple
+//             * int; an old-style exit status.
+//             */
+//
+//            return ( [ task terminationReason ] == NSTaskTerminationReasonExit &&
+//                     [ task terminationStatus ] == EXIT_SUCCESS )
+//                     ?
+//                     EXIT_SUCCESS
+//                     :
+//                     EXIT_FAILURE;
         };
 
         /* Process folders in batches grouped by icon style, so that we can pass a

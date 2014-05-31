@@ -14,8 +14,6 @@
 		230BA02914DD95FA00CC9DFC /* Add Folder Icons.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 235D7A0814DD82B100CD503D /* Add Folder Icons.entitlements */; };
 		230EE19C12E3501B00C9F14E /* IconStyle.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 230EE19B12E3501B00C9F14E /* IconStyle.xcdatamodel */; };
 		2311B0331302AD4500644100 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2311B0321302AD4500644100 /* Carbon.framework */; };
-		2311B03C1302AF6200644100 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2311B03B1302AF6200644100 /* Sparkle.framework */; };
-		2311B03D1302AF6600644100 /* Sparkle.framework in Copy Sparkle Framework */ = {isa = PBXBuildFile; fileRef = 2311B03B1302AF6200644100 /* Sparkle.framework */; };
 		232A213D13006066005CFBED /* DSClickableURLTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 232A213C13006066005CFBED /* DSClickableURLTextField.m */; };
 		232C2C8613018D7C00786507 /* SlipCoverSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED30912FF3E13003181D8 /* SlipCoverSupport.m */; };
 		232C2C8713018D8B00786507 /* CaseDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED2FD12FF2601003181D8 /* CaseDefinition.m */; };
@@ -63,6 +61,8 @@
 		23AED32B12FFF104003181D8 /* SCEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32912FFF104003181D8 /* SCEvents.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		23BD71AF12E8A1D700BE620C /* IconStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 23BD71AE12E8A1D700BE620C /* IconStyle.m */; };
 		23BD73F412E9FFA100BE620C /* CoreDataObjectIDTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 23BD73F312E9FFA100BE620C /* CoreDataObjectIDTransformer.m */; };
+		23C831271937521700486A48 /* ConcurrentPathProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912AF12F3857C00A59086 /* ConcurrentPathProcessor.m */; };
+		23C83128193A983600486A48 /* ConcurrentPathProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912AF12F3857C00A59086 /* ConcurrentPathProcessor.m */; };
 		23CB8B4812E09E9200E66CDA /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23CB8B4612E09E9200E66CDA /* Preferences.xib */; };
 		23CB8BA612E0C1CC00E66CDA /* Application.icns in Resources */ = {isa = PBXBuildFile; fileRef = 23CB8BA512E0C1CC00E66CDA /* Application.icns */; };
 		23CBD71212E1ED270024A106 /* ManageStyles.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23CBD71012E1ED270024A106 /* ManageStyles.xib */; };
@@ -158,7 +158,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				2311B03D1302AF6600644100 /* Sparkle.framework in Copy Sparkle Framework */,
 			);
 			name = "Copy Sparkle Framework";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -182,7 +181,6 @@
 		230BA02514DD8AB100CC9DFC /* container-migration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "container-migration.plist"; sourceTree = "<group>"; };
 		230EE19B12E3501B00C9F14E /* IconStyle.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; path = IconStyle.xcdatamodel; sourceTree = "<group>"; };
 		2311B0321302AD4500644100 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		2311B03B1302AF6200644100 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		232A213B13006066005CFBED /* DSClickableURLTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSClickableURLTextField.h; sourceTree = "<group>"; };
 		232A213C13006066005CFBED /* DSClickableURLTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSClickableURLTextField.m; sourceTree = "<group>"; };
 		232F57A812E0718F00FEB1C2 /* ManageStylesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageStylesWindowController.h; sourceTree = "<group>"; };
@@ -297,7 +295,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2311B03C1302AF6200644100 /* Sparkle.framework in Frameworks */,
 				2311B0331302AD4500644100 /* Carbon.framework in Frameworks */,
 				2370F3E71302ACE200448013 /* Cocoa.framework in Frameworks */,
 				2341099815714DD800AF9999 /* QuartzCore.framework in Frameworks */,
@@ -360,7 +357,6 @@
 				2341099715714DD800AF9999 /* QuartzCore.framework */,
 				2311B0321302AD4500644100 /* Carbon.framework */,
 				2370F3E61302ACE200448013 /* Cocoa.framework */,
-				2311B03B1302AF6200644100 /* Sparkle.framework */,
 			);
 			name = "Frameworks (Application)";
 			sourceTree = "<group>";
@@ -582,6 +578,17 @@
 			attributes = {
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = Hipposoft;
+				TargetAttributes = {
+					23C1583012F37D2900D99934 = {
+						DevelopmentTeam = XT4V976D8Y;
+					};
+					23D3FB2F13055044004FDA09 = {
+						DevelopmentTeam = XT4V976D8Y;
+					};
+					8D1107260486CEB800E47090 = {
+						DevelopmentTeam = XT4V976D8Y;
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Add Folder Icons" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -739,6 +746,7 @@
 				235D7A0614DD519B00CD503D /* IconParameters.m in Sources */,
 				2382901015714395005C60A5 /* SplashWindowController.m in Sources */,
 				2341099D15714F0400AF9999 /* WhiteBackgroundView.m in Sources */,
+				23C831271937521700486A48 /* ConcurrentPathProcessor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -773,6 +781,7 @@
 				235D7A0514DD4A3200CD503D /* IconParameters.m in Sources */,
 				2382900F15714395005C60A5 /* SplashWindowController.m in Sources */,
 				2341099C15714F0400AF9999 /* WhiteBackgroundView.m in Sources */,
+				23C83128193A983600486A48 /* ConcurrentPathProcessor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -888,7 +897,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: MR A D HODGKINSON";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -905,7 +915,7 @@
 				);
 				PRODUCT_NAME = addfoldericons;
 				PROVISIONING_PROFILE = "";
-				SYMROOT = "";
+				SYMROOT = build;
 			};
 			name = Debug;
 		};
@@ -914,7 +924,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: MR A D HODGKINSON";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -929,7 +940,7 @@
 				);
 				PRODUCT_NAME = addfoldericons;
 				PROVISIONING_PROFILE = "";
-				SYMROOT = "";
+				SYMROOT = build;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -940,7 +951,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: MR A D HODGKINSON";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -956,7 +968,7 @@
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "Add Folder Icons";
 				PROVISIONING_PROFILE = "";
-				SYMROOT = "";
+				SYMROOT = build;
 			};
 			name = Debug;
 		};
@@ -966,7 +978,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: MR A D HODGKINSON";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_MODEL_TUNING = G5;
@@ -979,7 +992,7 @@
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "Add Folder Icons";
 				PROVISIONING_PROFILE = "";
-				SYMROOT = "";
+				SYMROOT = build;
 			};
 			name = Release;
 		};
@@ -988,6 +1001,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1005,7 +1019,7 @@
 				INSTALL_PATH = /Applications;
 				OTHER_CFLAGS = "-DUPDATABLE";
 				PRODUCT_NAME = "Add Folder Icons";
-				SYMROOT = "";
+				SYMROOT = build;
 			};
 			name = Debug;
 		};
@@ -1014,6 +1028,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1028,7 +1043,7 @@
 				INSTALL_PATH = /Applications;
 				OTHER_CFLAGS = "-DUPDATABLE";
 				PRODUCT_NAME = "Add Folder Icons";
-				SYMROOT = "";
+				SYMROOT = build;
 			};
 			name = Release;
 		};
@@ -1048,6 +1063,7 @@
 				OTHER_CFLAGS = "";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx;
+				SYMROOT = build;
 			};
 			name = Debug;
 		};
@@ -1065,6 +1081,7 @@
 				OTHER_CFLAGS = "";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx;
+				SYMROOT = build;
 			};
 			name = Release;
 		};

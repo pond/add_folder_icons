@@ -177,7 +177,7 @@
 
     if ( ! [ moc commitEditing ] )
     {
-        NSLog( @"%@:%s unable to commit editing to terminate", [ self class ], ( char *) _cmd );
+        NSLog( @"%@:%s unable to commit editing to terminate", [ self class ], sel_getName( _cmd ) );
         return NSTerminateCancel;
     }
 

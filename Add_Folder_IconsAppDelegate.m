@@ -76,11 +76,9 @@
 {
     NSUserDefaults * userDefaults      = [ NSUserDefaults standardUserDefaults ];
     NSArray        * coverArtFilenames =
-    [
-        NSArray arrayWithObjects:
-            [ NSDictionary dictionaryWithObject: @"folder" forKey: @"leafname" ],
-            [ NSDictionary dictionaryWithObject: @"cover"  forKey: @"leafname" ],
-            nil
+    @[
+      @{ @"leafname": @"folder" },
+      @{ @"leafname": @"cover"  }
     ];
 
     /* A fiddly bit - fetch a default style object and transform it into a
@@ -97,16 +95,14 @@
     /* Combine all the above to construct and register the defaults */
 
     NSDictionary * appDefaults =
-    [
-        NSDictionary dictionaryWithObjectsAndKeys:
-            @"YES",            @"showSplashScreenAtStartup",
-            @"NO",             @"addSubFolders",
-            @"NO",             @"emptyListIfSuccessful",
-            @"YES",            @"colourLabelsIndicateCoverArt",
-            coverArtFilenames, @"coverArtFilenames",
-            defaultStyleID,    @"defaultStyle",
-            nil
-    ];
+    @{
+      @"showSplashScreenAtStartup":    @"YES",
+      @"addSubFolders":                @"NO",
+      @"emptyListIfSuccessful":        @"NO",
+      @"colourLabelsIndicateCoverArt": @"YES",
+      @"coverArtFilenames":            coverArtFilenames,
+      @"defaultStyle":                 defaultStyleID
+    };
 
     [ userDefaults registerDefaults: appDefaults ];
 }

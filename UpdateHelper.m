@@ -45,7 +45,6 @@
 {
     if ( NSClassFromString( UPDATER_CLASS_NAME ) == nil )
     {
-        [ self release ];
         return nil;
     }
 

@@ -93,9 +93,7 @@
 
     /* Set up supported user interaction operations */
 
-    [ folderList registerForDraggedTypes: [ NSArray arrayWithObjects: NSFilenamesPboardType,
-                                                                      NSINDEXSET_ON_PBOARD,
-                                                                      nil ] ];
+    [ folderList registerForDraggedTypes: @[ NSFilenamesPboardType, NSINDEXSET_ON_PBOARD ] ];
 
 	[ folderList setDraggingSourceOperationMask: NSDragOperationLink forLocal: NO  ];
 	[ folderList setDraggingSourceOperationMask: NSDragOperationMove forLocal: YES ];
@@ -393,8 +391,8 @@
 {
     @autoreleasepool
     {
-        NSArray    * parentFolderArray     = [ parentFolders objectForKey: @"urls" ];
-        NSNumber   * firstIndex            = [ parentFolders objectForKey: @"firstIndex" ];
+        NSArray    * parentFolderArray     = parentFolders[ @"urls"       ];
+        NSNumber   * firstIndex            = parentFolders[ @"firstIndex" ];
         BOOL         isURLs                = YES;
         NSUInteger   startRow, currentRow;
 
@@ -403,7 +401,7 @@
 
         if ( parentFolderArray == nil )
         {
-            parentFolderArray = [ parentFolders objectForKey: @"strings" ];
+            parentFolderArray = parentFolders[ @"strings" ];
             isURLs            = NO;
         }
 
@@ -429,7 +427,7 @@
             NSDirectoryEnumerator * dirEnum =
             [
                 fileManager enumeratorAtURL: parentPath
-                 includingPropertiesForKeys: [ NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLIsPackageKey, nil ]
+                 includingPropertiesForKeys: @[ NSURLIsDirectoryKey, NSURLIsPackageKey ]
                                     options: NSDirectoryEnumerationSkipsHiddenFiles |
                                              NSDirectoryEnumerationSkipsPackageDescendants
                                errorHandler: nil
@@ -476,12 +474,10 @@
                     if ( firstIndex != nil )
                     {
                         NSDictionary * dictionary =
-                        [
-                            NSDictionary dictionaryWithObjectsAndKeys:
-                                [ url path                                    ], @"path",
-                                [ NSNumber numberWithUnsignedLong: currentRow ], @"index",
-                                nil
-                        ];
+                        @{
+                          @"path":  [ url path ],
+                          @"index": @( currentRow )
+                        };
 
                         [ self performSelectorOnMainThread: @selector( insertFolderByDictionary: )
                                                 withObject: dictionary
@@ -606,7 +602,7 @@
 
         if ( [ coverArtFilenames count ] == 0 )
         {
-            coverArtFilenames = [ NSArray arrayWithObjects: @"cover", @"folder", nil ];
+            coverArtFilenames = @[ @"cover", @"folder" ];
         }
 
         /* Take a copy of and sort the array, grouping it by icon style. Using a
@@ -622,8 +618,8 @@
         [
             arrayOfDictionaries sortUsingComparator: ^ ( NSDictionary * obj1, NSDictionary * obj2 )
             {
-                IconStyle * s1 = [ obj1 objectForKey: @"style" ];
-                IconStyle * s2 = [ obj2 objectForKey: @"style" ];
+                IconStyle * s1 = obj1[ @"style" ];
+                IconStyle * s2 = obj2[ @"style" ];
 
                 return [ [ [ [ s1 objectID ] URIRepresentation ] absoluteString ]
                 compare: [ [ [ s2 objectID ] URIRepresentation ] absoluteString ] ];
@@ -667,8 +663,8 @@ params.singleImageMode        = NO;
 params.useColourLabels        = NO;
 params.coverArtNames          =
 [
-    NSMutableArray arrayWithObjects: [ NSString stringWithUTF8String: "folder" ],
-                                     [ NSString stringWithUTF8String: "cover"  ],
+    NSMutableArray arrayWithObjects: @"folder",
+                                     @"cover",
                                      nil
 ];
 
@@ -781,7 +777,7 @@ for ( int i = argi; i < argc; i ++ )
                                          andParameters: params
     ];
 
-    NSArray * oneOp = [ NSArray arrayWithObject: processThisPath ];
+    NSArray * oneOp = @[ processThisPath ];
     [ queue addOperations: oneOp waitUntilFinished: NO ];
 }
 
@@ -844,8 +840,8 @@ return EXIT_SUCCESS;
              */
 
             NSDictionary * folder = [ arrayOfDictionaries lastObject ];
-            NSString     * path   = [ folder objectForKey: @"path"   ];
-            IconStyle    * style  = [ folder objectForKey: @"style"  ];
+            NSString     * path   = folder[ @"path"  ];
+            IconStyle    * style  = folder[ @"style" ];
 
             if ( [ currentStyle objectID ] != [ style objectID ] )
             {
@@ -1052,7 +1048,7 @@ return EXIT_SUCCESS;
 
         for ( NSDictionary * folder in constArrayOfDictionaries )
         {
-            NSString * path = [ folder objectForKey: @"path" ];
+            NSString * path = folder[ @"path" ];
                 
             [ workspace setIcon: nil forFile: path options: 0 ];
             if ( [ [ NSThread currentThread ] isCancelled ] == YES ) break;
@@ -1261,8 +1257,8 @@ return EXIT_SUCCESS;
 
 - ( void ) insertFolderByDictionary: ( NSDictionary * ) dictionary
 {
-    NSString * path  = [ dictionary objectForKey: @"path"  ];
-    NSNumber * index = [ dictionary objectForKey: @"index" ];
+    NSString * path  = dictionary[ @"path"  ];
+    NSNumber * index = dictionary[ @"index" ];
 
     [ self insertFolder: path
                 atIndex: [ index unsignedLongValue ] ];
@@ -1315,7 +1311,7 @@ return EXIT_SUCCESS;
     [
         matchBlock enumerateIndexesUsingBlock: ^ ( NSUInteger matchIndex, BOOL * stop )
         {
-            NSDictionary * matchRecord = [ tableContents objectAtIndex: matchIndex ];
+            NSDictionary * matchRecord = tableContents[ matchIndex ];
             NSString     * matchPath   = [ matchRecord valueForKey: @"path" ];
 
             NSUInteger found =
@@ -1440,14 +1436,7 @@ return EXIT_SUCCESS;
              */
 
             [ folderList reloadData ];
-
-            [
-                self considerInsertingSubfoldersOf:
-                [
-                    NSDictionary dictionaryWithObject: [ openPanel URLs ]
-                                               forKey: @"urls"
-                ]
-            ];
+            [ self considerInsertingSubfoldersOf: @{ @"urls": [ openPanel URLs ] } ];
         }
 	};
 
@@ -1535,8 +1524,8 @@ return EXIT_SUCCESS;
          objectValueForTableColumn: ( NSTableColumn * ) tableColumn
                                row: ( NSInteger       ) row
 {
-    NSDictionary * record = [ tableContents objectAtIndex: row ];
-    id             value  = [ record objectForKey: [ tableColumn identifier ] ];
+    NSDictionary * record = tableContents[row];
+    id             value  = record[ [ tableColumn identifier ] ];
 
     if ( tableColumn == folderListStyleColumn )
     {
@@ -1569,7 +1558,7 @@ return EXIT_SUCCESS;
            writeRowsWithIndexes: ( NSIndexSet   * ) rowIndexes
                    toPasteboard: ( NSPasteboard * ) pboard
 {
-    [ pboard declareTypes: [ NSArray arrayWithObject: NSINDEXSET_ON_PBOARD ]
+    [ pboard declareTypes: @[ NSINDEXSET_ON_PBOARD ]
                     owner: nil ];
 
     return [ pboard setData: [ NSKeyedArchiver archivedDataWithRootObject: rowIndexes ]
@@ -1770,12 +1759,10 @@ return EXIT_SUCCESS;
 
         [
             self considerInsertingSubfoldersOf:
-            [
-                NSDictionary dictionaryWithObjectsAndKeys:
-                    pathnames,                                       @"strings",
-                    [ NSNumber numberWithUnsignedLong: currentRow ], @"firstIndex",
-                    nil
-            ]
+            @{
+              @"strings":    pathnames,
+              @"firstIndex": @( currentRow )
+            }
         ];
 
         /* Whatever happens, select the parents. In practice, this is a nice
@@ -1852,7 +1839,7 @@ return EXIT_SUCCESS;
         selectedIndices enumerateIndexesUsingBlock:
         ^ ( NSUInteger index, BOOL * stop )
         {
-            NSMutableDictionary * record = [ tableContents objectAtIndex: index ];
+            NSMutableDictionary * record = tableContents[ index ];
             [ record setValue: iconStyle forKey: @"style" ];
         }
     ];
@@ -1876,7 +1863,7 @@ return EXIT_SUCCESS;
 - ( void ) iconStyleListChanged: ( NSNotification * ) notification
 {
     NSDictionary * userInfo      = [ notification userInfo ];
-    NSSet        * deletedStyles = [ userInfo objectForKey: NSDeletedObjectsKey ];
+    NSSet        * deletedStyles = userInfo[ NSDeletedObjectsKey ];
 
     if ( [ deletedStyles count ] == 0 ) return;
 
@@ -1897,7 +1884,7 @@ return EXIT_SUCCESS;
             ( void ) index;
             ( void ) stop;
         
-            IconStyle * usedStyle = [ item objectForKey: @"style" ];
+            IconStyle * usedStyle = item[ @"style" ];
 
             if ( [ deletedStyles containsObject: usedStyle ] )
             {

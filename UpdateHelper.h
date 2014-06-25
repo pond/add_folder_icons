@@ -19,14 +19,14 @@
 
 @interface UpdateHelper : NSViewController
 {
-    IBOutlet NSMenuItem * checkForUpdatesMenuItem;
-    IBOutlet NSMenuItem * helpAboutUpdaterMenuItem;
+    IBOutlet NSMenuItem * __unsafe_unretained checkForUpdatesMenuItem;
+    IBOutlet NSMenuItem * __unsafe_unretained helpAboutUpdaterMenuItem;
 }
 
 /* Properties */
 
-@property ( readonly ) NSMenuItem * checkForUpdatesMenuItem;
-@property ( readonly ) NSMenuItem * helpAboutUpdaterMenuItem;
+@property ( unsafe_unretained, readonly ) NSMenuItem * checkForUpdatesMenuItem;
+@property ( unsafe_unretained, readonly ) NSMenuItem * helpAboutUpdaterMenuItem;
 
 /* General methods */
 

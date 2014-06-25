@@ -59,8 +59,8 @@ int main( int argc, const char * argv[] )
         params.useColourLabels        = NO;
         params.coverArtNames          =
         [
-            NSMutableArray arrayWithObjects: [ NSString stringWithUTF8String: "folder" ],
-                                             [ NSString stringWithUTF8String: "cover"  ],
+            NSMutableArray arrayWithObjects: @"folder",
+                                             @"cover",
                                              nil
         ];
 
@@ -90,7 +90,7 @@ int main( int argc, const char * argv[] )
                  * application provides its NSConnection server name here.
                  */
 
-                params.commsChannel = [ NSString stringWithUTF8String: argv[ arg ] ];
+                params.commsChannel = @( argv[ arg ] );
             }
 
             /* SlipCover definition - this one is more complicated as we have to
@@ -100,7 +100,7 @@ int main( int argc, const char * argv[] )
 
             else if ( ! strcmp( argv[ arg ], "--slipcover" ) && ( ++ arg ) < argc )
             {
-                NSString       * requestedName   = [ NSString stringWithUTF8String: argv[ arg ] ];
+                NSString       * requestedName   = @( argv[ arg ] );
                 CaseDefinition * foundDefinition = [ SlipCoverSupport findDefinitionFromName: requestedName ];
 
                 if ( foundDefinition == nil )
@@ -125,7 +125,7 @@ int main( int argc, const char * argv[] )
                 for ( int i = 0; i < count && arg + 1 < argc; i ++ )
                 {
                     ++ arg; /* Must be careful to leave 'arg' pointing at last "used" argument */
-                    [ array addObject: [ NSString stringWithUTF8String: argv[ arg ] ] ];
+                    [ array addObject: @( argv[ arg ] ) ];
                 }
 
                 params.coverArtNames = array;
@@ -158,10 +158,7 @@ int main( int argc, const char * argv[] )
 
         for ( int i = arg; i < argc; i ++ )
         {
-            NSString * fullPosixPath =
-            [
-                NSString stringWithUTF8String: argv[ i ]
-            ];
+            NSString * fullPosixPath = @( argv[ i ] );
 
             ConcurrentPathProcessor * processThisPath =
             [
@@ -170,8 +167,7 @@ int main( int argc, const char * argv[] )
                                                  andParameters: params
             ];
 
-            NSArray * oneOp = [ NSArray arrayWithObject: processThisPath ];
-            [ queue addOperations: oneOp waitUntilFinished: NO ];
+            [ queue addOperations: @[ processThisPath ] waitUntilFinished: NO ];
         }
 
         [ queue waitUntilAllOperationsAreFinished ];

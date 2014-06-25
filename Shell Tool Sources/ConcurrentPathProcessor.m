@@ -176,7 +176,7 @@
                         NSLog
                         (
                             @"%@ (saveCustomIcon()): Exception '%@': %@",
-                            [ NSString stringWithUTF8String: PROGRAM_STRING ],
+                            @PROGRAM_STRING,
                             [ exception name   ],
                             [ exception reason ]
                         );
@@ -195,13 +195,13 @@
                 NSLog
                 (
                     @"%@: Failed for '%@' with OSStatus code %d (&%04X) and errno value %d (&%04X): %@",
-                    [ NSString stringWithUTF8String: PROGRAM_STRING ],
+                    @PROGRAM_STRING,
                     self.pathData,
                     ( int          ) status,
                     ( unsigned int ) status,
                     ( int          ) errno,
                     ( unsigned int ) errno,
-                    [ NSString stringWithUTF8String: strerror( errno ) ]
+                    @( strerror( errno ) )
                 );
 
                 globalSemaphoreClaim();
@@ -214,7 +214,7 @@
             NSLog
             (
                 @"%@: Exception '%@': %@",
-                [ NSString stringWithUTF8String: PROGRAM_STRING ],
+                @PROGRAM_STRING,
                 [ exception name   ],
                 [ exception reason ]
             );

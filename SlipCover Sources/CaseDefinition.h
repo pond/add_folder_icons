@@ -27,13 +27,13 @@ enum ImageRendering {
   NSMutableDictionary *images;
   NSMutableDictionary *rects;
   NSMutableDictionary *masks;
-  NSString            *name;
+  NSString            *__unsafe_unretained name;
   
   int imageRendering;
   
   NSRect imageRect;
 }
-@property (readonly) NSString *name;
+@property (unsafe_unretained, readonly) NSString *name;
 
 @property (readonly) NSDictionary *images;
 @property (readonly) NSDictionary *rects;

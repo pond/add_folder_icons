@@ -25,10 +25,7 @@
 + ( NSString * ) applicationSupportDirectory
 {
     return
-    [
-        [ self applicationSupportDirectoriesFor: APPLICATION_SUPPORT_DIRECTORY_FILENAME ]
-        objectAtIndex: 0
-    ];
+    [ self applicationSupportDirectoriesFor: APPLICATION_SUPPORT_DIRECTORY_FILENAME ][ 0 ];
 }
 
 /******************************************************************************\

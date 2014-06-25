@@ -176,10 +176,11 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
                                                              isDirectory: YES ];
 
         dirEnum = [ fileMgr enumeratorAtURL: enumPathAsURL
-                 includingPropertiesForKeys: [ NSArray arrayWithObjects: NSURLLabelColorKey,
-                                                                         NSURLIsDirectoryKey,
-                                                                         NSURLIsRegularFileKey,
-                                                                         nil ]
+                 includingPropertiesForKeys: @[
+                                               NSURLLabelColorKey,
+                                               NSURLIsDirectoryKey,
+                                               NSURLIsRegularFileKey
+                                             ]
                                     options: NSDirectoryEnumerationSkipsHiddenFiles
                                errorHandler: nil ];
 
@@ -300,7 +301,7 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
                 NSDictionary * currAttrs = [ dirEnum fileAttributes ];
                 if ( ! currAttrs ) continue;
 
-                NSString * fileType = [ currAttrs objectForKey: NSFileType ];
+                NSString * fileType = currAttrs[ NSFileType ];
                 NSString * fullPath = [
                     enumPath stringByAppendingPathComponent: currFile
                 ];
@@ -316,7 +317,7 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
                     {
                         #ifdef MAXIMUM_IMAGE_SIZE
                         {
-                            NSNumber * size = [ currAttrs objectForKey: NSFileSize ];
+                            NSNumber * size = currAttrs[ NSFileSize ];
                             if ( [ size unsignedLongLongValue ] > MAXIMUM_IMAGE_SIZE ) continue;
                         }
                         #endif
@@ -390,7 +391,7 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
         if ( params.previewMode == YES ) randomIndex = 0;
         else                             randomIndex = random() % [ images count ];
 
-        [ chosenImages addObject: [ images objectAtIndex: randomIndex ] ];
+        [ chosenImages addObject: images[ randomIndex ] ];
         [ images removeObjectAtIndex: randomIndex ];
     }
 
@@ -481,15 +482,15 @@ static BOOL paintImage( CFStringRef  fullPosixPath,
             CGFloat    dpi, xdpi, ydpi;
             int        orientation;
 
-            val  = [ metadata objectForKey: ( id ) kCGImagePropertyDPIWidth ];
+            val  = metadata[ ( id ) kCGImagePropertyDPIWidth ];
             dpi  = [ val floatValue ];
             xdpi = ( dpi == 0 ) ? 72.0 : dpi;
 
-            val  = [ metadata objectForKey: ( id ) kCGImagePropertyDPIHeight ];
+            val  = metadata[ ( id ) kCGImagePropertyDPIHeight ];
             dpi  = [ val floatValue ];
             ydpi = ( dpi == 0 ) ? 72.0 : dpi;
 
-            val  = [ metadata objectForKey: ( id ) kCGImagePropertyOrientation ];
+            val  = metadata[ ( id ) kCGImagePropertyOrientation ];
             orientation = [ val intValue ];
             if ( orientation < 1 || orientation > 8 ) orientation = 1;
 
@@ -754,7 +755,7 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
         dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ),
         ^( size_t index )
         {
-            NSString * currFile = [ chosenImages objectAtIndex: ( NSUInteger ) index ];
+            NSString * currFile = chosenImages[ ( NSUInteger ) index ];
 
             CGLayerRef   layer    = CGLayerCreateWithContext( context, pixelSize, NULL );
             CGContextRef layerCtx = CGLayerGetContext( layer );
@@ -1131,7 +1132,7 @@ static CGImageRef allocSlipCoverIcon( NSMutableArray * chosenImages,
 
     @try
     {
-        sourceImage = [ [ NSImage alloc ] initByReferencingFile: [ chosenImages objectAtIndex: 0 ] ];
+        sourceImage = [ [ NSImage alloc ] initByReferencingFile: chosenImages[ 0 ] ];
         caseImage   = [ CaseGenerator caseImageAtSize: case512
                                                 cover: sourceImage
                                        caseDefinition: params.slipCoverCase ];

@@ -69,10 +69,9 @@
     ];
 
     NSArray * iconStyleSortDescriptors =
-    [
-        NSArray arrayWithObjects: byNameDescriptor,
-                                  byDateDescriptor,
-                                  nil
+    @[
+      byNameDescriptor,
+      byDateDescriptor
     ];
 
     [ self setSortDescriptors: iconStyleSortDescriptors ];

@@ -37,15 +37,13 @@
     /* Attributes for a link to the SlipCover web site */
 
     NSString     * url     = NSLocalizedString( @"http://www.macupdate.com/app/mac/31676/slipcover", @"SlipCover web site URL" );
-    NSNumber     * uFlags  = [ NSNumber numberWithUnsignedInteger: NSUnderlinePatternSolid | NSUnderlineStyleSingle ];
+    NSNumber     * uFlags  = @( ( NSUInteger ) ( NSUnderlinePatternSolid | NSUnderlineStyleSingle ) );
     NSDictionary * attrs   =
-    [
-        NSDictionary dictionaryWithObjectsAndKeys:
-            url,                   NSLinkAttributeName,
-            [ NSColor blueColor ], NSForegroundColorAttributeName,
-            uFlags,                NSUnderlineStyleAttributeName,
-            nil
-    ];
+    @{
+      NSLinkAttributeName:            url,
+      NSForegroundColorAttributeName: [ NSColor blueColor ],
+      NSUnderlineStyleAttributeName:  uFlags
+    };
 
     /* Attributed link text */
 
@@ -109,18 +107,17 @@
          */
 
         styleObservableKeyPaths =
-        [
-                NSArray arrayWithObjects: @"usesSlipCover",
-                                          @"slipCoverName",
-                                          @"cropToSquare",
-                                          @"whiteBackground",
-                                          @"dropShadow",
-                                          @"randomRotation",
-                                          @"onlyUseCoverArt",
-                                          @"maxImages",
-                                          @"showFolderInBackground",
-                                          nil
-            ];
+        @[
+          @"usesSlipCover",
+          @"slipCoverName",
+          @"cropToSquare",
+          @"whiteBackground",
+          @"dropShadow",
+          @"randomRotation",
+          @"onlyUseCoverArt",
+          @"maxImages",
+          @"showFolderInBackground"
+        ];
 
         cachedFolderImage = allocFolderIcon();
     }
@@ -224,7 +221,7 @@
 
         IconStyle * newStyle = [ iconStyleManager insertBlankUserStyleAndProcessChanges ];
         [ stylesArrayController fetch: nil ];
-        [ stylesArrayController setSelectedObjects: [ NSArray arrayWithObject: newStyle ] ];
+        [ stylesArrayController setSelectedObjects: @[ newStyle ] ];
         
         /* Drop through to the code which opens the editor sheet - it's the
          * same now, whether editing a previously selected item, or editing
@@ -239,7 +236,7 @@
      * would be 'already gone' by the time the observer was invoked).
      */
 
-    IconStyle * editedStyle = [ [ stylesArrayController selectedObjects ] objectAtIndex: 0 ];
+    IconStyle * editedStyle = [ stylesArrayController selectedObjects ][ 0 ];
     for ( NSString * keyPath in styleObservableKeyPaths )
     {
         [ editedStyle addObserver: self forKeyPath: keyPath options: 0 context: NULL ];
@@ -288,7 +285,7 @@
      * destructive ('Cancel' -> Undo -> object is deleted).
      */
 
-    IconStyle * editedStyle = [ [ stylesArrayController selectedObjects ] objectAtIndex: 0 ];
+    IconStyle * editedStyle = [ stylesArrayController selectedObjects ][ 0 ];
     for ( NSString * keyPath in styleObservableKeyPaths )
     {
         [ editedStyle removeObserver: self forKeyPath: keyPath ];

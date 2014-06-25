@@ -99,9 +99,10 @@ static id preferencesWindowControllerSingletonInstance = nil;
     [ item setTarget: self                        ];
     [ item setAction: @selector( setActiveView: ) ];
     
-    [ toolbarLabels addObject:              labelCopy ];
-    [ toolbarViews  setObject: view forKey: labelCopy ];
-    [ toolbarItems  setObject: item forKey: labelCopy ];
+    [ toolbarLabels addObject: labelCopy ];
+
+    toolbarViews[ labelCopy ] = view;
+    toolbarItems[ labelCopy ] = item;
 }
 
 /******************************************************************************\
@@ -226,7 +227,7 @@ static id preferencesWindowControllerSingletonInstance = nil;
     
         /* Select the first tab */
         
-        NSString * firstLabel = [ toolbarLabels objectAtIndex: 0 ];
+        NSString * firstLabel = toolbarLabels[ 0 ];
         [ [ [ self window ] toolbar ] setSelectedItemIdentifier: firstLabel ];
         [ self displayViewForLabel: firstLabel animate: NO ];
     }
@@ -323,7 +324,7 @@ static id preferencesWindowControllerSingletonInstance = nil;
     ( void ) toolbar;
     ( void ) willBeInserted;
     
-    return [ toolbarItems objectForKey: identifier ];
+    return toolbarItems[ identifier ];
 }
 
 //------------------------------------------------------------------------------
@@ -366,7 +367,7 @@ static id preferencesWindowControllerSingletonInstance = nil;
 - ( void ) displayViewForLabel: ( NSString * ) label animate: ( BOOL ) animate
 {	
 	NSView * oldView = nil;
-	NSView * newView = [ toolbarViews objectForKey: label ];
+	NSView * newView = toolbarViews[ label ];
 
     /* Find the last subview. We only ever expect one, but take the last in
      * the list just in case there are several (though we'd be in a fairly
@@ -409,7 +410,7 @@ static id preferencesWindowControllerSingletonInstance = nil;
 
         /* Make sure the window title is updated too */
 
-		[ [ self window ] setTitle: [ [ toolbarItems objectForKey: label ] label ] ];
+		[ [ self window ] setTitle: [ toolbarItems[ label ] label ] ];
 	}
 }
 

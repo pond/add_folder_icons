@@ -7,12 +7,11 @@
  *
  */
 
-typedef enum IconStyleShowFolderInBackground
+typedef NS_ENUM( NSUInteger, IconStyleShowFolderInBackground )
 {
     StyleShowFolderInBackgroundNever              = 0,
     StyleShowFolderInBackgroundForOneImage        = 1,
     StyleShowFolderInBackgroundForOneOrTwoImages  = 2,
     StyleShowFolderInBackgroundForUpToThreeImages = 3,
     StyleShowFolderInBackgroundAlways             = 4
-}
-IconStyleShowFolderInBackground;
+};

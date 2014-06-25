@@ -114,8 +114,6 @@ static ApplicationSpecificPreferencesWindowController * applicationSpecificPrefe
 
             [ updatesPreferencesView addSubview: [ updateHelper view ] ];
             [ self addView: updatesPreferencesView label: @"Updates" image: sparkleIcon ];
-
-            [ sparkleIcon release ];
         }
     #endif
 
@@ -138,7 +136,7 @@ static ApplicationSpecificPreferencesWindowController * applicationSpecificPrefe
 - ( void ) iconStyleListChanged: ( NSNotification * ) notification
 {
     NSDictionary * userInfo      = [ notification userInfo ];
-    NSSet        * deletedStyles = [ userInfo objectForKey: NSDeletedObjectsKey ];
+    NSSet        * deletedStyles = userInfo[ NSDeletedObjectsKey ];
 
     if ( [ deletedStyles count ] == 0 ) return;
 

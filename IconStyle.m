@@ -109,7 +109,7 @@
 
         for ( NSDictionary * entry in coverArtFilenames )
         {
-            if ( [ entry objectForKey: @"leafname" ] != nil ) notNilCount ++;
+            if ( entry[ @"leafname" ] != nil ) notNilCount ++;
         }
 
         if ( notNilCount > 0 )
@@ -119,7 +119,7 @@
             
             for ( NSDictionary * entry in coverArtFilenames )
             {
-                NSString * leafname = [ entry objectForKey: @"leafname" ];
+                NSString * leafname = entry[ @"leafname" ];
                 if ( leafname != nil ) [ arguments addObject: leafname ];
             }
         }

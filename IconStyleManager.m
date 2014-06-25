@@ -226,7 +226,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
 {
     NSManagedObjectContext * moc         = [ self managedObjectContext ];
     NSManagedObjectModel   * mom         = [ self managedObjectModel   ];
-    NSEntityDescription    * styleEntity = [ [ mom entitiesByName ] objectForKey: @"IconStyle" ];
+    NSEntityDescription    * styleEntity = [ mom entitiesByName ][ @"IconStyle" ];
     IconStyle              * newStyle;
 
     /* Is the icon style collection empty? */
@@ -254,8 +254,8 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
 
     /* Convenience... */
 
-    NSNumber * numYes = [ NSNumber numberWithBool: YES ];
-    NSNumber * numNo  = [ NSNumber numberWithBool: NO  ];
+    NSNumber * numYes = @YES;
+    NSNumber * numNo  = @NO;
 
     /* "Preset: Classic thumbnails" - defaults are mostly fine */
 
@@ -280,7 +280,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
     [ newStyle setWhiteBackground: numNo  ];
     [ newStyle setRandomRotation:  numNo  ];
     [ newStyle setOnlyUseCoverArt: numYes ];
-    [ newStyle setShowFolderInBackground: [ NSNumber numberWithUnsignedInt: StyleShowFolderInBackgroundNever ] ];
+    [ newStyle setShowFolderInBackground: @( StyleShowFolderInBackgroundNever ) ];
 
     /* "Preset: Rectangular covers (e.g. DVDs) - the most changes */
 
@@ -296,7 +296,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
     [ newStyle setWhiteBackground: numNo  ];
     [ newStyle setRandomRotation:  numNo  ];
     [ newStyle setOnlyUseCoverArt: numYes ];
-    [ newStyle setShowFolderInBackground: [ NSNumber numberWithUnsignedInt: StyleShowFolderInBackgroundNever ] ]; 
+    [ newStyle setShowFolderInBackground: @( StyleShowFolderInBackgroundNever ) ];
 
     /* Save the presets */
 
@@ -320,7 +320,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
     NSError                * error       = nil;
     NSManagedObjectContext * moc         = [ self managedObjectContext ];
     NSManagedObjectModel   * mom         = [ self managedObjectModel   ];
-    NSEntityDescription    * styleEntity = [ [ mom entitiesByName ] objectForKey: @"IconStyle" ];
+    NSEntityDescription    * styleEntity = [ mom entitiesByName ][ @"IconStyle" ];
     NSFetchRequest         * request     = [ [ NSFetchRequest alloc ] init ];
     NSPredicate            * predicate   = [ NSPredicate predicateWithFormat: @"usesSlipCover == YES" ];
 
@@ -505,13 +505,13 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
             if ( [ alert runModal ] == NSAlertDefaultReturn )
             {
                 NSManagedObjectModel * mom         = [ self managedObjectModel   ];
-                NSEntityDescription  * styleEntity = [ [ mom entitiesByName ] objectForKey: @"IconStyle" ];
+                NSEntityDescription  * styleEntity = [ mom entitiesByName ][ @"IconStyle" ];
                 IconStyle            * newStyle;
 
                 /* Convenience... */
 
-                NSNumber * numYes = [ NSNumber numberWithBool: YES ];
-                NSNumber * numNo  = [ NSNumber numberWithBool: NO  ];
+                NSNumber * numYes = @YES;
+                NSNumber * numNo  = @NO;
 
                 /* Loop over unused case names and created styles for each */
 
@@ -615,7 +615,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
         NSArray * results = [ [ self managedObjectContext ] executeFetchRequest: request
                                                                           error: nil ];
 
-        if ( [ results count ] > 0 ) obj = [ results objectAtIndex: 0 ];
+        if ( [ results count ] > 0 ) obj = results[ 0 ];
         else                         obj = allElseFails;
     }
 
@@ -645,7 +645,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
     NSError                * error       = nil;
     NSManagedObjectContext * moc         = [ self managedObjectContext ];
     NSManagedObjectModel   * mom         = [ self managedObjectModel   ];
-    NSEntityDescription    * styleEntity = [ [ mom entitiesByName ] objectForKey: @"IconStyle" ];
+    NSEntityDescription    * styleEntity = [ mom entitiesByName ][ @"IconStyle" ];
     NSFetchRequest         * request     = [ [ NSFetchRequest alloc ] init ];
     NSPredicate            * predicate   =
     [
@@ -668,7 +668,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
 
     assert( [ results count ] == 1 );
 
-    foundStyle = [ results objectAtIndex: 0 ];
+    foundStyle = results[ 0 ];
     assert( foundStyle != nil );
 
     return foundStyle;
@@ -693,7 +693,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
 {
     NSManagedObjectContext * moc         = [ self managedObjectContext ];
     NSManagedObjectModel   * mom         = [ self managedObjectModel   ];
-    NSEntityDescription    * styleEntity = [ [ mom entitiesByName ] objectForKey: @"IconStyle" ];
+    NSEntityDescription    * styleEntity = [ mom entitiesByName ][ @"IconStyle" ];
     IconStyle              * newStyle    =
     [
         [ IconStyle alloc ] initWithEntity: styleEntity
@@ -718,7 +718,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
 
     if ( [ caseDefinitions count ] > 0 )
     {
-        [ newStyle setSlipCoverName: [ [ caseDefinitions objectAtIndex: 0 ] name ] ];
+        [ newStyle setSlipCoverName: [ caseDefinitions[ 0 ] name ] ];
     }
 
     /* OK, tell CoreData to process the new object and return the result */

@@ -240,7 +240,7 @@
 	NSPasteboard *copyBoard = [NSPasteboard pasteboardWithName:NSGeneralPboard];
 	NSURL *copyURL = [sender representedObject];
 	
-	[copyBoard declareTypes:[NSArray arrayWithObjects:NSURLPboardType, NSStringPboardType, nil] owner:nil];
+	[copyBoard declareTypes:@[NSURLPboardType, NSStringPboardType] owner:nil];
 	[copyURL writeToPasteboard:copyBoard];
 	[copyBoard setString:[copyURL absoluteString] forType:NSStringPboardType];
 }

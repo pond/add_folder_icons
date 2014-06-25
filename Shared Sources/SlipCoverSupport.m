@@ -49,12 +49,11 @@
     NSString       * caseFolder =
     [
         NSString pathWithComponents:
-        [
-            NSArray arrayWithObjects: appItself,
-                                      @"Contents",
-                                      @"PlugIns",
-                                      @"Cases",
-                                      nil
+        @[
+          appItself,
+          @"Contents",
+          @"PlugIns",
+          @"Cases"
         ]
     ];
 

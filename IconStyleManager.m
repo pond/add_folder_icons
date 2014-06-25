@@ -84,9 +84,14 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
 
         /* Watch SlipCover paths to make sure definitions don't change */
 
-        slipCoverCaseFolderWatcher = [ [ SCEvents alloc ] init ];
-        [ slipCoverCaseFolderWatcher setDelegate: self ];
-        [ slipCoverCaseFolderWatcher startWatchingPaths: [ SlipCoverSupport searchPathsForCovers ] ];
+        NSMutableArray * watchPaths = [ SlipCoverSupport searchPathsForCovers ];
+
+        if ( watchPaths != nil )
+        {
+            slipCoverCaseFolderWatcher = [ [ SCEvents alloc ] init ];
+            [ slipCoverCaseFolderWatcher setDelegate: self ];
+            [ slipCoverCaseFolderWatcher startWatchingPaths: watchPaths ];
+        }
     }
 
     return self;

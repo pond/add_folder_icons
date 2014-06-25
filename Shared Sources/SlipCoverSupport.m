@@ -36,8 +36,9 @@
  *      Autoreleased array of autoreleased pointers to NSStrings each giving
  *      the full POSIX path of a unique directory which might contain SlipCover
  *      case files. Each directory can be assumed to have no interesting
- *      subdirectories. Each directory may or may not exist. If the SlipCover
- *      application cannot be found, this method will return 'nil'.
+ *      subdirectories. Each directory will exist. If the SlipCover application
+ *      or all of the likely subdirectores are absent, this method will return
+ *      'nil'.
 \******************************************************************************/
 
 + ( NSMutableArray * ) searchPathsForCovers
@@ -45,8 +46,8 @@
     NSString * appItself = [ self slipCoverApplicationPath ];
     if ( appItself == nil ) return nil;
 
-    NSMutableArray * appSupport = [ ApplicationSupport applicationSupportDirectoriesFor: @"SlipCover" ];
-    NSString       * caseFolder =
+    NSMutableArray * likelyFolders = [ ApplicationSupport applicationSupportDirectoriesFor: @"SlipCover" ];
+    NSString       * caseFolder    =
     [
         NSString pathWithComponents:
         @[
@@ -57,7 +58,7 @@
         ]
     ];
 
-    [ appSupport insertObject: caseFolder atIndex: 0 ];
+    [ likelyFolders insertObject: caseFolder atIndex: 0 ];
 
     /* Is the application running in a sandbox? This is the only way I can find
      * to figure it out, even though it's clearly awful :-(
@@ -65,7 +66,7 @@
 
     BOOL isSandboxed = NO;
 
-    for ( NSString * path in appSupport )
+    for ( NSString * path in likelyFolders )
     {
         NSRange found = [ path rangeOfString: @"/Library/Containers/" ];
 
@@ -87,10 +88,29 @@
     if ( isSandboxed )
     {
         NSString * nonSandboxPath = [ NSString stringWithFormat: @"/Users/%@/Library/Application Support/SlipCover", NSUserName() ];
-        [ appSupport insertObject: nonSandboxPath atIndex: 0 ];
+
+        [ likelyFolders insertObject: nonSandboxPath atIndex: 0 ];
     }
 
-    return appSupport;
+    /* Between the application support directories, application itself and
+     * non-sandbox library path, some or all of the items may not exist.
+     */
+
+    BOOL             exists, isDir;
+    NSFileManager  * fileManager   = [ NSFileManager defaultManager ];
+    NSMutableArray * actualFolders = [ [ NSMutableArray alloc ] init ];
+
+    for ( NSString * path in likelyFolders )
+    {
+        exists = [ fileManager fileExistsAtPath: path isDirectory: &isDir ];
+
+        if ( exists == YES && isDir == YES )
+        {
+            [ actualFolders addObject: path ];
+        }
+    }
+
+    return [ actualFolders count ] == 0 ? nil : actualFolders;
 }
 
 /******************************************************************************\
@@ -109,6 +129,8 @@
     NSFileManager  * fileManager     = [ [ NSFileManager alloc ] init ];
     NSMutableArray * searchPaths     = [ self searchPathsForCovers ];
     NSMutableArray * caseDefinitions = [ NSMutableArray arrayWithCapacity: 0 ];
+
+    if ( searchPaths == nil ) return nil;
 
     for ( NSString * searchPath in searchPaths )
     {

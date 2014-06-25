@@ -475,8 +475,8 @@
                     {
                         NSDictionary * dictionary =
                         @{
-                          @"path":  [ url path ],
-                          @"index": @( currentRow )
+                            @"path":  [ url path ],
+                            @"index": @( currentRow )
                         };
 
                         [ self performSelectorOnMainThread: @selector( insertFolderByDictionary: )
@@ -1760,8 +1760,8 @@ return EXIT_SUCCESS;
         [
             self considerInsertingSubfoldersOf:
             @{
-              @"strings":    pathnames,
-              @"firstIndex": @( currentRow )
+                @"strings":    pathnames,
+                @"firstIndex": @( currentRow )
             }
         ];
 

@@ -51,10 +51,10 @@
     [
         NSString pathWithComponents:
         @[
-          appItself,
-          @"Contents",
-          @"PlugIns",
-          @"Cases"
+            appItself,
+            @"Contents",
+            @"PlugIns",
+            @"Cases"
         ]
     ];
 

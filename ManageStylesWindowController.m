@@ -40,9 +40,9 @@
     NSNumber     * uFlags  = @( ( NSUInteger ) ( NSUnderlinePatternSolid | NSUnderlineStyleSingle ) );
     NSDictionary * attrs   =
     @{
-      NSLinkAttributeName:            url,
-      NSForegroundColorAttributeName: [ NSColor blueColor ],
-      NSUnderlineStyleAttributeName:  uFlags
+        NSLinkAttributeName:            url,
+        NSForegroundColorAttributeName: [ NSColor blueColor ],
+        NSUnderlineStyleAttributeName:  uFlags
     };
 
     /* Attributed link text */
@@ -108,15 +108,15 @@
 
         styleObservableKeyPaths =
         @[
-          @"usesSlipCover",
-          @"slipCoverName",
-          @"cropToSquare",
-          @"whiteBackground",
-          @"dropShadow",
-          @"randomRotation",
-          @"onlyUseCoverArt",
-          @"maxImages",
-          @"showFolderInBackground"
+            @"usesSlipCover",
+            @"slipCoverName",
+            @"cropToSquare",
+            @"whiteBackground",
+            @"dropShadow",
+            @"randomRotation",
+            @"onlyUseCoverArt",
+            @"maxImages",
+            @"showFolderInBackground"
         ];
 
         cachedFolderImage = allocFolderIcon();

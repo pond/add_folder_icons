@@ -177,9 +177,9 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
 
         dirEnum = [ fileMgr enumeratorAtURL: enumPathAsURL
                  includingPropertiesForKeys: @[
-                                               NSURLLabelColorKey,
-                                               NSURLIsDirectoryKey,
-                                               NSURLIsRegularFileKey
+                                                 NSURLLabelColorKey,
+                                                 NSURLIsDirectoryKey,
+                                                 NSURLIsRegularFileKey
                                              ]
                                     options: NSDirectoryEnumerationSkipsHiddenFiles
                                errorHandler: nil ];

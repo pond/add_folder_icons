@@ -29,7 +29,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#if TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || TARGET_OS_WIN32
+#import <CFNetwork/CFNetwork.h>
+#else
 #import <CoreServices/CoreServices.h>
+#endif
+
 
 #import "SCConstants.h"
 

@@ -40,8 +40,8 @@ enum ImageRendering {
 
 @property (readonly) int imageRendering;
 
-+ (id)caseDefinitionFromPath:(NSString *)path;
-- (id)initFromPath:(NSString *)path;
++ (instancetype)caseDefinitionFromPath:(NSString *)path;
+- (instancetype)initFromPath:(NSString *)path NS_DESIGNATED_INITIALIZER;
 
 - (NSImage *)caseImageForSize:(NSString *)caseSize;
 - (NSRect)caseRectForSize:(NSString *)caseSize;

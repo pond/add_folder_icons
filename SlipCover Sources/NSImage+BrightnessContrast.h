@@ -10,6 +10,6 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface NSImage (NSImage_BrightnessContrast)
-- (NSImage *)sharpenedImage;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSImage *sharpenedImage;
 - (NSData *)PNGRepresentationWithInterlaced:(BOOL)interlaced;
 @end

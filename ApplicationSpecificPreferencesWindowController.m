@@ -63,7 +63,7 @@ static ApplicationSpecificPreferencesWindowController * applicationSpecificPrefe
  *      This instance ("self").
 \******************************************************************************/
 
-- ( id ) initWithWindowNibName: ( NSString * ) windowNibName
+- ( instancetype ) initWithWindowNibName: ( NSString * ) windowNibName
 {
     if ( ( self = [ super initWithWindowNibName: windowNibName ] ) )
     {

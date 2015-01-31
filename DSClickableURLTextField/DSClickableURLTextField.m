@@ -55,7 +55,7 @@
 
 /* Set the text field to be non-editable and
 	non-selectable. */
-- (id)initWithCoder:(NSCoder *)coder
+- (instancetype)initWithCoder:(NSCoder *)coder
 {
 	if ( (self = [super initWithCoder:coder]) ) {
 		[self setEditable:NO];
@@ -68,7 +68,7 @@
 
 /* Set the text field to be non-editable and
 	non-selectable. */
-- (id)initWithFrame:(NSRect)frameRect
+- (instancetype)initWithFrame:(NSRect)frameRect
 {
 	if ( (self = [super initWithFrame:frameRect]) ) {
 		[self setEditable:NO];

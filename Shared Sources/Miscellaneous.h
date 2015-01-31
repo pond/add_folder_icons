@@ -20,7 +20,13 @@
  *      release the string later, for non-NULL return values.
 \******************************************************************************/
 
+
+CF_IMPLICIT_BRIDGING_ENABLED
+
 CFStringRef getUti( FSRef * fsRef );
+
+CF_IMPLICIT_BRIDGING_DISABLED
+
 
 /******************************************************************************\
  * isLikeAPackage()

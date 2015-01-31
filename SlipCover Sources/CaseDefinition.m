@@ -13,7 +13,7 @@
 
 @synthesize name, images, rects, imageRendering;
 
-+ (id)caseDefinitionFromPath:(NSString *)path
++ (instancetype)caseDefinitionFromPath:(NSString *)path
 {
   return [[CaseDefinition alloc] initFromPath:path];
 }
@@ -39,7 +39,7 @@
 // source herein differs from that in the application. Either way, I've added
 // a further change which initialises the name based on the path.
 
-- (id)initFromPath:(NSString *)path
+- (instancetype)initFromPath:(NSString *)path
 {
   self = [super init];
   

@@ -29,8 +29,8 @@
  * discard their copy afterwards.
  */
 
--( id ) initWithPath: ( NSString       * ) fullPosixPath
+-( instancetype ) initWithPath: ( NSString       * ) fullPosixPath
        andBackground: ( CGImageRef       ) backgroundImage
-       andParameters: ( IconParameters * ) params;
+       andParameters: ( IconParameters * ) params NS_DESIGNATED_INITIALIZER;
 
 @end /* @interface ConcurrentPathProcessor : NSOperation */

@@ -57,7 +57,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
  *      Value of "self".
 \******************************************************************************/
 
-- ( id ) init
+- ( instancetype ) init
 {
     if ( ( self = [ super init ] ) )
     {

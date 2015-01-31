@@ -133,7 +133,7 @@ static id preferencesWindowControllerSingletonInstance = nil;
  *      Initialised 'self'.
 \******************************************************************************/
 
-- ( id ) initWithWindow: ( NSWindow * ) window
+- ( instancetype ) initWithWindow: ( NSWindow * ) window
 {
     self = [ super initWithWindow: window ];
 

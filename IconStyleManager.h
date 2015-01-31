@@ -56,12 +56,12 @@
 /* General methods */
 
 - ( void        ) establishPresetIconStyles;
-- ( NSArray   * ) findSlipCoverStyles;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *findSlipCoverStyles;
 - ( void        ) checkIconStylesForValidity;
-- ( IconStyle * ) findDefaultIconStyle;
-- ( IconStyle * ) findClassicIconStyle;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) IconStyle *findDefaultIconStyle;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) IconStyle *findClassicIconStyle;
 
-- ( IconStyle * ) insertBlankUserStyleAndProcessChanges;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) IconStyle *insertBlankUserStyleAndProcessChanges;
 
 /* Implement SCEventListenerProtocol */
 

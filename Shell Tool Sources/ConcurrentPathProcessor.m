@@ -61,7 +61,7 @@
  * Out: self.
 \******************************************************************************/
 
--( id ) initWithPath : ( NSString       * ) fullPosixPath
+-( instancetype ) initWithPath : ( NSString       * ) fullPosixPath
        andBackground : ( CGImageRef       ) backgroundImage
        andParameters : ( IconParameters * ) params;
 {

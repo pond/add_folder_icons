@@ -29,21 +29,21 @@
 
 //TODO: There must be a better way! Revisit this sometime.
 
-- ( id ) init
+- ( instancetype ) init
 {
     self = [ super init ];
     [ self setDefaultSortDescriptors ];
     return self;
 }
 
-- ( id ) initWithCoder: ( NSCoder * ) aDecoder
+- ( instancetype ) initWithCoder: ( NSCoder * ) aDecoder
 {
     self = [ super initWithCoder: aDecoder ];
     [ self setDefaultSortDescriptors ];
     return self;
 }
 
-- ( id ) initWithContent: ( id ) content 
+- ( instancetype ) initWithContent: ( id ) content 
 {
     self = [ super initWithContent: content ];
     [ self setDefaultSortDescriptors ];

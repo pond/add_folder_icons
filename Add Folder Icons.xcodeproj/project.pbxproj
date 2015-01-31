@@ -35,7 +35,7 @@
 		235D7A0514DD4A3200CD503D /* IconParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 235D7A0414DD4A3200CD503D /* IconParameters.m */; };
 		235D7A0614DD519B00CD503D /* IconParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 235D7A0414DD4A3200CD503D /* IconParameters.m */; };
 		235D7A0714DD51A200CD503D /* IconParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 235D7A0414DD4A3200CD503D /* IconParameters.m */; };
-		236315C913055DE400F84A22 /* addfoldericons in Copy Shell Tool */ = {isa = PBXBuildFile; fileRef = 23C1583112F37D2900D99934 /* addfoldericons */; };
+		236315C913055DE400F84A22 /* addfoldericons in Copy Shell Tool */ = {isa = PBXBuildFile; fileRef = 23C1583112F37D2900D99934 /* addfoldericons */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2364AF0212ED8E98007C6521 /* IconStyleArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2364AF0112ED8E98007C6521 /* IconStyleArrayController.m */; };
 		2364AF8612EDBA8A007C6521 /* IconStyleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2364AF8512EDBA8A007C6521 /* IconStyleManager.m */; };
 		2364B22012EEE058007C6521 /* tb_cd.png in Resources */ = {isa = PBXBuildFile; fileRef = 2364B21D12EEE058007C6521 /* tb_cd.png */; };
@@ -77,7 +77,7 @@
 		23D3FB3C13055044004FDA09 /* tb_classic.png in Resources */ = {isa = PBXBuildFile; fileRef = 2364B21E12EEE058007C6521 /* tb_classic.png */; };
 		23D3FB3D13055044004FDA09 /* tb_dvd.png in Resources */ = {isa = PBXBuildFile; fileRef = 2364B21F12EEE058007C6521 /* tb_dvd.png */; };
 		23D3FB3E13055044004FDA09 /* Preview in Resources */ = {isa = PBXBuildFile; fileRef = 23FF74DD1301D1C700D656DB /* Preview */; };
-		23D3FB4213055044004FDA09 /* addfoldericons in Copy Shell Tool */ = {isa = PBXBuildFile; fileRef = 23C1583112F37D2900D99934 /* addfoldericons */; };
+		23D3FB4213055044004FDA09 /* addfoldericons in Copy Shell Tool */ = {isa = PBXBuildFile; fileRef = 23C1583112F37D2900D99934 /* addfoldericons */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		23D3FB4413055044004FDA09 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		23D3FB4513055044004FDA09 /* Add_Folder_IconsAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* Add_Folder_IconsAppDelegate.m */; };
 		23D3FB4613055044004FDA09 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 233D820A115FF0E900D62B8C /* MainWindowController.m */; };
@@ -92,8 +92,8 @@
 		23D3FB4F13055044004FDA09 /* ApplicationSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2349142712FAB6AF00A59086 /* ApplicationSupport.m */; };
 		23D3FB5013055044004FDA09 /* SlipCoverSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED30912FF3E13003181D8 /* SlipCoverSupport.m */; };
 		23D3FB5113055044004FDA09 /* CaseDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED2FD12FF2601003181D8 /* CaseDefinition.m */; };
-		23D3FB5213055044004FDA09 /* SCEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32612FFF104003181D8 /* SCEvent.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		23D3FB5313055044004FDA09 /* SCEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32912FFF104003181D8 /* SCEvents.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		23D3FB5213055044004FDA09 /* SCEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32612FFF104003181D8 /* SCEvent.m */; };
+		23D3FB5313055044004FDA09 /* SCEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32912FFF104003181D8 /* SCEvents.m */; };
 		23D3FB5413055044004FDA09 /* DSClickableURLTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 232A213C13006066005CFBED /* DSClickableURLTextField.m */; };
 		23D3FB5513055044004FDA09 /* GlobalSemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912A512F3857000A59086 /* GlobalSemaphore.m */; };
 		23D3FB5613055044004FDA09 /* Miscellaneous.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912A712F3857000A59086 /* Miscellaneous.m */; };
@@ -576,7 +576,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = Hipposoft;
 				TargetAttributes = {
 					23C1583012F37D2900D99934 = {
@@ -1002,7 +1002,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1020,6 +1021,7 @@
 				INSTALL_PATH = /Applications;
 				OTHER_CFLAGS = "-DUPDATABLE";
 				PRODUCT_NAME = "Add Folder Icons";
+				PROVISIONING_PROFILE = "";
 				SYMROOT = build;
 			};
 			name = Debug;
@@ -1030,7 +1032,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1045,6 +1048,7 @@
 				INSTALL_PATH = /Applications;
 				OTHER_CFLAGS = "-DUPDATABLE";
 				PRODUCT_NAME = "Add Folder Icons";
+				PROVISIONING_PROFILE = "";
 				SYMROOT = build;
 			};
 			name = Release;

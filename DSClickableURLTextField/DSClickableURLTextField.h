@@ -58,8 +58,7 @@
 	BOOL			canCopyURLs;
 }
 
-- (void)setCanCopyURLs:(BOOL)aFlag;
-- (BOOL)canCopyURLs;
+@property (NS_NONATOMIC_IOSONLY) BOOL canCopyURLs;
 
 @end
 

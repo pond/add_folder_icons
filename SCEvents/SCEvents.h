@@ -29,7 +29,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#if TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || TARGET_OS_WIN32
+#import <CFNetwork/CFNetwork.h>
+#else
 #import <CoreServices/CoreServices.h>
+#endif
+
 
 #import "SCEventListenerProtocol.h"
 
@@ -44,7 +49,7 @@
  */
 @interface SCEvents : NSObject 
 {
-    id <NSObject, SCEventListenerProtocol> _delegate; 
+    __unsafe_unretained id <NSObject, SCEventListenerProtocol> _delegate; 
     
     BOOL                 _isWatchingPaths;
     BOOL                 _ignoreEventsFromSubDirs;
@@ -57,7 +62,7 @@
     NSArray              *_watchedPaths;
     NSArray              *_excludedPaths;
 	
-	pthread_mutex_t       _eventsLock;
+    dispatch_queue_t     _eventsQueue;
 }
 
 /**

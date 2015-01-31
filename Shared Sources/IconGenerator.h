@@ -80,4 +80,4 @@ CGImageRef allocIconForFolder( NSString       * fullPosixPath,
                                BOOL             skipPackageLikeEntries,
                                CGImageRef       backgroundImage,
                                OSStatus       * thumbState,
-                               IconParameters * params );
+                               IconParameters * params ) CF_RETURNS_NOT_RETAINED;

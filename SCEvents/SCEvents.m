@@ -1,5 +1,5 @@
 /*
- *  $Id: SCEvents.m 218 2012-04-12 19:16:38Z stuart $
+ *  $Id: SCEvents.m 211 2011-08-31 20:43:52Z stuart $
  *
  *  SCEvents
  *  http://stuconnolly.com/projects/code/
@@ -53,7 +53,7 @@ static void _events_callback(ConstFSEventStreamRef streamRef,
 							 const FSEventStreamEventFlags eventFlags[], 
 							 const FSEventStreamEventId eventIds[]);
 
-static CFStringRef _strip_trailing_slash_from_path(CFStringRef path);
+static CFStringRef _strip_trailing_slash(CFStringRef string);
 
 @end
 
@@ -81,7 +81,7 @@ static CFStringRef _strip_trailing_slash_from_path(CFStringRef path);
     if ((self = [super init])) {
         _isWatchingPaths = NO;
 		
-		pthread_mutex_init(&_eventsLock, NULL);
+        _eventsQueue = dispatch_queue_create("scevents.queue", 0);
         
 		[self setResumeFromEventId:kFSEventStreamEventIdSinceNow];
         [self setNotificationLatency:SCEventsDefaultNotificationLatency];
@@ -102,19 +102,15 @@ static CFStringRef _strip_trailing_slash_from_path(CFStringRef path);
  */
 - (BOOL)flushEventStreamSync
 {
-	pthread_mutex_lock(&_eventsLock);
-	
-    if (!_isWatchingPaths) {
-		pthread_mutex_unlock(&_eventsLock);
-		
-		return NO;
-	}
     
-    FSEventStreamFlushSync(_eventStream);
+    if (!_isWatchingPaths) { return NO; }
     
-	pthread_mutex_unlock(&_eventsLock);
-	
-    return YES;
+    dispatch_sync(_eventsQueue,
+    ^{
+        FSEventStreamFlushSync(_eventStream);        
+    });
+    
+	return YES;
 }
 
 /**
@@ -125,17 +121,9 @@ static CFStringRef _strip_trailing_slash_from_path(CFStringRef path);
  */
 - (BOOL)flushEventStreamAsync
 {
-    pthread_mutex_lock(&_eventsLock);
-	
-    if (!_isWatchingPaths) {
-		pthread_mutex_unlock(&_eventsLock);
-		
-		return NO;
-	}
+    if (!_isWatchingPaths) { return NO; }
     
-    FSEventStreamFlushAsync(_eventStream);
-    
-	pthread_mutex_unlock(&_eventsLock);
+    dispatch_sync(_eventsQueue, ^{ FSEventStreamFlushAsync(_eventStream); });
 	
     return YES;
 }
@@ -165,29 +153,24 @@ static CFStringRef _strip_trailing_slash_from_path(CFStringRef path);
  */
 - (BOOL)startWatchingPaths:(NSArray *)paths onRunLoop:(NSRunLoop *)runLoop
 {
-	pthread_mutex_lock(&_eventsLock);
-	
-	_runLoop = [runLoop getCFRunLoop];
-	
-    if ([paths count] == 0 || _isWatchingPaths) {
-		pthread_mutex_unlock(&_eventsLock);
-		
-		return NO;
-	}
+    if (([paths count] == 0) || (_isWatchingPaths)) { return NO; }
     
-    [self setWatchedPaths:paths];
-    
-	_eventStream = _create_events_stream(self, ((CFArrayRef)_watchedPaths), _notificationLatency, _resumeFromEventId);
-    
-    // Schedule the event stream on the supplied run loop
-    FSEventStreamScheduleWithRunLoop(_eventStream, _runLoop, kCFRunLoopDefaultMode);
-    
-    // Start the event stream
-    FSEventStreamStart(_eventStream);
-    
-    _isWatchingPaths = YES;
-    
-	pthread_mutex_unlock(&_eventsLock);
+    dispatch_sync(_eventsQueue,
+    ^{
+        _runLoop = [runLoop getCFRunLoop];
+        
+        [self setWatchedPaths:paths];
+        
+        _eventStream = _create_events_stream(self, ((__bridge CFArrayRef)_watchedPaths), _notificationLatency, _resumeFromEventId);
+        
+        // Schedule the event stream on the supplied run loop
+        FSEventStreamScheduleWithRunLoop(_eventStream, _runLoop, kCFRunLoopDefaultMode);
+        
+        // Start the event stream
+        FSEventStreamStart(_eventStream);
+        
+        _isWatchingPaths = YES;        
+    });
 	
     return YES;
 }
@@ -201,26 +184,21 @@ static CFStringRef _strip_trailing_slash_from_path(CFStringRef path);
  */
 - (BOOL)stopWatchingPaths
 {
-	pthread_mutex_lock(&_eventsLock);
-	
-    if (!_isWatchingPaths) {
-		pthread_mutex_unlock(&_eventsLock);
-		
-		return NO;
-	}
+    if (!_isWatchingPaths) { return NO; }
+    
+    dispatch_sync(_eventsQueue, 
+    ^{
+        FSEventStreamStop(_eventStream);
+        
+        if (_runLoop) FSEventStreamUnscheduleFromRunLoop(_eventStream, _runLoop, kCFRunLoopDefaultMode);
+        
+        FSEventStreamInvalidate(_eventStream);
+        
+        if (_eventStream) FSEventStreamRelease(_eventStream), _eventStream = NULL;
+        
+        _isWatchingPaths = NO;    
+    });
 	    
-    FSEventStreamStop(_eventStream);
-	
-	if (_runLoop) FSEventStreamUnscheduleFromRunLoop(_eventStream, _runLoop, kCFRunLoopDefaultMode);
-	
-    FSEventStreamInvalidate(_eventStream);
-	
-	if (_eventStream) FSEventStreamRelease(_eventStream), _eventStream = NULL;
-    
-    _isWatchingPaths = NO;
-    
-	pthread_mutex_unlock(&_eventsLock);
-	
     return YES;
 }
 
@@ -231,13 +209,13 @@ static CFStringRef _strip_trailing_slash_from_path(CFStringRef path);
  */
 - (NSString *)streamDescription
 {
-	pthread_mutex_lock(&_eventsLock);
+	__block NSString *description = nil;
+    dispatch_sync(_eventsQueue,
+    ^{
+        description = (_isWatchingPaths) ? (__bridge NSString *)FSEventStreamCopyDescription(_eventStream) : nil;
+    });
 	
-	NSString *description = (_isWatchingPaths) ? (NSString *)FSEventStreamCopyDescription(_eventStream) : nil;
-	
-	pthread_mutex_unlock(&_eventsLock);
-	
-	return [description autorelease];
+	return description;
 }
 
 #pragma mark -
@@ -256,20 +234,31 @@ static CFStringRef _strip_trailing_slash_from_path(CFStringRef path);
 
 #pragma mark -
 
-- (void)dealloc
+- (void)_finalize
 {
-	_delegate = nil;
+    
+    _delegate = nil;
 	
 	// Stop the event stream if it's still running
 	if (_isWatchingPaths) [self stopWatchingPaths];
-        
-	pthread_mutex_destroy(&_eventsLock);
-	
-	[_lastEvent release], _lastEvent = nil;
-    [_watchedPaths release], _watchedPaths = nil;
-    [_excludedPaths release], _excludedPaths = nil;
     
-    [super dealloc];
+    dispatch_release(_eventsQueue);
+    
+	_lastEvent = nil;
+    _watchedPaths = nil;
+    _excludedPaths = nil;
+    
+}
+
+- (void)finalize
+{
+    [self _finalize];
+    [super finalize];
+}
+
+- (void)dealloc
+{
+    [self _finalize];
 }
 
 #pragma mark -
@@ -287,7 +276,7 @@ static FSEventStreamRef _create_events_stream(SCEvents *watcher, CFArrayRef path
 	FSEventStreamContext callbackInfo;
 	
 	callbackInfo.version = 0;
-	callbackInfo.info    = (void *)watcher;
+	callbackInfo.info    = (__bridge void *)watcher;
 	callbackInfo.retain  = NULL;
 	callbackInfo.release = NULL;
 	callbackInfo.copyDescription = NULL;
@@ -326,7 +315,7 @@ static void _events_callback(ConstFSEventStreamRef streamRef,
     BOOL shouldIgnore = NO;
     
 	CFArrayRef paths = (CFArrayRef)eventPaths;
-    SCEvents *pathWatcher = (SCEvents *)clientCallBackInfo;
+    SCEvents *pathWatcher = (__bridge SCEvents *)clientCallBackInfo;
     
     for (i = 0; i < numEvents; i++) 
 	{
@@ -345,12 +334,12 @@ static void _events_callback(ConstFSEventStreamRef streamRef,
          * The drawback to this approach however, is the increased resources required
          * calling this callback more frequently.
          */
-		
+        
 		NSArray *excludedPaths = [pathWatcher excludedPaths];
         CFStringRef eventPath = CFArrayGetValueAtIndex(paths, (CFIndex)i);
         
         // Check to see if the event should be ignored if it's path is in the exclude list
-        if ([excludedPaths containsObject:(NSString *)eventPath]) {
+        if ([excludedPaths containsObject:(__bridge NSString *)eventPath]) {
             shouldIgnore = YES;
         }
         else {
@@ -359,7 +348,7 @@ static void _events_callback(ConstFSEventStreamRef streamRef,
             if ([pathWatcher ignoreEventsFromSubDirs]) {
                 for (NSString *path in [pathWatcher excludedPaths]) 
 				{
-					if (CFStringHasPrefix(eventPath, (CFStringRef)path)) {
+					if (CFStringHasPrefix(eventPath, (__bridge CFStringRef)path)) {
 						shouldIgnore = YES;
                         break;
 					}
@@ -368,14 +357,13 @@ static void _events_callback(ConstFSEventStreamRef streamRef,
         }
     
         if (!shouldIgnore) {
-						
+			
 			// If present remove the path's trailing slash
-			eventPath = _strip_trailing_slash_from_path(eventPath);
-					
-            SCEvent *event = [SCEvent eventWithEventId:(NSUInteger)eventIds[i] 
-											 eventDate:[NSDate date] 
-											 eventPath:(NSString *)eventPath 
-											eventFlags:(SCEventFlags)eventFlags[i]];
+			eventPath = _strip_trailing_slash(eventPath);
+            
+            SCEvent *event = [SCEvent eventWithEventId:(NSUInteger)eventIds[i] eventDate:[NSDate date] eventPath:(__bridge NSString *)eventPath eventFlags:(SCEventFlags)eventFlags[i]];
+			
+			CFRelease(eventPath);
 			
             if ([[pathWatcher delegate] conformsToProtocol:@protocol(SCEventListenerProtocol)]) {
                 [[pathWatcher delegate] pathWatcher:pathWatcher eventOccurred:event];
@@ -389,19 +377,26 @@ static void _events_callback(ConstFSEventStreamRef streamRef,
 }
 
 /**
- * If present, strips the trailing slash from the supplied string.
+ * If present, strips the trailing slash from the supplied string. Note, that the caler is
+ * responsible for freeing the associate memory.
  *
  * @param string The string that is to be stripped
  *
  @ @return The resulting string
  */
-static CFStringRef _strip_trailing_slash_from_path(CFStringRef path)
+static CFStringRef _strip_trailing_slash(CFStringRef string)
 {
-	NSString *string = (NSString *)path;
-
-	NSUInteger length = [string length];
+	CFStringRef stripped = string;
 	
-	return (length > 1 && [string hasSuffix:@"/"]) ? (CFStringRef)[string substringToIndex:length - 1] : path;
+	if (CFStringHasSuffix((CFStringRef)stripped, CFSTR("/"))) {
+		stripped = CFStringCreateWithSubstring(kCFAllocatorDefault, stripped, CFRangeMake(0, (CFStringGetLength(stripped) - 1)));				
+	}
+	
+#ifdef __OBJC_GC__
+	return (stripped) ? CFMakeCollectable(stripped) : string;
+#else
+	return (stripped) ? stripped : string;    
+#endif
 }
 
 @end

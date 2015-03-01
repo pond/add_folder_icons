@@ -498,7 +498,7 @@ static OSStatus addImages( IconFamilyHandle iconHnd,
 
     if ( dpiValue( 1 ) != 1 )
     {
-        if ( err == noErr ) err = addImage( iconHnd, cgImage, cgColourSpace, dpiValue( 512 ) );
+        err = addImage( iconHnd, cgImage, cgColourSpace, dpiValue( 512 ) );
     }
 
     if ( err == noErr ) err = addImage( iconHnd, cgImage, cgColourSpace, 512 );

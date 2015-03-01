@@ -19,12 +19,9 @@
 /* Library functions and data */
 
 #import "GlobalSemaphore.h"
-#import "Icons.h"
 #import "IconGenerator.h"
 
 /* Application communication */
-
-#import "FolderProcessNotificationProtocol.h"
 
 @implementation ConcurrentPathProcessor
 
@@ -62,13 +59,13 @@
 \******************************************************************************/
 
 -( instancetype ) initWithPath : ( NSString       * ) fullPosixPath
-       andBackground : ( CGImageRef       ) backgroundImage
-       andParameters : ( IconParameters * ) params;
+                 andBackground : ( CGImageRef       ) backgroundImage
+                 andParameters : ( IconParameters * ) params;
 {
     if ( ( self = [ super init ] ) )
     {
         self.pathData       = fullPosixPath;
-        self.backgroundRef  = allocFolderIcon();//CGImageCreateCopy( backgroundImage );
+        self.backgroundRef  = CGImageCreateCopy( backgroundImage );
         self.iconParameters = params;
     }
 
@@ -101,6 +98,8 @@
     {
         @try
         {
+            if ( self.isCancelled ) return;
+
             /* Generate the thumbnail */
 
             OSStatus   status     = noErr;
@@ -113,6 +112,8 @@
                 &status,
                 self.iconParameters
             );
+
+            if ( self.isCancelled ) return;
 
             if ( finalImage )
             {
@@ -151,12 +152,23 @@
 
                 #endif    
 
+                /* The Finder gets buggier with each OS release and by
+                 * Mavericks and especially Yosemite is extremely reluctant
+                 * to update the view when a folder icon *changes* but tends
+                 * to perform better if the icon is *removed then added*, so
+                 * remove it first here.
+                 *
+                 * It's pretty depressing how consistently changes to objects
+                 * result in no Finder view updates, even if QuickLook shows
+                 * the changes immediately.
+                 */
+
+                [ [ NSWorkspace sharedWorkspace ] setIcon: nil forFile: self.pathData options: 0 ];
+
                 /* Apply the thumbnail to the folder. Since the global
                  * semaphore is needed here, an inned try...catch construct
                  * is required to ensure it gets released whatever happens.
                  */
-
-                [ [ NSWorkspace sharedWorkspace ] setIcon: nil forFile: self.pathData options: 0 ];
 
                 IconFamilyHandle iconHnd = NULL;
                 status = createIconFamilyFromCGImage( finalImage, &iconHnd );
@@ -222,30 +234,6 @@
             globalSemaphoreClaim();
             globalErrorFlag = YES;
             globalSemaphoreRelease();
-        }
-
-        /* If we reach here with no error and there is an a known communications
-         * channel, use it to tell the application about our progress.
-         */
-
-        if ( globalErrorFlag == NO && self.iconParameters.commsChannel )
-        {
-            /* See FolderProcessNotificationProtocol.h */
-
-            id proxy =
-            [
-                NSConnection rootProxyForConnectionWithRegisteredName: self.iconParameters.commsChannel
-                                                                 host: nil
-            ];
-
-            [ proxy setProtocolForProxy: @protocol( FolderProcessNotification ) ];
-
-            if ( [ proxy folderProcessedSuccessfully: self.pathData ] == YES )
-            {
-                globalSemaphoreClaim();
-                globalErrorFlag = YES;
-                globalSemaphoreRelease();
-            }
         }
 
     } // @autoreleasepool

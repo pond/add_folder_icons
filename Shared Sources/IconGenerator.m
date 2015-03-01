@@ -129,13 +129,13 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
                                                   OSStatus       * thumbState,
                                                   IconParameters * params )
 {
-    NSFileManager     * fileMgr      = [ [ NSFileManager alloc ] init ]; /* http://developer.apple.com/mac/library/documentation/Cocoa/Reference/Foundation/Classes/NSFileManager_Class/Reference/Reference.html */
-    NSString          * enumPath     = fullPosixPath;
-    NSString          * currFile;
-    NSMutableArray    * images       = [ NSMutableArray arrayWithCapacity: 0 ];
-    NSMutableArray    * chosenImages = nil;
-    BOOL                failed       = NO;
-    errno                            = 0;
+    NSFileManager  * fileMgr      = [ [ NSFileManager alloc ] init ]; /* http://developer.apple.com/mac/library/documentation/Cocoa/Reference/Foundation/Classes/NSFileManager_Class/Reference/Reference.html */
+    NSString       * enumPath     = fullPosixPath;
+    NSString       * currFile;
+    NSMutableArray * images       = [ NSMutableArray arrayWithCapacity: 0 ];
+    NSMutableArray * chosenImages = nil;
+    BOOL             failed       = NO;
+    errno                         = 0;
 
     /* We consider ourselves in Single Image Mode if using that flag explicitly
      * or if using SlipCover code for icon generation.

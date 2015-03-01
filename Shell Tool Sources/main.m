@@ -40,12 +40,10 @@ int main( int argc, const char * argv[] )
 {
     @autoreleasepool
     {
-
         /* Establish default parameters which command line arguments can override */
 
         IconParameters * params = [ [ IconParameters alloc ] init ];
 
-        params.commsChannel           = nil;
         params.previewMode            = NO;
 
         params.slipCoverCase          = nil;
@@ -57,12 +55,7 @@ int main( int argc, const char * argv[] )
         params.showFolderInBackground = StyleShowFolderInBackgroundForOneOrTwoImages;
         params.singleImageMode        = NO;
         params.useColourLabels        = NO;
-        params.coverArtNames          =
-        [
-            NSMutableArray arrayWithObjects: @"folder",
-                                             @"cover",
-                                             nil
-        ];
+        params.coverArtNames          = @[ @"folder", @"cover" ];
 
         int arg = 1;
         while ( arg < argc )
@@ -80,18 +73,6 @@ int main( int argc, const char * argv[] )
 
             else if ( ! strcmp( argv[ arg ], "--maximages"  ) && ( ++ arg ) < argc ) params.maxImages              = atoi( argv[ arg ] );
             else if ( ! strcmp( argv[ arg ], "--showfolder" ) && ( ++ arg ) < argc ) params.showFolderInBackground = atoi( argv[ arg ] );
-
-            /* String parameters */
-            
-            else if ( ! strcmp( argv[ arg ], "--communicate" ) && ( ++ arg ) < argc )
-            {
-                /* The public usage string does not print this argument out as it
-                 * is for internal use between the CLI tool and application. The
-                 * application provides its NSConnection server name here.
-                 */
-
-                params.commsChannel = @( argv[ arg ] );
-            }
 
             /* SlipCover definition - this one is more complicated as we have to
              * generate the case definition from the name and store the definition

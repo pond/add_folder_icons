@@ -16,7 +16,7 @@
 
 #define PROGRAM_STRING "addfoldericons"
 #define AUTHOR_STRING  "Andrew Hodgkinson"
-#define VERSION_STRING "2.0.1.2011.03.23"
+#define VERSION_STRING "2.2.0.2015.03.01"
 
 /* Avoid subdirectories which are package-like (e.g. applications)? */
 

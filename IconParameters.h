@@ -16,7 +16,6 @@
 {
 }
 
-@property ( strong, nonatomic ) NSString                        * commsChannel;
 @property                       BOOL                              previewMode;
 @property ( strong, nonatomic ) CaseDefinition                  * slipCoverCase;
 @property                       BOOL                              crop;
@@ -27,6 +26,6 @@
 @property                       IconStyleShowFolderInBackground   showFolderInBackground;
 @property                       BOOL                              singleImageMode;
 @property                       BOOL                              useColourLabels;
-@property ( strong, nonatomic ) NSMutableArray                  * coverArtNames;
+@property ( strong, nonatomic ) NSArray                         * coverArtNames;
 
 @end

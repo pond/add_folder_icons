@@ -11,7 +11,6 @@
 
 @implementation IconParameters
 
-@synthesize commsChannel           = _commsChannel;
 @synthesize previewMode            = _previewMode;
 @synthesize slipCoverCase          = _slipCoverCase;
 @synthesize crop                   = _crop;

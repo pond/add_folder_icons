@@ -7,7 +7,6 @@
 //
 
 #import "IconStyle.h"
-#import "FolderProcessNotificationProtocol.h" /* For APP_SERVER_CONNECTION_NAME only */
 
 @implementation IconStyle 
 
@@ -65,11 +64,6 @@
                 withColourLabelsAsCoverArt: ( BOOL      ) includeColourLabels
 {
     NSMutableArray * arguments = [ [ NSMutableArray alloc ] initWithCapacity: 1 ];
-
-    /* There is always a communications channel back to the application */
-
-    [ arguments addObject: @"--communicate" ];
-    [ arguments addObject: APP_SERVER_CONNECTION_NAME ];
 
     /* Even though at any particular 'time of writing' some options may
      * exclude others, we pass most parameters over to the CLI tool to make

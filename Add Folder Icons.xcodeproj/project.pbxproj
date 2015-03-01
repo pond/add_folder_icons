@@ -206,7 +206,6 @@
 		2349135212F5EF2F00A59086 /* IconParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconParameters.h; sourceTree = "<group>"; };
 		2349142612FAB6AF00A59086 /* ApplicationSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationSupport.h; sourceTree = "<group>"; };
 		2349142712FAB6AF00A59086 /* ApplicationSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationSupport.m; sourceTree = "<group>"; };
-		2349168412FDCCDD00A59086 /* FolderProcessNotificationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderProcessNotificationProtocol.h; sourceTree = "<group>"; };
 		235D7A0414DD4A3200CD503D /* IconParameters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconParameters.m; sourceTree = "<group>"; };
 		235D7A0814DD82B100CD503D /* Add Folder Icons.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Add Folder Icons.entitlements"; sourceTree = "<group>"; };
 		2364AF0012ED8E98007C6521 /* IconStyleArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconStyleArrayController.h; sourceTree = "<group>"; };
@@ -428,7 +427,6 @@
 		23C15D1E12F37E1900D99934 /* Shared Shell Tool and Application Sources */ = {
 			isa = PBXGroup;
 			children = (
-				2349168412FDCCDD00A59086 /* FolderProcessNotificationProtocol.h */,
 				2349133B12F5DE5600A59086 /* IconStyleShowFolderInBackground.h */,
 				2349135212F5EF2F00A59086 /* IconParameters.h */,
 				235D7A0414DD4A3200CD503D /* IconParameters.m */,
@@ -444,6 +442,30 @@
 				23AED30912FF3E13003181D8 /* SlipCoverSupport.m */,
 			);
 			name = "Shared Shell Tool and Application Sources";
+			sourceTree = "<group>";
+		};
+		23F829FB1A7C9CC000BE26B7 /* Image assets */ = {
+			isa = PBXGroup;
+			children = (
+				2382900A1571414B005C60A5 /* splash.png */,
+				23CB8BA512E0C1CC00E66CDA /* Application.icns */,
+				2389C660114D6AC3003466DE /* Sparkle.icns */,
+				2364B21D12EEE058007C6521 /* tb_cd.png */,
+				2364B21E12EEE058007C6521 /* tb_classic.png */,
+				2364B21F12EEE058007C6521 /* tb_dvd.png */,
+			);
+			name = "Image assets";
+			sourceTree = "<group>";
+		};
+		23F829FC1A7C9CDC00BE26B7 /* RTF assets */ = {
+			isa = PBXGroup;
+			children = (
+				23D3FB7113055B6B004FDA09 /* CreditsBottom.rtf */,
+				23D3FB7313055B6B004FDA09 /* CreditsMAS.rtf */,
+				23D3FB7513055B6B004FDA09 /* CreditsPOU.rtf */,
+				23D3FB7713055B6B004FDA09 /* CreditsTop.rtf */,
+			);
+			name = "RTF assets";
 			sourceTree = "<group>";
 		};
 		29B97314FDCFA39411CA2CEA /* Add Folder Icons */ = {
@@ -482,26 +504,18 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				23F829FC1A7C9CDC00BE26B7 /* RTF assets */,
+				23F829FB1A7C9CC000BE26B7 /* Image assets */,
 				8D1107310486CEB800E47090 /* Add_Folder_Icons-Info.plist */,
 				235D7A0814DD82B100CD503D /* Add Folder Icons.entitlements */,
 				230BA02514DD8AB100CC9DFC /* container-migration.plist */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
 				23CBD7B512E203F20024A106 /* MainWindow.xib */,
 				23A86A2F1560111E000B2861 /* SplashWindow.xib */,
-				2382900A1571414B005C60A5 /* splash.png */,
 				23CBD71012E1ED270024A106 /* ManageStyles.xib */,
 				23CB8B4612E09E9200E66CDA /* Preferences.xib */,
 				2397AF7A130578FA00931AD3 /* Updates.xib */,
-				23D3FB7113055B6B004FDA09 /* CreditsBottom.rtf */,
-				23D3FB7313055B6B004FDA09 /* CreditsMAS.rtf */,
-				23D3FB7513055B6B004FDA09 /* CreditsPOU.rtf */,
-				23D3FB7713055B6B004FDA09 /* CreditsTop.rtf */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				23CB8BA512E0C1CC00E66CDA /* Application.icns */,
-				2389C660114D6AC3003466DE /* Sparkle.icns */,
-				2364B21D12EEE058007C6521 /* tb_cd.png */,
-				2364B21E12EEE058007C6521 /* tb_classic.png */,
-				2364B21F12EEE058007C6521 /* tb_dvd.png */,
 				237F3834133A3B8800A23219 /* Add-Folder-Icons.help */,
 				23FF74DD1301D1C700D656DB /* Preview */,
 			);

@@ -372,7 +372,6 @@
 
     IconParameters * params = [ [ IconParameters alloc ] init ];
 
-    params.commsChannel           = nil;
     params.previewMode            = YES;
 
     params.crop                   = [ [ editedStyle cropToSquare           ] boolValue        ];
@@ -382,7 +381,7 @@
     params.singleImageMode        = [ [ editedStyle onlyUseCoverArt        ] boolValue        ];
     params.maxImages              = [ [ editedStyle maxImages              ] unsignedIntValue ];
     params.showFolderInBackground = [ [ editedStyle showFolderInBackground ] unsignedIntValue ];
-    params.coverArtNames          = [ NSMutableArray arrayWithObject: @"cover" ];
+    params.coverArtNames          = @[ @"cover" ];
 
     /* Do we need to find the SlipCover case definition? */
 

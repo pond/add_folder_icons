@@ -8,11 +8,9 @@
 #import <Cocoa/Cocoa.h>
 #import "IconStyleArrayController.h"
 #import "IconStyleManager.h"
-#import "FolderProcessNotificationProtocol.h"
 
 @interface MainWindowController : NSWindowController < NSTableViewDataSource,
-                                                       NSMenuDelegate,
-                                                       FolderProcessNotification >
+                                                       NSMenuDelegate >
 {
     /* Outlet members */
 
@@ -68,10 +66,6 @@
 
 - ( void ) initOpenPanel;
 - ( void ) initWindowContents;
-
-/* Inter-process communication */
-
-- ( void ) doCommsThread;
 
 /* Modal progress panel and related tasks */
 

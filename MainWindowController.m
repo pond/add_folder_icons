@@ -10,11 +10,14 @@
 #import "MainWindowController.h"
 #import "ApplicationSupport.h"
 
+#import "Icons.h"
 #import "IconParameters.h"
+#import "SlipCoverSupport.h"
+#import "GlobalConstants.h"
 #import "GlobalSemaphore.h"
 #import "ConcurrentPathProcessor.h"
 
-#include <CoreFoundation/CoreFoundation.h>
+#import <Foundation/Foundation.h>
 
 #define NSINDEXSET_ON_PBOARD @"NSIndexSetOnPboardType"
 
@@ -30,14 +33,6 @@
 
     [ self initOpenPanel      ];
     [ self initWindowContents ];
-
-    /* Set up a communications channel through which the command line tool
-     * can talk to us.
-     */
-
-    [ NSThread detachNewThreadSelector: @selector( doCommsThread )
-                              toTarget: self
-                            withObject: nil ];
 }
 
 /******************************************************************************\
@@ -140,57 +135,6 @@
 
     [ openPanel setDirectoryURL: [ NSURL fileURLWithPath: home
                                              isDirectory: YES ] ];
-}
-
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark Inter-process communication
-//------------------------------------------------------------------------------
-
-/******************************************************************************\
- * -doCommsThread
- *
- * This method is run inside the thread which handle distant connections from
- * the command-line tool during folder processing.
- *
- * See also: awakeFromNib
-\******************************************************************************/
-
-- ( void ) doCommsThread
-{
-    @autoreleasepool
-    {
-        NSConnection * connection = [ NSConnection new ];
-
-        [ connection setRootObject: self ];
-        [ connection registerName: APP_SERVER_CONNECTION_NAME ];
-
-        [ [ NSRunLoop currentRunLoop ] run ];
-    }
-}
-
-/******************************************************************************\
- * -folderProcessedSuccessfully:
- *
- * FolderProcessNotification: Call when a folder has had its icon successfully
- * applied. Pass the full POSIX path of the folder. Returns YES if the worker
- * thread has had cancellation requested; the caller should exit as soon as
- * possible. Returns NO if the caller can continue normally.
- *
- * In:  ( NSString * ) fullPOSIXPath
- *      Full POSIX path of a folder which has just had an icon applied.
- *
- * Out: If YES, the caller should exit as soon as possible (cancellation). If
- *      NO, the caller should continue normally.
-\******************************************************************************/
-
-- ( BOOL ) folderProcessedSuccessfully: ( NSString * ) fullPOSIXPath
-{
-    [ self performSelectorOnMainThread: @selector( advanceProgressBarFor: )
-                            withObject: fullPOSIXPath
-                         waitUntilDone: NO ];
-
-    return [ workerThread isCancelled ];
 }
 
 //------------------------------------------------------------------------------
@@ -593,345 +537,155 @@
 {
     globalSemaphoreInit();
 
-    @autoreleasepool
+    NSUserDefaults * standardUserDefaults = [ NSUserDefaults standardUserDefaults ];
+    NSArray        * coverArtFilenames    = [ standardUserDefaults arrayForKey: @"coverArtFilenames" ];
+    BOOL             includeColourLabels  = [ standardUserDefaults boolForKey: @"colourLabelsIndicateCoverArt" ];
+    CGImageRef       backgroundImage      = allocFolderIcon();
+
+    if ( [ coverArtFilenames count ] == 0 )
     {
-        NSUserDefaults * standardUserDefaults  = [ NSUserDefaults standardUserDefaults ];
-        NSArray        * coverArtFilenames     = [ standardUserDefaults arrayForKey: @"coverArtFilenames" ];
-        BOOL             includeColourLabels   = [ standardUserDefaults boolForKey: @"colourLabelsIndicateCoverArt" ];
-
-        if ( [ coverArtFilenames count ] == 0 )
-        {
-            coverArtFilenames = @[ @"cover", @"folder" ];
-        }
-
-        /* Take a copy of and sort the array, grouping it by icon style. Using a
-         * copy avoids thread safety issues / cross-thread communication delays
-         * with trying to update 'tableContents' (and the related table view in
-         * 'folderList') in the main thread. It also means we can modify the array
-         * without disturbing the GUI - handy if we get cancelled. Of course on
-         * the downside, it wastes RAM and CPU cycles to do the copy.
+        coverArtFilenames = @[ @"cover", @"folder" ];
+    }
+    else
+    {
+        /* The defaults system actually gives us an array of dictionarys of
+         * the single entry form "leafname = <foo>" - collect those into an
+         * array of the values of "<foo>".
          */
 
-        NSMutableArray * arrayOfDictionaries = [ NSMutableArray arrayWithArray: constArrayOfDictionaries ];
+        coverArtFilenames = [ coverArtFilenames valueForKeyPath: @"leafname" ];
+    }
+
+    globalErrorFlag = NO;
+    NSOperationQueue * queue = [ [ NSOperationQueue  alloc ] init ];
+
+    /* Although documentation implies that the system should be left alone to
+     * set this up, in practice doing so causes very high system workload for
+     * large numbers of folders. Trying to cancel the operation takes a long
+     * time, because OS X appears to queue *all* operations extremely quickly,
+     * then has to cancel the whole lot.
+     *
+     * By restricting concurrency, this up-front queueing and latency comes
+     * under control. OS X may choose to use *less* than this of course, it's
+     * just a maximum. The value chosen here should soak CPUs on most machines
+     * but still (at least on the author's laptop at the time of writing)
+     * responds to cancellation quickly.
+     *
+     * This is entirely unscientific and unsatisfactory but given OS X's poor
+     * behaviour here (was OK on 10.6, got bad in 10.7, still bad in 10.10.2)
+     * there doesn't seem to be another way; though if anyone else other than
+     * me ever reads this and has suggestions, I'd love to hear them!
+     */
+
+    queue.maxConcurrentOperationCount = 16;
+
+    for ( NSDictionary * folder in constArrayOfDictionaries )
+    {
+        NSString       * fullPOSIXPath = folder[ @"path"  ];
+        IconStyle      * style         = folder[ @"style" ];
+        IconParameters * params        = [ [ IconParameters alloc ] init ];
+
+        params.previewMode            = NO;
+
+        params.crop                   = [ style.cropToSquare           boolValue        ];
+        params.border                 = [ style.whiteBackground        boolValue        ];
+        params.shadow                 = [ style.dropShadow             boolValue        ];
+        params.rotate                 = [ style.randomRotation         boolValue        ];
+        params.singleImageMode        = [ style.onlyUseCoverArt        boolValue        ];
+        params.maxImages              = [ style.maxImages              unsignedIntValue ];
+        params.showFolderInBackground = [ style.showFolderInBackground unsignedIntValue ];
+
+        params.coverArtNames          = coverArtFilenames;
+        params.useColourLabels        = includeColourLabels;
+
+        /* Do we need to find the SlipCover case definition? */
+
+        if ( [ [ style usesSlipCover ] boolValue ] == YES )
+        {
+            params.slipCoverCase =
+            [
+                SlipCoverSupport findDefinitionFromName: [ style slipCoverName ]
+                                      withinDefinitions: [ iconStyleManager slipCoverDefinitions ]
+            ];
+        }
+        else
+        {
+            params.slipCoverCase = nil;
+        }
+
+        ConcurrentPathProcessor * processThisPath =
+        [
+            [ ConcurrentPathProcessor alloc ] initWithPath: fullPOSIXPath
+                                             andBackground: backgroundImage
+                                             andParameters: params
+        ];
+
+        /* Set a completion block that runs whether the operation is successful,
+         * fails or is cancelled. In the event we can see that the worker thread
+         * is cancelled (via the modal progress panel's "Stop" button, tell the
+         * queue to cancel everything. Even though we'll repeat this over and
+         * over for all remaining in-flight operations on the queue, it's
+         * harmless to do so and keeps the code simple.
+         */
 
         [
-            arrayOfDictionaries sortUsingComparator: ^ ( NSDictionary * obj1, NSDictionary * obj2 )
+            processThisPath setCompletionBlock: ^
             {
-                IconStyle * s1 = obj1[ @"style" ];
-                IconStyle * s2 = obj2[ @"style" ];
-
-                return [ [ [ [ s1 objectID ] URIRepresentation ] absoluteString ]
-                compare: [ [ [ s2 objectID ] URIRepresentation ] absoluteString ] ];
+                if ( [ workerThread isCancelled ]  == YES )
+                {
+                    [ queue cancelAllOperations ];
+                }
+                else
+                {
+                    [ self performSelectorOnMainThread: @selector( advanceProgressBarFor: )
+                                            withObject: fullPOSIXPath
+                                         waitUntilDone: NO ];
+                }
             }
         ];
 
-        /* Avoid code duplication below by using this little block as a task
-         * runner function. It's passed the path of the CLI tool and an alloc'd
-         * mutable array of arguments. It runs the CLi tool with those arguments,
-         * calls "-release" on the arguments and waits for the task to exit.
-         *
-         * Returns EXIT_SUCCESS if everything worked, else EXIT_FAILURE for any
-         * problems.
+        /* Outside the completion block, here in the loop adding operations, we
+         * also need to check for thread cancellation and use that to cancel the
+         * queue operations before bailing out of the addition loop.
          */
 
-        int ( ^ taskRunner ) ( NSString *, NSMutableArray * ) = ^ ( NSString * path, NSMutableArray * arguments )
+        if ( [ workerThread isCancelled ] == YES )
         {
-            /* We just sit here and wait until the task exits for any reason. The
-             * task can talk back to us through the communications thread (see e.g.
-             * "-doCommsThread"). It asks us if there has been early cancellation
-             * using the protocol implemented by that communications thread and
-             * will exit if so, allowing this thread to resume processing and
-             * handle the cancellation condition itself.
-             */
-
-/* Establish default parameters which command line arguments can override */
-
-IconParameters * params = [ [ IconParameters alloc ] init ];
-
-params.commsChannel           = nil;
-params.previewMode            = NO;
-
-params.slipCoverCase          = nil;
-params.crop                   = NO;
-params.border                 = NO;
-params.shadow                 = NO;
-params.rotate                 = NO;
-params.maxImages              = 4;
-params.showFolderInBackground = StyleShowFolderInBackgroundForOneOrTwoImages;
-params.singleImageMode        = NO;
-params.useColourLabels        = NO;
-params.coverArtNames          =
-[
-    NSMutableArray arrayWithObjects: @"folder",
-                                     @"cover",
-                                     nil
-];
-
-NSUInteger argi = 0;
-NSUInteger argc = [ arguments count ];
-
-while ( true )
-{
-    /* Simple boolean switches */
-
-    NSString * arg = ( NSString * ) arguments[ argi ];
-
-    if ( [ arg length ] <= 2 || [ arg compare: @"--" options: 0 range: NSMakeRange( 0, 2 ) ] != NSOrderedSame )
-    {
-        break;
+            [ queue cancelAllOperations ];
+            break;
+        }
+        else
+        {
+            [ queue addOperation: processThisPath ];
+        }
     }
 
-    if      ( [ arg isEqualToString: @"--crop"   ] ) params.crop            = YES;
-    else if ( [ arg isEqualToString: @"--border" ] ) params.border          = YES;
-    else if ( [ arg isEqualToString: @"--shadow" ] ) params.shadow          = YES;
-    else if ( [ arg isEqualToString: @"--rotate" ] ) params.rotate          = YES;
-    else if ( [ arg isEqualToString: @"--single" ] ) params.singleImageMode = YES;
-    else if ( [ arg isEqualToString: @"--labels" ] ) params.useColourLabels = YES;
+    [ queue waitUntilAllOperationsAreFinished ];
+    CFRelease( backgroundImage );
 
-    /* Numerical parameters */
-
-    else if ( [ arg isEqualToString: @"--maximages"  ] && ( ++ argi ) < argc ) params.maxImages              = [ arguments[ argi ] intValue ];
-    else if ( [ arg isEqualToString: @"--showfolder" ] && ( ++ argi ) < argc ) params.showFolderInBackground = [ arguments[ argi ] intValue ];
-
-    /* String parameters */
-    
-    else if ( [ arg isEqualToString: @"--communicate" ] && ( ++ argi ) < argc )
-    {
-        /* The public usage string does not print this argument out as it
-         * is for internal use between the CLI tool and application. The
-         * application provides its NSConnection server name here.
-         */
-
-        params.commsChannel = arguments[ argi ];
-    }
-
-    /* SlipCover definition - this one is more complicated as we have to
-     * generate the case definition from the name and store the definition
-     * reference in the icon style parameters.
+    /* If things went wrong tell the user in a modal alert opened from within
+     * this modal loop, so the progress panel is still visible as an indication
+     * of continuity between the addition process and the alert.
+     *
+     * The ConcurrentPathProcessor code sets (thread-safely) a global error flag
+     * to let us know when something went wrong, albeit in a rather crude way.
+     *
+     * If things went *right*, ask the main thread to consider removing folders
+     * from the folder list (depending on preferences it may or may not do so).
      */
 
-//    else if ( [ arg isEqualToString: @"--slipcover" ] && ( ++ argi ) < argc )
-//    {
-//        NSString       * requestedName   = [ NSString stringWithUTF8String: argv[ arg ] ];
-//        CaseDefinition * foundDefinition = [ SlipCoverSupport findDefinitionFromName: requestedName ];
-//
-//        if ( foundDefinition == nil )
-//        {
-//            printVersion();
-//            printf( "SlipCover case name '%s' is not recognised.\n", argv[ arg ] );
-//            return EX_USAGE;
-//        }
-//
-//        params.slipCoverCase = foundDefinition;
-//    }
-
-    /* Array - the second parameter after the switch is the number of
-     * items, followed by the items themselves.
-     */
-    
-    else if ( [ arg isEqualToString: @"--coverart" ] && ( argi + 2 ) < argc )
+    if ( globalErrorFlag )
     {
-        int              count = [ arguments[ ++ argi ] intValue ];
-        NSMutableArray * array = [ NSMutableArray arrayWithCapacity: count ];
-
-        for ( int i = 0; i < count && argi + 1 < argc; i ++ )
-        {
-            ++ argi; /* Must be careful to leave 'arg' pointing at last "used" argument */
-            [ array addObject: arguments[ argi ] ];
-        }
-
-        params.coverArtNames = array;
+        [ self performSelectorOnMainThread: @selector( showAdditionFailureAlert )
+                                withObject: nil
+                             waitUntilDone: YES ];
     }
-
-    else break; /* Assume a folder name */
-
-    ++ argi;
-}
-
-///* If parameters are out of range or we've run out of arguments so no
-// * folder filenames were supplied, complain.
-// */
-//
-//if ( arg >= argc || params.maxImages < 1 || params.maxImages > 4 || params.showFolderInBackground > StyleShowFolderInBackgroundAlways )
-//{
-//    printVersion();
-//    printHelp();
-//    return EXIT_FAILURE;
-//}
-
-/* Prerequisites */
-
-NSOperationQueue * queue = [ [ NSOperationQueue  alloc ] init ];
-
-/* Process pathnames and add Grand Central Dispatch operations for each */
-
-for ( int i = argi; i < argc; i ++ )
-{
-    NSString * fullPosixPath = arguments[ i ];
-
-    ConcurrentPathProcessor * processThisPath =
-    [
-        [ ConcurrentPathProcessor alloc ] initWithPath: fullPosixPath
-                                         andBackground: nil
-                                         andParameters: params
-    ];
-
-    NSArray * oneOp = @[ processThisPath ];
-    [ queue addOperations: oneOp waitUntilFinished: NO ];
-}
-
-[ queue waitUntilAllOperationsAreFinished ];
-
-//return ( globalErrorFlag == YES ) ? EXIT_FAILURE : EXIT_SUCCESS;
-
-return EXIT_SUCCESS;
-
-
-//            NSTask * task = [ NSTask launchedTaskWithLaunchPath: path
-//                                                      arguments: arguments ];
-//            [ task waitUntilExit ];
-//
-//            /* Success or failure? Would like to return a BOOL but the compiler
-//             * insists that such code is actually returning an int, yet refuses
-//             * to recognise that in the same way if the block is declared as
-//             * returning a BOOL rather than an int. To keep it simple, we just
-//             * return something which is semantically really defined as a simple
-//             * int; an old-style exit status.
-//             */
-//
-//            return ( [ task terminationReason ] == NSTaskTerminationReasonExit &&
-//                     [ task terminationStatus ] == EXIT_SUCCESS )
-//                     ?
-//                     EXIT_SUCCESS
-//                     :
-//                     EXIT_FAILURE;
-        };
-
-        /* Process folders in batches grouped by icon style, so that we can pass a
-         * long command line with multiple folders simultaneously specified in one
-         * go to the command line tool. This allows it to employ whatever parallel
-         * processing tricks it can.
-         *
-         * Mindful of command line length limits (AFAII ~256K on Mac OS 10.6) as
-         * well as general sanity in attempting to compile truly vast command line
-         * strings and to avoid potentially large peak RAM overheads, no more than
-         * 144 (divides cleanly between 2, 4, 6, 8, 12, 16... cores) folders will
-         * be passed in at one time before deliberately grouping the next set of
-         * folders again.
-         *
-         * To keep things simple, don't worry about edge cases such as the
-         * ineffiency of processing 144 folders, only to find one remaining 145th
-         * item using that style and having to process it individually. This isn't
-         * common enough to be worth the effort and besides, icon creation just
-         * isn't that time-critical a process!
-         */
-
-        NSString       * toolPath      = [ ApplicationSupport auxiliaryExecutablePathFor: @"addfoldericons" ];
-        NSMutableArray * toolArgs      = nil;
-        IconStyle      * currentStyle  = nil;
-        NSUInteger       addedCount    = 0;
-        int              taskStatus    = EXIT_SUCCESS;
-
-        while ( [ arrayOfDictionaries count ] > 0 )
-        {
-            /* The grouping loop runs quickly so doesn't check for cancellation.
-             * That's done whenever the icon generator task is run.
-             */
-
-            NSDictionary * folder = [ arrayOfDictionaries lastObject ];
-            NSString     * path   = folder[ @"path"  ];
-            IconStyle    * style  = folder[ @"style" ];
-
-            if ( [ currentStyle objectID ] != [ style objectID ] )
-            {
-                /* First, is there an old group to now process? */
-
-                if ( addedCount > 0 )
-                {
-                    taskStatus = taskRunner( toolPath, toolArgs ); /* taskRunner() deals with calling [toolArgs release] */
-
-                    /* Did that fail? */
-                    
-                    if ( taskStatus == EXIT_FAILURE ) break;
-
-                    /* We may have been cancelled while the task was running (see
-                     * also comments within the definition of the 'taskRunner'
-                     * block above).
-                     */
-
-                    if ( [ [ NSThread currentThread ] isCancelled ] == YES ) break;
-                }
-
-                /* Next, start the new group */
-
-                addedCount   = 0;
-                currentStyle = style;
-                toolArgs   = [ style allocArgumentsUsing: coverArtFilenames
-                              withColourLabelsAsCoverArt: includeColourLabels ];
-            }
-
-            [ toolArgs addObject: path ];
-            [ arrayOfDictionaries removeLastObject ];
-            addedCount ++;
-
-            /* If we've added 24 folders, reset the current style to provoke the
-             * start of a new group on the next trip around the loop. It is
-             * important to check the thread cancellation quite often without
-             * queueing too much in Grand Central - Snow Leopard shows no issues
-             * but on Lion things seem to lock up (GCD just never completes all
-             * of its operations).
-             *
-             * 24 concurrent operations should easily soak a 12-core machine.
-             */
-
-            if ( addedCount >= 24 ) currentStyle = nil;
-        }
-
-        if ( [ [ NSThread currentThread ] isCancelled ] == NO )
-        {
-            /* Anything left over for processing as a result of the last group
-             * encountered in the loop above? No need to check for cancellation
-             * after this, since we're going to exit anyway.
-             */
-
-            if ( addedCount > 0 )
-            {
-                taskStatus = taskRunner( toolPath, toolArgs ); /* taskRunner() deals with calling [toolArgs release] */
-            }
-        }
-
-        /* If things went wrong tell the user in a modal alert opened from within
-         * this modal loop, so the progress panel is still visible as an indication
-         * of continuity between the addition process and the alert.
-         *
-         * The shell tool exits and flags an error if the controlling thread is
-         * cancelled (discovered via the FolderProcessNotification protocol), so
-         * only report errors for non-cancelled cases. The edge-case of a thread
-         * being cancelled just as a real error happened to arise does result in
-         * a "missed" error, but since the user cancelled the operation anyway we
-         * don't really care about that.
-         *
-         * If things went *right*, ask the main thread to consider removing folders
-         * from the folder list (depending on preferences it may or may not do so).
-         */
-
-        if ( [ [ NSThread currentThread ] isCancelled ] == NO )
-        {
-            if ( taskStatus == EXIT_FAILURE )
-            {
-                [ self performSelectorOnMainThread: @selector( showAdditionFailureAlert )
-                                        withObject: nil
-                                     waitUntilDone: YES ];
-            }
-            else
-            {
-                [ self performSelectorOnMainThread: @selector( considerEmptyingFolderList )
-                                        withObject: nil
-                                     waitUntilDone: YES ];
-            }
-        }
-
-    } // @autoreleasepool
+    else if ( [ [ NSThread currentThread ] isCancelled ] == NO )
+    {
+        [ self performSelectorOnMainThread: @selector( considerEmptyingFolderList )
+                                withObject: nil
+                             waitUntilDone: YES ];
+    }
 
     /* See "-addSubFoldersOf:" for the rationale behind this next call */
 
@@ -949,11 +703,8 @@ return EXIT_SUCCESS;
  *
  * Invoke within the main processing thread only.
  *
- * In:       ( NSString * ) fullPOSIXPath
- *           Full POSIX path of the folder which was successfully processed.
- *
- * See also: -doCommsThread
- *           -folderProcessedSuccessfully:
+ * In: ( NSString * ) fullPOSIXPath
+ *     Full POSIX path of the folder which was successfully processed.
 \******************************************************************************/
 
 - ( void ) advanceProgressBarFor: ( NSString * ) fullPOSIXPath

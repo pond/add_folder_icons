@@ -540,7 +540,7 @@ Gw
                     </button>
                     <imageView id="578">
                         <rect key="frame" x="216" y="276" width="9" height="12"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="NSLockLockedTemplate" id="579"/>
                     </imageView>
                     <textField verticalHuggingPriority="750" id="580" customClass="DSClickableURLTextField">
@@ -960,7 +960,7 @@ Gw
                     </textField>
                     <imageView id="HJT-mb-bFm">
                         <rect key="frame" x="216" y="276" width="9" height="12"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="NSLockLockedTemplate" id="TzI-lZ-Diw"/>
                     </imageView>
                     <textField verticalHuggingPriority="750" id="arf-ip-Duv" customClass="DSClickableURLTextField">

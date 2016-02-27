@@ -40,6 +40,8 @@ enum ImageRendering {
 
 @property (readonly) int imageRendering;
 
+- (id)init NS_UNAVAILABLE; /* Use -initFromPath: instead */
+
 + (instancetype)caseDefinitionFromPath:(NSString *)path;
 - (instancetype)initFromPath:(NSString *)path NS_DESIGNATED_INITIALIZER;
 

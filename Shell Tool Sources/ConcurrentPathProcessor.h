@@ -16,6 +16,8 @@
 {
 }
 
+-( id ) init NS_UNAVAILABLE; /* Use -initWithPath:... instead */
+
 @property ( strong, nonatomic ) NSString       * pathData;
 @property                       CGImageRef       backgroundRef;
 @property ( strong, nonatomic ) IconParameters * iconParameters;
@@ -30,7 +32,7 @@
  */
 
 -( instancetype ) initWithPath: ( NSString       * ) fullPosixPath
-       andBackground: ( CGImageRef       ) backgroundImage
-       andParameters: ( IconParameters * ) params NS_DESIGNATED_INITIALIZER;
+                 andBackground: ( CGImageRef       ) backgroundImage
+                 andParameters: ( IconParameters * ) params NS_DESIGNATED_INITIALIZER;
 
 @end /* @interface ConcurrentPathProcessor : NSOperation */

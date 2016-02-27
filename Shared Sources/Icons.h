@@ -19,13 +19,11 @@
  *      went wrong.
 \******************************************************************************/
 
-
 CF_IMPLICIT_BRIDGING_ENABLED
 
 CGImageRef allocFolderIcon( void );
 
 CF_IMPLICIT_BRIDGING_DISABLED
-
 
 /******************************************************************************\
  * getIconFamilyFromCGImage()

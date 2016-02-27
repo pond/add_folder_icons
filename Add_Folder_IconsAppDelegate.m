@@ -44,7 +44,7 @@
         [ MainWindowController alloc ] initWithWindowNibName: MAIN_WINDOW_CONTROLLER_NIB_NAME
     ];
 
-    /* Create the plash window, which opens above the main window */
+    /* Create the splash window, which opens above the main window */
 
     NSUserDefaults * defaults      = [ NSUserDefaults standardUserDefaults ];
     NSString       * showSplashKey = @"showSplashScreenAtStartup";

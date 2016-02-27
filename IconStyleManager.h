@@ -5,6 +5,11 @@
 //  Created by Andrew Hodgkinson on 24/01/2011.
 //  Copyright 2011 Hipposoft. All rights reserved.
 //
+//  Handles Core Data storage, including storage or retrieval of IconStyle
+//  instances and establishing default styles if the Core Data store is empty.
+//  Monitoring for changes in the SlipCover case design collection is also
+//  done here; the Core Data store contents are automatically updated.
+//
 //  Always use "+iconStyleManager" to obtain references to instances of this
 //  class.
 //

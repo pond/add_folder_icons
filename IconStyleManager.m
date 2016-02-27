@@ -5,6 +5,11 @@
 //  Created by Andrew Hodgkinson on 24/01/2011.
 //  Copyright 2011 Hipposoft. All rights reserved.
 //
+//  Handles Core Data storage, including storage or retrieval of IconStyle
+//  instances and establishing default styles if the Core Data store is empty.
+//  Monitoring for changes in the SlipCover case design collection is also
+//  done here; the Core Data store contents are automatically updated.
+//
 //  Always use "+iconStyleManager" to obtain references to instances of this
 //  class.
 //
@@ -97,7 +102,14 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
     return self;
 }
 
-- ( void ) dealloc
+/******************************************************************************\
+ * -dealloc
+ *
+ * If the IconStyleManager singleton is deallocated, it must stop watching for
+ * any SlipCover case design collection changes.
+ \******************************************************************************/
+
+ - ( void ) dealloc
 {
     [ slipCoverCaseFolderWatcher stopWatchingPaths ];
 }
@@ -243,7 +255,6 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
     [ request setIncludesSubentities: NO          ];
 
     NSUInteger count = [ moc countForFetchRequest: request error: &error ];
-    
 
     /* Early exit points */
 
@@ -257,50 +268,45 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
         return;
     }
 
-    /* Convenience... */
-
-    NSNumber * numYes = @YES;
-    NSNumber * numNo  = @NO;
-
     /* "Preset: Classic thumbnails" - defaults are mostly fine */
 
     newStyle = [ [ IconStyle alloc ] initWithEntity: styleEntity
-                       insertIntoManagedObjectContext: moc ];
+                     insertIntoManagedObjectContext: moc ];
 
-    [ newStyle setIsPreset:      numYes ];
-    [ newStyle setUsesSlipCover: numNo  ];
+    [ newStyle setIsPreset:      @YES ];
+    [ newStyle setUsesSlipCover: @NO  ];
     [ newStyle setCreatedAt:     [ NSDate date ] ];
     [ newStyle setName:          DEFAULT_ICON_STYLE_NAME ];
 
     /* "Preset: Square covers (e.g. CDs) - a few more changes */
 
     newStyle = [ [ IconStyle alloc ] initWithEntity: styleEntity
-                       insertIntoManagedObjectContext: moc ];
+                     insertIntoManagedObjectContext: moc ];
 
-    [ newStyle setIsPreset:      numYes ];
-    [ newStyle setUsesSlipCover: numNo  ];
+    [ newStyle setIsPreset:      @YES ];
+    [ newStyle setUsesSlipCover: @NO  ];
     [ newStyle setCreatedAt:     [ NSDate date ] ];
     [ newStyle setName:          NSLocalizedString( @"Preset: Square covers (e.g. CDs)", @"Name of 'CD cover' preset icon style" ) ];
 
-    [ newStyle setWhiteBackground: numNo  ];
-    [ newStyle setRandomRotation:  numNo  ];
-    [ newStyle setOnlyUseCoverArt: numYes ];
+    [ newStyle setWhiteBackground: @NO  ];
+    [ newStyle setRandomRotation:  @NO  ];
+    [ newStyle setOnlyUseCoverArt: @YES ];
     [ newStyle setShowFolderInBackground: @( StyleShowFolderInBackgroundNever ) ];
 
     /* "Preset: Rectangular covers (e.g. DVDs) - the most changes */
 
     newStyle = [ [ IconStyle alloc ] initWithEntity: styleEntity
-                       insertIntoManagedObjectContext: moc ];
+                     insertIntoManagedObjectContext: moc ];
 
-    [ newStyle setIsPreset:      numYes ];
-    [ newStyle setUsesSlipCover: numNo  ];
+    [ newStyle setIsPreset:      @YES ];
+    [ newStyle setUsesSlipCover: @NO  ];
     [ newStyle setCreatedAt:     [ NSDate date ] ];
     [ newStyle setName:          NSLocalizedString( @"Preset: Rectangular covers (e.g. DVDs)", @"Name of 'DVD cover' preset icon style" ) ];
 
-    [ newStyle setCropToSquare:    numNo  ];
-    [ newStyle setWhiteBackground: numNo  ];
-    [ newStyle setRandomRotation:  numNo  ];
-    [ newStyle setOnlyUseCoverArt: numYes ];
+    [ newStyle setCropToSquare:    @NO  ];
+    [ newStyle setWhiteBackground: @NO  ];
+    [ newStyle setRandomRotation:  @NO  ];
+    [ newStyle setOnlyUseCoverArt: @YES ];
     [ newStyle setShowFolderInBackground: @( StyleShowFolderInBackgroundNever ) ];
 
     /* Save the presets */
@@ -334,7 +340,6 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
     [ request setPredicate:           predicate   ];
 
     NSArray * results = [ moc executeFetchRequest: request error: &error ];
-
 
     if ( error != nil ) [ NSApp presentError: error ];
     return results; /* Not 'autoreleased' as we don't "own" the object, according to naming conventions; the framework (must have) dealt with it */
@@ -443,17 +448,21 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
             );
         }
 
-        NSRunInformationalAlertPanel(
-            title,
-            message,
-            NSLocalizedString(
-                @"Continue",
-                @"Button in the alert shown when one or more styles become invalid because SlipCover cases disappear for any reason"
-            ),
-            NULL,
-            NULL,
-            count
-        );
+        NSAlert * alert =
+        [
+            NSAlert alertWithMessageText: title
+                           defaultButton: NSLocalizedString(
+                                              @"Continue",
+                                              @"Button in the alert shown when one or more styles become invalid because SlipCover cases disappear for any reason"
+                                          )
+                         alternateButton: nil
+                             otherButton: nil
+               informativeTextWithFormat: message, count
+        ];
+
+        [ alert setShowsHelp:  YES ];
+        [ alert setHelpAnchor: @"slipcover" ];
+        [ alert runModal ];
     }
 
     /* Never mind deleting things - should we ask to add some styles if
@@ -513,11 +522,6 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
                 NSEntityDescription  * styleEntity = [ mom entitiesByName ][ @"IconStyle" ];
                 IconStyle            * newStyle;
 
-                /* Convenience... */
-
-                NSNumber * numYes = @YES;
-                NSNumber * numNo  = @NO;
-
                 /* Loop over unused case names and created styles for each */
 
                 for ( NSString * unusedCaseName in unusedCaseNames )
@@ -531,8 +535,8 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
                     newStyle = [ [ IconStyle alloc ] initWithEntity: styleEntity
                                        insertIntoManagedObjectContext: moc ];
 
-                    [ newStyle setIsPreset:      numNo           ];
-                    [ newStyle setUsesSlipCover: numYes          ];
+                    [ newStyle setIsPreset:      @NO           ];
+                    [ newStyle setUsesSlipCover: @YES          ];
                     [ newStyle setSlipCoverName: unusedCaseName  ];
                     [ newStyle setCreatedAt:     [ NSDate date ] ];
                     [ newStyle setName:          styleName       ];

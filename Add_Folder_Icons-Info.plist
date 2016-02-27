@@ -13,7 +13,7 @@
 	<key>CFBundleIconFile</key>
 	<string>Application.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>uk.org.pond.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

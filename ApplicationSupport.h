@@ -26,12 +26,5 @@
 
 + ( NSString       * ) applicationSupportDirectory;
 + ( NSMutableArray * ) applicationSupportDirectoriesFor: ( NSString * ) name;
-+ ( NSString       * ) resourcePathFor:                  ( NSString * ) name;
-+ ( NSString       * ) auxiliaryExecutablePathFor:       ( NSString * ) name;
-
-+ ( BOOL             ) copyItemToApplicationSupport: ( NSString * ) leafname
-                                       isExecutable: ( BOOL       ) isExecutable
-                                            ifNewer: ( BOOL       ) ifNewer
-                                              error: ( NSError ** ) error;
 
 @end

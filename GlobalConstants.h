@@ -4,7 +4,7 @@
  * Global application constant definitions. Other hard-coded constant values of
  * interest can be found in the library code.
  *
- * (C) Hipposoft 2009, 2010, 2011 <ahodgkin@rowing.org.uk>
+ * (C) Hipposoft 2009-2016 <ahodgkin@rowing.org.uk>
 \******************************************************************************/
 
 #import <Cocoa/Cocoa.h>
@@ -16,7 +16,7 @@
 
 #define PROGRAM_STRING "addfoldericons"
 #define AUTHOR_STRING  "Andrew Hodgkinson"
-#define VERSION_STRING "2.2.0.2015.03.01"
+#define VERSION_STRING "3.0.0.2016.02.27"
 
 /* Avoid subdirectories which are package-like (e.g. applications)? */
 

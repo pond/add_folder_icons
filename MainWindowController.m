@@ -5,21 +5,24 @@
 //  Copyright 2010, 2011 Hipposoft. All rights reserved.
 //
 
-//#import "IconParameters.h"
-
 #import "MainWindowController.h"
 #import "ApplicationSupport.h"
 
 #import "Icons.h"
-#import "IconParameters.h"
+#import "CustomIconGenerator.h"
 #import "SlipCoverSupport.h"
 #import "GlobalConstants.h"
 #import "GlobalSemaphore.h"
+#import "ConcurrentCellProcessor.h"
 #import "ConcurrentPathProcessor.h"
 
 #import <Foundation/Foundation.h>
 
 #define NSINDEXSET_ON_PBOARD @"NSIndexSetOnPboardType"
+
+@interface MainWindowController()
+@property NSOperationQueue * queue;
+@end
 
 @implementation MainWindowController
 
@@ -29,10 +32,51 @@
 
 - ( void ) awakeFromNib
 {
-    tableContents = [ [ NSMutableArray alloc ] init ];
+    tableContents = [ [ NSMutableArray   alloc ] init ];
+    self.queue    = [ [ NSOperationQueue alloc ] init ];
 
+    /* Although documentation implies that the system should be left alone to
+     * set this up, in practice doing so causes very high system workload for
+     * large numbers of folders. Trying to cancel the operation takes a long
+     * time, because OS X appears to queue *all* operations extremely quickly,
+     * then has to cancel the whole lot.
+     *
+     * By restricting concurrency, this up-front queueing and latency comes
+     * under control. OS X may choose to use *less* than this of course, it's
+     * just a maximum. The value chosen here should soak CPUs on most machines
+     * but still (at least on the author's laptop at the time of writing)
+     * responds to cancellation quickly.
+     *
+     * This is entirely unscientific and unsatisfactory but given OS X's poor
+     * behaviour here (was OK on 10.6, got bad in 10.7, still bad in 10.10.2)
+     * there doesn't seem to be another way; though if anyone else other than
+     * me ever reads this and has suggestions, I'd love to hear them!
+     */
+
+    self.queue.maxConcurrentOperationCount = 8;
+    
     [ self initOpenPanel      ];
     [ self initWindowContents ];
+
+    /* On OS X Yosemite (10.10.x) and later, the green 'zoom' window control
+     * changes to become 'full screen'. This is nonsensical for an application
+     * that really needs to live alongside Finder windows to be useful, even
+     * given split screen in OS X El Capitan (10.11.x).
+     *
+     * Setting the button behaviour to 'auxiliary' in the XIB file causes
+     * warnings about compatibility before OS X 10.7; we'd quite like to stay
+     * compatible with OS X 10.6 if possible. So instead, set this at run time
+     * if on OS X 10.10 or later.
+     *
+     * It just so happens that a high level interface to determine OS X version
+     * was introduced in 10.10 - so if this exists, we already know we're on a
+     * new enough version.
+     */
+
+    if ( [ [ NSProcessInfo processInfo ] respondsToSelector: @selector( operatingSystemVersion ) ] )
+    {
+        self.window.collectionBehavior = NSWindowCollectionBehaviorFullScreenAuxiliary;
+    }
 }
 
 /******************************************************************************\
@@ -536,88 +580,17 @@
 - ( void ) createFolderIcons: ( NSArray * ) constArrayOfDictionaries
 {
     globalSemaphoreInit();
-
-    NSUserDefaults * standardUserDefaults = [ NSUserDefaults standardUserDefaults ];
-    NSArray        * coverArtFilenames    = [ standardUserDefaults arrayForKey: @"coverArtFilenames" ];
-    BOOL             includeColourLabels  = [ standardUserDefaults boolForKey: @"colourLabelsIndicateCoverArt" ];
-    CGImageRef       backgroundImage      = allocFolderIcon();
-
-    if ( [ coverArtFilenames count ] == 0 )
-    {
-        coverArtFilenames = @[ @"cover", @"folder" ];
-    }
-    else
-    {
-        /* The defaults system actually gives us an array of dictionarys of
-         * the single entry form "leafname = <foo>" - collect those into an
-         * array of the values of "<foo>".
-         */
-
-        coverArtFilenames = [ coverArtFilenames valueForKeyPath: @"leafname" ];
-    }
-
     globalErrorFlag = NO;
-    NSOperationQueue * queue = [ [ NSOperationQueue  alloc ] init ];
-
-    /* Although documentation implies that the system should be left alone to
-     * set this up, in practice doing so causes very high system workload for
-     * large numbers of folders. Trying to cancel the operation takes a long
-     * time, because OS X appears to queue *all* operations extremely quickly,
-     * then has to cancel the whole lot.
-     *
-     * By restricting concurrency, this up-front queueing and latency comes
-     * under control. OS X may choose to use *less* than this of course, it's
-     * just a maximum. The value chosen here should soak CPUs on most machines
-     * but still (at least on the author's laptop at the time of writing)
-     * responds to cancellation quickly.
-     *
-     * This is entirely unscientific and unsatisfactory but given OS X's poor
-     * behaviour here (was OK on 10.6, got bad in 10.7, still bad in 10.10.2)
-     * there doesn't seem to be another way; though if anyone else other than
-     * me ever reads this and has suggestions, I'd love to hear them!
-     */
-
-    queue.maxConcurrentOperationCount = 16;
 
     for ( NSDictionary * folder in constArrayOfDictionaries )
     {
-        NSString       * fullPOSIXPath = folder[ @"path"  ];
-        IconStyle      * style         = folder[ @"style" ];
-        IconParameters * params        = [ [ IconParameters alloc ] init ];
-
-        params.previewMode            = NO;
-
-        params.crop                   = [ style.cropToSquare           boolValue        ];
-        params.border                 = [ style.whiteBackground        boolValue        ];
-        params.shadow                 = [ style.dropShadow             boolValue        ];
-        params.rotate                 = [ style.randomRotation         boolValue        ];
-        params.singleImageMode        = [ style.onlyUseCoverArt        boolValue        ];
-        params.maxImages              = [ style.maxImages              unsignedIntValue ];
-        params.showFolderInBackground = [ style.showFolderInBackground unsignedIntValue ];
-
-        params.coverArtNames          = coverArtFilenames;
-        params.useColourLabels        = includeColourLabels;
-
-        /* Do we need to find the SlipCover case definition? */
-
-        if ( [ [ style usesSlipCover ] boolValue ] == YES )
-        {
-            params.slipCoverCase =
-            [
-                SlipCoverSupport findDefinitionFromName: [ style slipCoverName ]
-                                      withinDefinitions: [ iconStyleManager slipCoverDefinitions ]
-            ];
-        }
-        else
-        {
-            params.slipCoverCase = nil;
-        }
+        NSString  * fullPOSIXPath = folder[ @"path"  ];
+        IconStyle * iconStyle     = folder[ @"style" ];
 
         ConcurrentPathProcessor * processThisPath =
         [
-            [ ConcurrentPathProcessor alloc ] initWithPath: fullPOSIXPath
-                                             andBackground: backgroundImage
-                                             andParameters: params
+            [ ConcurrentPathProcessor alloc ] initWithIconStyle: iconStyle
+                                                   forPOSIXPath: fullPOSIXPath
         ];
 
         /* Set a completion block that runs whether the operation is successful,
@@ -633,7 +606,7 @@
             {
                 if ( [ workerThread isCancelled ]  == YES )
                 {
-                    [ queue cancelAllOperations ];
+                    [ self.queue cancelAllOperations ];
                 }
                 else
                 {
@@ -651,17 +624,16 @@
 
         if ( [ workerThread isCancelled ] == YES )
         {
-            [ queue cancelAllOperations ];
+            [ self.queue cancelAllOperations ];
             break;
         }
         else
         {
-            [ queue addOperation: processThisPath ];
+            [ self.queue addOperation: processThisPath ];
         }
     }
 
-    [ queue waitUntilAllOperationsAreFinished ];
-    CFRelease( backgroundImage );
+    [ self.queue waitUntilAllOperationsAreFinished ];
 
     /* If things went wrong tell the user in a modal alert opened from within
      * this modal loop, so the progress panel is still visible as an indication
@@ -674,7 +646,7 @@
      * from the folder list (depending on preferences it may or may not do so).
      */
 
-    if ( globalErrorFlag )
+    if ( globalErrorFlag || true )
     {
         [ self performSelectorOnMainThread: @selector( showAdditionFailureAlert )
                                 withObject: nil
@@ -853,14 +825,17 @@
 
 - ( void ) showAdditionFailureAlert
 {
-    NSRunCriticalAlertPanel
-    (
-        NSLocalizedString( @"Icon Addition Failure", @"Title of alert reporting a failure to add all icons" ),
-        NSLocalizedString( @"One or more of the folder addition attempts failed. You could try again with the existing folder list, clear the folder list and try with a new set of folders, or add fewer folders at a time.", @"Message shown in alert reporting a failure to add all icons "),
-        NSLocalizedString( @"Continue", @"Button shown in alert reporting a failure to add all icons" ),
-        nil,
-        nil
-    );
+    NSString * title   = NSLocalizedString( @"Icon Addition Failure", @"Title of alert reporting a failure to add all icons" );
+    NSString * message = NSLocalizedString( @"One or more of the folder addition attempts failed. You could try again with the existing folder list, clear the folder list and try with a new set of folders, or add fewer folders at a time.", @"Message shown in alert reporting a failure to add all icons ");
+    NSString * button  = NSLocalizedString( @"Continue", @"Button shown in alert reporting a failure to add all icons" );
+    NSAlert  * alert   = [ [ NSAlert alloc ] init ];
+
+    alert.alertStyle      = NSCriticalAlertStyle;
+    alert.messageText     = title;
+    alert.informativeText = message;
+
+    [ alert addButtonWithTitle: button ];
+    [ alert runModal                   ];
 }
 
 //------------------------------------------------------------------------------
@@ -1152,12 +1127,12 @@
              * how many new items are to be added, then add them.
              */
 
-            NSUInteger originalCount = [ tableContents      count ];
-            NSUInteger additionCount = [ [ openPanel URLs ] count ];
+            NSUInteger originalCount = tableContents.count;
+            NSUInteger additionCount = openPanel.URLs.count;
 
-            for ( NSURL * url in [ openPanel URLs ] )
+            for ( NSURL * url in openPanel.URLs )
             {
-                NSString * pathBeingAdded = [ url path ];
+                NSString * pathBeingAdded = url.path;
                 [ self addFolder: pathBeingAdded ];
             }
 
@@ -1186,11 +1161,11 @@
              */
 
             [ folderList reloadData ];
-            [ self considerInsertingSubfoldersOf: @{ @"urls": [ openPanel URLs ] } ];
+            [ self considerInsertingSubfoldersOf: @{ @"urls": openPanel.URLs } ];
         }
 	};
 
-    [ openPanel beginSheetModalForWindow: [ self window ]
+    [ openPanel beginSheetModalForWindow: self.window
                        completionHandler: openPanelHandler ];
 }
 
@@ -1242,12 +1217,12 @@
 
 - ( NSInteger ) numberOfRowsInTableView: ( NSTableView * ) tableView
 {
-    BOOL enabled = ( [ tableContents count ] != 0 );
+    BOOL enabled = ( tableContents.count != 0 );
 
-    [ startButton setEnabled: enabled ];
-    [ clearButton setEnabled: enabled ];
+    startButton.enabled = enabled;
+    clearButton.enabled = enabled;
 
-    return [ tableContents count ];
+    return tableContents.count;
 }
 
 /******************************************************************************\
@@ -1260,26 +1235,114 @@
  *      View making the request;
  *
  *      ( NSTableColumn * ) tableColumn
- *      Column identifier (identifier property values 'path' and 'style' are
- *      expected);
+ *      Column identifier (identifier property values 'path', 'style' or
+ *      'preview' are expected);
  *
  *      ( NSInteger ) row
  *      Row index (from zero upwards).
  *
  * Out: ( id )
- *      Data to display - an autoreleased NSString pointer cast to 'id'.
+ *      Data to display - an autoreleased NSString pointer cast to 'id' or
+ *      an NSString.
 \******************************************************************************/
 
 - ( id )                 tableView: ( NSTableView   * ) tableView
          objectValueForTableColumn: ( NSTableColumn * ) tableColumn
                                row: ( NSInteger       ) row
 {
-    NSDictionary * record = tableContents[row];
-    id             value  = record[ [ tableColumn identifier ] ];
+    NSString            * columnId = tableColumn.identifier;
+    NSMutableDictionary * record   = tableContents[ row ];
+    id                    value    = record[ columnId ];
 
-    if ( tableColumn == folderListStyleColumn )
+    if ( [ columnId isEqualToString: @"style" ] )
     {
-        value = [ ( ( IconStyle * ) value ) name ];
+        value = ( ( IconStyle * ) value ).name;
+
+        if ( [ value hasPrefix: ICON_STYLE_PRESET_PREFIX ] )
+        {
+            value = [ value substringFromIndex: ICON_STYLE_PRESET_PREFIX.length ];
+        }
+    }
+    else if ( [ columnId isEqualToString: @"preview" ] )
+    {
+        /* Is there already an operation underway to create a preview image for
+         * this row, or an existing image?
+         *
+         * - There is existing preview data, but it is outdated:
+         *
+         *   - If there is a cell processor running, cancel it.
+         *   - In any event, set record data to 'nil' so ARC can free it all.
+         *
+         * - There is existing preview data, and it is relevant:
+         *
+         *   - If there is an existing image, return it.
+         *   - If there is a cell processor running, let it continue and return
+         *     the default placeholder for now.
+         */
+
+        NSImage      * defaultImage     = [ NSImage imageNamed: NSImageNameFolder ];
+        IconStyle    * styleForTableRow = record[ @"style"   ];
+        NSDictionary * previewData      = record[ @"preview" ];
+
+        if ( previewData )
+        {
+            if ( previewData[ @"styleID" ] != styleForTableRow.objectID )
+            {
+                ConcurrentCellProcessor * outdatedProcessor = previewData[ @"cellProcessor" ];
+                [ outdatedProcessor cancel ];
+
+                record[ @"preview" ] = nil;
+            }
+            else
+            {
+                ConcurrentCellProcessor * runningProcessor = previewData[ @"cellProcessor" ];
+                NSImage                 * existingImage    = previewData[ @"previewImage" ];
+
+                if ( existingImage    ) return existingImage;
+                if ( runningProcessor ) return defaultImage;
+            }
+        }
+
+        /* If the row isn't even visible, don't proceed further */
+
+        NSScrollView * scrollView  = [ tableView enclosingScrollView ];
+        CGRect         visibleRect = scrollView.contentView.visibleRect;
+        NSRange        range       = [ tableView rowsInRect: visibleRect ];
+
+        if ( NSLocationInRange( row, range ) == NO )
+        {
+            /* If the row isn't visible, even if there's a style-relevant cell
+             * processing operation it might as well be cancelled now.
+             */
+
+            ConcurrentCellProcessor * runningProcessor = previewData[ @"cellProcessor" ];
+
+            [ runningProcessor cancel ];
+            record[ @"preview" ] = nil;
+
+            return defaultImage;
+        }
+
+        /* Need to build a preview image */
+
+        ConcurrentCellProcessor * cellProcessor =
+        [
+            [ ConcurrentCellProcessor alloc ] initForTableView: tableView
+                                              andTableContents: tableContents
+                                              andRowDictionary: record
+        ];
+
+        record[ @"preview" ] =
+        @{
+            @"styleID":       styleForTableRow.objectID,
+            @"cellProcessor": cellProcessor
+        };
+
+        [ self.queue addOperation: cellProcessor ];
+
+        /* Meanwhile, return the default folder image */
+
+        value = defaultImage;
     }
 
     return value;

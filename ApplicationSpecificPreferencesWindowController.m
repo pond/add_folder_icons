@@ -19,7 +19,6 @@
             managedObjectContext,
             managedObjectModel;
 
-
 /******************************************************************************\
  * +applicationSpecificPreferencesWindowController:
  *

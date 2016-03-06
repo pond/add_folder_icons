@@ -41,9 +41,10 @@
     @property ( readonly ) UpdateHelper * updateHelper;
 #endif
 
-- ( void ) establishDefaultPreferences;
+- ( void       ) establishDefaultPreferences;
+- ( CGImageRef ) standardFolderIcon;
 
-- ( IBAction ) showPreferences:  ( id ) sender;
-- ( IBAction ) showManageStyles: ( id ) sender;
+- ( IBAction   ) showPreferences:  ( id ) sender;
+- ( IBAction   ) showManageStyles: ( id ) sender;
 
 @end

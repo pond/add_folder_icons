@@ -41,7 +41,7 @@
  *      as well as checking for 'nil' return values within that code.
 \******************************************************************************/
 
-- ( id ) init
+- ( instancetype ) init
 {
     if ( NSClassFromString( UPDATER_CLASS_NAME ) == nil )
     {

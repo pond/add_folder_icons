@@ -9,6 +9,14 @@
 #import "SlipCoverSupport.h"
 #import "ApplicationSupport.h"
 
+@interface SlipCoverSupport ()
+
++ ( void ) addCaseDefinitionsAt: ( NSString       * ) searchPath
+                 toMutableArray: ( NSMutableArray * ) caseDefinitions;
+
++ ( NSURL * ) bookmarkedURLFor: ( NSString * ) searchPath;
+@end
+
 @implementation SlipCoverSupport
 
 /******************************************************************************\
@@ -78,11 +86,7 @@
     }
 
     /* If we *are* sandboxed, hard-code an additional path to the user's
-     * non-sandbox library for SlipCover styles there - again, I can't find
-     * any other way to do this (we can't use migrations as they move files
-     * rather than copying them, so instead we use temporary read-only file
-     * entitlements on specific known paths to attempt some kind of legacy
-     * SlipCover support from within a sandbox).
+     * non-sandbox library for SlipCover styles there.
      */
 
     if ( isSandboxed )
@@ -114,78 +118,153 @@
 }
 
 /******************************************************************************\
- * +enumerateSlipCoverDefinitions
+ * +enumerateSlipCoverDefinitionsInto:thenCall:with:
  *
- * Return an array of SlipCover CaseDefinition objects representing all
- * known and parseable case descriptors.
+ * Generate an array of SlipCover CaseDefinition objects representing all
+ * known and parseable case descriptors. This call is asynchronous; the
+ * given selector is sent to the given object instance when complete, with
+ * all of the case definitions included.
  *
- * Out: ( NSMutableArray * )
- *      Autoreleased array of autoreleased pointers to CaseDefinitions or 'nil'
- *      if no valid case definitions could be found.
+ * In:  ( NSMutableArray * ) slipCoverDefinitions
+ *      The caller provides an (assumed initially empty) NSMutableArray which
+ *      will aynschronously be populated with CaseDefinition instances.
+ *
+ *      ( id ) instance
+ *      When all accessible paths (inside the sandbox, exceptions, or outside
+ *      the sandbox but with access granted) have been processed, this instance
+ *      will be called to notify it that processing has finished.
+ *
+ *      ( SEL ) selector
+ *      This is the no-parameters selector performed on the instance to notify
+ *      it that all processing has finished. This selector is performed whether
+ *      or not any case definitions were added to the provided mutable array.
 \******************************************************************************/
 
-+ ( NSMutableArray * ) enumerateSlipCoverDefinitions
++ ( void ) enumerateSlipCoverDefinitionsInto: ( NSMutableArray * ) slipCoverDefinitions
+                                    thenCall: ( id               ) instance
+                                        with: ( SEL              ) selector
 {
-    NSFileManager  * fileManager     = [ [ NSFileManager alloc ] init ];
-    NSMutableArray * searchPaths     = [ self searchPathsForCovers ];
-    NSMutableArray * caseDefinitions = [ NSMutableArray arrayWithCapacity: 0 ];
+    /* The main queue runs only one operation at a time and only in the main
+     * thread. Perfect - that's what we need to check each search path and,
+     * possibly, open a modal NSOpenPanel to grant access to one or more of
+     * them, in series not parallel.
+     *
+     * Although we use -runModal: for the open panel, trying to do that in the
+     * main thread synchronously while initialising stuff ends badly. Making
+     * use of the main operation queue to schedule all of this in coordination
+     * with anything else Mac OS X is doing works very well.
+     */
 
-    if ( searchPaths == nil ) return nil;
+    NSOperationQueue * mainQueue             = [ NSOperationQueue mainQueue ];
+    NSMutableArray   * searchPaths           = [ self searchPathsForCovers ];
+    NSMutableArray   * accessibleSearchPaths = [ [ NSMutableArray alloc ] init ];
 
     for ( NSString * searchPath in searchPaths )
     {
-        NSArray * contents = [ fileManager contentsOfDirectoryAtPath: searchPath error: NULL ];
-
-        if ( contents != nil )
-        {
-            for ( NSString * casePath in contents )
+        [
+            mainQueue addOperationWithBlock: ^ ( void )
             {
-                /* The CaseDefinition constructor code handles sanity checks
-                 * and returns 'nil' if anything goes wrong. 
-                 */
-                 
-                CaseDefinition * caseDefinition =
-                [
-                    CaseDefinition caseDefinitionFromPath:
-                    [ searchPath stringByAppendingPathComponent: casePath ]
-                ];
+                BOOL       accessGranted = NO;
+                NSURL    * bookmarkedURL = [ self bookmarkedURLFor: searchPath ];
 
-                if ( [ caseDefinition name ] != nil )
+                /* Under appropriate security scope, check access permission. If it is
+                 * granted, easy! Just add it. Otherwise, try and get permission.
+                 */
+
+                [ bookmarkedURL startAccessingSecurityScopedResource ];
+
+                if ( access( searchPath.fileSystemRepresentation, R_OK) == 0 )
                 {
-                    [ caseDefinitions addObject: caseDefinition ];
+                    accessGranted = YES;
+                    [ accessibleSearchPaths addObject: searchPath ];
+                }
+                
+                [ bookmarkedURL stopAccessingSecurityScopedResource ];
+
+                if ( accessGranted == NO )
+                {
+                    NSOpenPanel * openPanel = [ NSOpenPanel openPanel ];
+                    NSURL       * fileURL   = [ NSURL fileURLWithPath: searchPath isDirectory: YES ];
+
+                    [ openPanel setMessage: NSLocalizedString( @"Please click on the 'Grant Access' button to allow Add Folder Icons to offer SlipCover case design styles.", @"Message shown in the Open Panel used for granting out-of-sandbox access to the SlipCover application" ) ];
+                    [ openPanel setPrompt:  NSLocalizedString( @"Grant Access", @"Button text in the Open Panel used for granting out-of-sandbox access to the SlipCover application"   ) ];
+
+                    [ openPanel setCanChooseFiles:          NO  ];
+                    [ openPanel setCanChooseDirectories:    YES ];
+                    [ openPanel setCanCreateDirectories:    NO  ];
+                    [ openPanel setAllowsMultipleSelection: NO  ];
+                    [ openPanel setResolvesAliases:         YES ];
+
+                    [ openPanel setDirectoryURL: fileURL ];
+
+                    /* This blocks until a button is clicked upon */
+
+                    NSModalResponse result = [ openPanel runModal ];
+
+                    if ( result == NSFileHandlingPanelOKButton )
+                    {
+                        NSURL * url = openPanel.URLs[ 0 ];
+
+                        if ( [ [ url absoluteString ] isEqualToString: [ fileURL absoluteString ] ] )
+                        {
+                            NSError * error        = nil;
+                            NSData  * bookmarkData =
+                            [
+                                   url bookmarkDataWithOptions: NSURLBookmarkCreationWithSecurityScope
+                                includingResourceValuesForKeys: nil
+                                                 relativeToURL: nil
+                                                         error: &error
+                            ];
+
+                            if ( error )
+                            {
+                                [ NSApp presentError: error ];
+                            }
+                            else
+                            {
+                                NSUserDefaults * userDefaults = [ NSUserDefaults standardUserDefaults ];
+                                NSString       * prefsKey     = [ NSString stringWithFormat: @"BookmarkFor%@", searchPath ];
+
+                                [ userDefaults setObject: bookmarkData forKey: prefsKey ];
+                                [ userDefaults synchronize ];
+
+                                [ accessibleSearchPaths addObject: searchPath ];
+                            }
+                        }
+                    }
                 }
             }
-        }
+        ];
     }
 
-    if ( [ caseDefinitions count ] == 0 ) return nil;
-    else                                  return caseDefinitions;
-}
+    /* Once all the above paths have been processed, we'll have the
+     * 'accessibleSearchPaths' array containing zero or more paths. Add in
+     * another operation which takes those and builds case definitions.
+     */
 
-/******************************************************************************\
- * +findDefinitionFromName:
- *
- * Enumerates the current set of available SlipCover case definitions, then
- * passes the given name and the array of definitions through to
- * "+findDefinitionFromName:withinDefinitions:". As a result the returned
- * object is an autoreleased item that is not owned by the caller.
- *
- * If you already have an enumerated set of case definitions available, it is
- * more efficient to use "+findDefinitionFromName:withinDefinitions:" directly.
- *
- * In:       ( NSString * ) name
- *           Name of case definition to find.
- *
- * Out:      ( CaseDefinition * )
- *           Pointer to a case definition if found, else nil.
- *
- * See also: +findDefinitionFromName:withinDefinitions:
-\******************************************************************************/
+    [
+        mainQueue addOperationWithBlock: ^ ( void )
+        {
+            for ( NSString * accessibleSearchPath in accessibleSearchPaths )
+            {
+                [ self addCaseDefinitionsAt: accessibleSearchPath
+                             toMutableArray: slipCoverDefinitions ];
+            }
 
-+ ( CaseDefinition * ) findDefinitionFromName: ( NSString * ) name
-{
-    return [ self findDefinitionFromName: name
-                       withinDefinitions: [ self enumerateSlipCoverDefinitions ] ];
+            /* I.e.:
+             *
+             *   [ instance performSelector: selector ];
+             *
+             * See:
+             *
+             *   http://stackoverflow.com/questions/7017281/performselector-may-cause-a-leak-because-its-selector-is-unknown
+             */
+
+            IMP imp = [ instance methodForSelector: selector ];
+            void ( *func )( id, SEL ) = (void * ) imp;
+            func( instance, selector );
+        }
+    ];
 }
 
 /******************************************************************************\
@@ -209,7 +288,7 @@
  *           Pointer to a case definition if found, else nil.
  *
  * See also: +findDefinitionFromName:
- *           +enumerateSlipCoverDefinitions
+ *           +enumerateSlipCoverDefinitionsInto:thenCall:with:
 \******************************************************************************/
 
 + ( CaseDefinition * ) findDefinitionFromName: ( NSString * ) name
@@ -238,6 +317,122 @@
     }
 
     return foundDefinition;
+}
+
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark Internal (private) methods.
+//------------------------------------------------------------------------------
+
+/******************************************************************************\
+ * +bookmarkedURLFor:
+ *
+ * Internal.
+ *
+ * Return a security scoped bookmark for the given full POSIX path, or 'nil'
+ * if no such thing exists.
+ *
+ * In:  ( NSString * ) searchPath
+ *      Full POSIX path of the file or folder for which a bookmark is to be
+ *      found.
+ *
+ * Out: NSURL for the security-scoped bookmark, or 'nil' if none is found.
+ \******************************************************************************/
+
++ ( NSURL * ) bookmarkedURLFor: ( NSString * ) searchPath
+{
+    BOOL       isStale       = NO;
+    NSError  * error         = nil;
+    NSString * prefsKey      = [ NSString stringWithFormat: @"BookmarkFor%@", searchPath ];
+    NSData   * bookmarkData  = [ [ NSUserDefaults standardUserDefaults ] objectForKey: prefsKey ];
+
+    if ( bookmarkData )
+    {
+        NSURL * url = [ NSURL URLByResolvingBookmarkData: bookmarkData
+                                                 options: NSURLBookmarkResolutionWithSecurityScope
+                                           relativeToURL: nil
+                                     bookmarkDataIsStale: &isStale
+                                                   error: &error ];
+
+        if ( error ) [ NSApp presentError: error ];
+
+        if ( isStale == YES ) return nil;
+        else                  return url;
+    }
+    else
+    {
+        return nil;
+    }
+}
+
+/******************************************************************************\
+ * +addCaseDefinitionsAt:toMutableArray:
+ *
+ * Internal.
+ *
+ * Enumerate SlipCover case definitions at a given search path and add
+ * CaseDefinition objects representing all found and parseable case descriptors
+ * to the given mutable array.
+ *
+ * In:  ( NSString * ) searchPath
+ *      POSIX path of the folder in which case definitions may reside. If this
+ *      is outside the sandbox, the user may have had to grant access else no
+ *      successful enumeration will occur.
+ *
+ *      ( NSMutableArray *) caseDefinitions
+ *      An array of existing CaseDefintion instances which may have new items
+ *      added to the end.
+ *
+ * If any errors occur, the method silently exits without adding new entries to
+ * the given array. Usually this happens when out-of-sandbox access has not
+ * been granted for the given search path.
+ \******************************************************************************/
+
++ ( void ) addCaseDefinitionsAt: ( NSString       * ) searchPath
+                 toMutableArray: ( NSMutableArray * ) caseDefinitions
+{
+    NSURL * bookmarkedURL = [ self bookmarkedURLFor: searchPath ];
+    BOOL    accessGranted = NO;
+
+    /* If there's no security bookmark or access is somehow denied by it, maybe
+     * there's an exception entitlement available instead so always check.
+     */
+
+    [ bookmarkedURL startAccessingSecurityScopedResource ];
+
+    if ( access( searchPath.fileSystemRepresentation, R_OK) == 0 )
+    {
+        accessGranted = YES;
+    }
+
+    if ( accessGranted == YES )
+    {
+        NSFileManager * fileManager = [ [ NSFileManager alloc ] init ];
+        NSArray       * contents    = [ fileManager contentsOfDirectoryAtPath: searchPath error: NULL ];
+
+        if ( contents != nil )
+        {
+            for ( NSString * casePath in contents )
+            {
+                /* The CaseDefinition constructor code handles sanity checks
+                 * and returns 'nil' if anything goes wrong.
+                 */
+
+                CaseDefinition * caseDefinition =
+                [
+                    CaseDefinition caseDefinitionFromPath:
+                    [ searchPath stringByAppendingPathComponent: casePath ]
+                ];
+
+                if ( [ caseDefinition name ] != nil )
+                {
+                    [ caseDefinitions addObject: caseDefinition ];
+                }
+            }
+        }
+    }
+
+    [ bookmarkedURL stopAccessingSecurityScopedResource ];
 }
 
 @end

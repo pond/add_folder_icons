@@ -8,6 +8,8 @@
 
 #import "Add_Folder_IconsAppDelegate.h"
 #import "ApplicationSupport.h"
+#import "SlipCoverSupport.h"
+#import "GlobalConstants.h"
 #import "GlobalSemaphore.h"
 
 @implementation Add_Folder_IconsAppDelegate
@@ -22,20 +24,21 @@
 
     globalSemaphoreInit();
 
-    /* Get hold of the singleton icon style manager instance */
-
-    iconStyleManager = [ IconStyleManager iconStyleManager ];
-
-    /* Establish various defaults */
-
-    [ self establishDefaultPreferences ];
-
     /* Possibly wake up the update mechanism */
 
     #ifdef UPDATABLE
         updateHelper = [ [ UpdateHelper alloc ] init ];
         [ mainMenuController addUpdaterMenuEntriesWith: updateHelper ];
     #endif
+
+    /* Get hold of the singleton icon style manager instance */
+
+    iconStyleManager = [ IconStyleManager iconStyleManager ];
+
+    /* Establish various defaults, allocate singletons */
+
+    [ self establishDefaultPreferences ];
+    [ self standardFolderIcon          ];
 
     /* Create the main window, which opens itself */
 
@@ -96,15 +99,71 @@
 
     NSDictionary * appDefaults =
     @{
-        @"showSplashScreenAtStartup":    @"YES",
-        @"addSubFolders":                @"NO",
-        @"emptyListIfSuccessful":        @"NO",
-        @"colourLabelsIndicateCoverArt": @"YES",
+        @"showSplashScreenAtStartup":    @YES,
+        @"addSubFolders":                @NO,
+        @"emptyListIfSuccessful":        @NO,
+        @"colourLabelsIndicateCoverArt": @YES,
         @"coverArtFilenames":            coverArtFilenames,
         @"defaultStyle":                 defaultStyleID
     };
 
     [ userDefaults registerDefaults: appDefaults ];
+}
+
+/******************************************************************************\
+ * -standardFolderIcon
+ *
+ * Ask the system for a generic folder icon and generate a CGImage variant of
+ * it at CANVAS_SIZE x CANVAS_SIZE dimensions (see "GlobalConstants.h"). This
+ * is only done once - the representation is then kept forever.
+ *
+ * Out: CGImageRef pointing to a CGImage version of the standard system folder
+ *      icon. DO NOT EVER CALL 'release()' ON THIS.
+\******************************************************************************/
+
+- ( CGImageRef ) standardFolderIcon
+{
+    static dispatch_once_t onceToken;
+    static CGImageRef      folderIconRef = NULL;
+
+    dispatch_once( &onceToken, ^{
+
+        NSImage * folder = [ NSImage imageNamed: NSImageNameFolder ];
+
+        if ( folder )
+        {
+            /* To turn into a CGImage, just try to fill the canvas with the folder
+             * icon. The OS selects the best image.
+             *
+             * We *DO NOT* adjust the requested size for retina DPI. The OS does
+             * that internally, it seems; at least on OS X 10.11, requesting an
+             * adjusted 512 for high DPI and thus asking for 1024, results in a
+             * failure to fetch an image and a logged complaint from
+             * iconservicesagent about being able to find a 2048x2048 image.
+             */
+
+            NSInteger  canvasSize = CANVAS_SIZE; /* (was 'dpiValue( CANVAS_SIZE )' */
+            NSRect     imageRect  = NSMakeRect( 0, 0, canvasSize, canvasSize );
+            CGImageRef localRef   =
+            [
+                folder CGImageForProposedRect: &imageRect
+                                      context: nil
+                                        hints: nil
+            ];
+
+            /* The above is owned by the NSImage and when the NSImage goes, the
+             * folder goes with it. We need to store a copy.
+             */
+
+            if ( localRef )
+            {
+                folderIconRef = CGImageCreateCopy( localRef );
+            }
+        }
+
+    } );
+
+    return folderIconRef;
 }
 
 /******************************************************************************\

@@ -8,22 +8,24 @@
 
 #import "Miscellaneous.h"
 
-/******************************************************************************\
- * allocFolderIcon()
- *
- * Obtain an CGImageRef containing the standard folder icon. Caller must
- * release this when no longer needed. Returns the largest icon available.
- *
- * In:  N/A
- * Out: CGImageRef for the standard folder icon image, or NULL if something
- *      went wrong.
-\******************************************************************************/
-
-CF_IMPLICIT_BRIDGING_ENABLED
-
-CGImageRef allocFolderIcon( void );
-
-CF_IMPLICIT_BRIDGING_DISABLED
+///******************************************************************************\
+// * allocFolderIcon()
+// *
+// * Obtain an CGImageRef containing the standard folder icon. Returns the
+// * largest icon available. Caches the result in a local static variable; call
+// * from the main thread only the first time around, or anywhere subsequently.
+// *
+// * In:  N/A
+// *
+// * Out: CGImageRef for the standard folder icon image, or NULL if something
+// *      went wrong.
+// \******************************************************************************/
+//
+//// CF_IMPLICIT_BRIDGING_ENABLED
+//
+//CGImageRef allocFolderIcon( void );
+//
+//// CF_IMPLICIT_BRIDGING_DISABLED
 
 /******************************************************************************\
  * getIconFamilyFromCGImage()

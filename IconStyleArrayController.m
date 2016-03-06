@@ -17,7 +17,7 @@
 /* Overriding all three NSArrayController initialisation methods is probably
  * overkill; it seems to me that there must be a more elegant and less
  * overweight way to achieve this apparently simple requirement of specifying
- * default sorting for a CoreData bound array controller. However, despite
+ * default sorting for a Core Data bound array controller. However, despite
  * two days attempting to read around the topic on developer.apple.com and
  * numerous articles turned up via Google, table views listing styles still
  * always default to unsorted until a column heading is clicked upon, popup

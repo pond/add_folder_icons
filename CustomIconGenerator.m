@@ -1,41 +1,25 @@
-/******************************************************************************\
- * Utilities: IconGenerator.m
- *
- * Takes folders and creates a thumbnail icon that gives an idea of any images
- * contained inside that folder. Requires "Utilities: Miscellaneous" library.
- *
- * (C) Hipposoft 2009, 2010, 2011 <ahodgkin@rowing.org.uk>
-\******************************************************************************/
+//
+//  CustomIconGenerator.m
+//  Add Folder Icons
+//
+//  Created by Andrew Hodgkinson on 3/03/16.
+//  Copyright © 2016 Hipposoft. All rights reserved.
+//
 
-#import "IconGenerator.h"
-#import "CaseGenerator.h"
+#import "CustomIconGenerator.h"
+
+#import "Add_Folder_IconsAppDelegate.h"
+#import "GlobalConstants.h"
 #import "GlobalSemaphore.h"
-
-/* Declare local functions */
-
-static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath,
-                                                  BOOL             skipPackageLikeEntries,
-                                                  OSStatus       * thumbState,
-                                                  IconParameters * params );
-
-static BOOL             paintImage              ( CFStringRef      fullPosixPath,
-                                                  CGRect           rect,
-                                                  CGContextRef     context,
-                                                  BOOL             cropImages );
-
-static CGImageRef       allocCustomIcon         ( NSMutableArray * chosenImages,
-                                                  CGImageRef       backgroundImage,
-                                                  BOOL             opaque,
-                                                  OSStatus       * thumbState,
-                                                  IconParameters * params );
-
-static CGImageRef       allocSlipCoverIcon      ( NSMutableArray * chosenImages,
-                                                  OSStatus       * thumbState,
-                                                  IconParameters * params );
+#import "Icons.h"
+#import "IconStyleManager.h"
+#import "SlipCoverSupport.h"
+#import "CaseGenerator.h"
 
 /* Pre-computed locations inside a CANVAS_SIZE square canvas for cropped
  * thumbnail icons for when there are between 1 and 4 icons available. See
- * "IconGenerator.h" for CANVAS_SIZE and other relevant definitions.
+ * "GlobalConstants.h" for CANVAS_SIZE and "CustomIconGenerator.h" for other
+ * relevant constants throughout this implementation.
  *
  * The compuation takes the worst case of an icon with no border, shadow or
  * rotation with image cropping enabled, so the painted image fills the whole
@@ -76,85 +60,175 @@ static CGRect locations[ 4 ][ 4 ] =
     }
 };
 
+@interface CustomIconGenerator()
+
+- ( NSArray    * ) allocFoundImagePathArray: ( NSError      ** ) error;
+
+- ( BOOL         )             paintImageAt: ( CFStringRef     ) fullPosixPath
+                                   intoRect: ( CGRect          ) rect
+                               usingContext: ( CGContextRef    ) context
+                     maintainingAspectRatio: ( BOOL            ) maintainAspectRatio;
+
+- ( CGImageRef   )      allocCustomIconFrom: ( NSArray       * ) chosenImages
+                             withBackground: ( CGImageRef      ) backgroundImage
+                                   errorsTo: ( NSError      ** ) error;
+
+- ( CGImageRef   )       allocSlipCoverIcon: ( NSArray       * ) chosenImages
+                                   errorsTo: ( NSError      ** ) error;
+
+@property CGImageRef backgroundImage;
+
+@end
+
+@implementation CustomIconGenerator
+
 /******************************************************************************\
- * allocFoundImagePathArray()
+ * -initWithIconStyle:forPOSIXPath:
+ *
+ * Initialise an instance of the icon generator based on the given IconStyle
+ * instance (retained by reference) and full POSIX path of the folder for which
+ * an icon is to be generated - source images for the icon are taken from this.
+ * Once initialised, you may want to modify other read/write properties before
+ * generating an icon.
+ *
+ * Any relevant user preferences values are frozen in when the instance is
+ * created, so changes to them will not affect the operation of this generator.
+ * If you pass an IconStyle instance that's still connected to CoreData and may
+ * be modified in the background by preferences changes, though, beware.
+ *
+ * In:  ( IconStyle * ) theIconStyle
+ *      IconStyle to use for the generated icon. Can be read back later via the
+ *      "iconStyle" property.
+ *
+ *      ( NSString * ) thePOSIXPath
+ *      Full POSIX path of the folder to use for image enumeration and icon
+ *      generation. Can be read back later by the "posixPath" property.
+\******************************************************************************/
+
+- ( instancetype ) initWithIconStyle: ( IconStyle * ) theIconStyle
+                        forPOSIXPath: ( NSString  * ) thePosixPath
+{
+    if ( ( self = [ super init ] ) )
+    {
+        NSUserDefaults * defaults  = [ NSUserDefaults standardUserDefaults ];
+        NSArray        * filenames = [ defaults arrayForKey: @"coverArtFilenames" ];
+
+        /* The defaults system actually gives us an array of dictionarys of
+         * the single entry form "leafname = <foo>" - collect those into an
+         * array of the values of "<foo>". Include also a fallback in case
+         * all cover art filenames were deleted.
+         */
+
+        filenames = [ filenames valueForKeyPath: @"leafname" ];
+
+        if ( [ filenames count ] == 0 )
+        {
+            filenames = @[ @"cover", @"folder" ];
+        }
+
+        _posixPath                          = thePosixPath;
+        _iconStyle                          = theIconStyle;
+
+        _coverArtFilenames                  = [ [ NSArray alloc ] initWithArray: filenames copyItems: YES ];
+        _useColourLabelsToIdentifyCoverArt  = [ defaults boolForKey: @"colourLabelsIndicateCoverArt" ];
+
+        _makeBackgroundOpaque               = NO;
+        _nonRandomImageSelectionForAPreview = NO;
+
+        if ( _iconStyle.usesSlipCover.boolValue == YES )
+        {
+            IconStyleManager * iconStyleManager = [ IconStyleManager iconStyleManager ];
+
+            _slipCoverCase =
+            [
+                SlipCoverSupport findDefinitionFromName: [ _iconStyle       slipCoverName        ]
+                                      withinDefinitions: [ iconStyleManager slipCoverDefinitions ]
+            ];
+        }
+        else
+        {
+            _slipCoverCase = nil;
+        }
+
+        _backgroundImage = [ [ NSApp delegate ] standardFolderIcon ];
+    }
+
+    return self;
+}
+
+/******************************************************************************\
+ * -allocFoundImagePathArray:
  *
  * Based on given folder and icon generation parameters, search the folder for
  * suitable images to use as part of icon generation and return a pointer to a
  * mutable array containing full POSIX paths (as NSString pointers) of the
- * found image(s). The caller gets ownership of the array and must eventually
- * discard it with a call to '-release'.
+ * found image(s).
  *
- * Images may be enumerated from the given directory freely, or may be
- * constrainted by some of the settings in the given icon parameters structure.
- * The found images are always narrowed down to a collection the maximum size
- * of which is dictated by the icon parameters' "maxImages" property. The order
- * of choice will always be random even if there were less found images than
- * this maximum, so unless there is only one found image, the results may be
- * different from call to call, even if all input parameters are equal. This
- * can be prevented by setting with icon parameters' "previewMode" flag, which
- * if YES causes the requested number of images to be drawn sequentially from
- * the found pool, from first found upwards in order of enumeration.
- *
- * Returns 'nil' if anything goes wrong (see also parameter 'thumbState') or
- * if no images are found, else an array with at least one image inside.
+ * Images may be enumerated from the given directory freely, or be constrainted
+ * by some of the settings in this instance's configured icon style. Results
+ * are always narrowed down to a collection no larger than the icon style's
+ * "maxImages" property. The order of results will always be random even if
+ * there were fewer images found than this maximum; results of this call thus
+ * may differ from call to call even if most other parameters are equal. This
+ * can be prevented by setting the nonRandomImageSelectionForAPreview property
+ * to YES prior to calling. Returned results are then drawn sequentially from
+ * the found pool, in order of enumeration.
  *
  * This function allows re-entrant callers from multiple threads using
  * independent execution contexts, as it protects thread-sensitive sections
  * using the global semaphore.
  *
- * The caller must ensure that an autorelease pool is available.
+ * In:  ( NSError ** ) error
+ *      Pointer to an NSError *, which is filled in with 'nil' if no errors
+ *      occur, else a pointer to an initialised NSError describing the problem.
+ *      You can pass 'nil' here if you don't care about errors.
  *
- * In:  Fully specified POSIX-style path of folder of interest;
- *
- *      YES to not enumerate contents of subdirectories if the subdirectory
- *      is package-like, else enumerate subdirectories regardless;
- *
- *      Pointer to an OSStatus updated on exit with 'noErr' if everything is
- *      OK, else an error code (see also 'errno' in such cases). This is
- *      required in addition to the function's return value to distinguish
- *      between NULL being returned because the folder contains no recognised
- *      images and thus needs no custom icon, or NULL being returned because an
- *      error was encountered while attempting to generate the custom icon;
- *
- *      Pointer to an initialised IconParameters instance describing the way
- *      in which to generate the icons, which in turn influences the image
- *      search (e.g. for multiple images, or a single cover art image).
- *
- * Out: Pointer to a caller-owned NSMutableArray containing the .
+ * Out: Pointer to a caller-owned NSArray containing the paths of the images,
+ *      or "nil" if either none were found or an error occurs.
 \******************************************************************************/
 
-static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath,
-                                                  BOOL             skipPackageLikeEntries,
-                                                  OSStatus       * thumbState,
-                                                  IconParameters * params )
+- ( NSArray * ) allocFoundImagePathArray: ( NSError ** ) error
 {
     NSFileManager  * fileMgr      = [ [ NSFileManager alloc ] init ]; /* http://developer.apple.com/mac/library/documentation/Cocoa/Reference/Foundation/Classes/NSFileManager_Class/Reference/Reference.html */
-    NSString       * enumPath     = fullPosixPath;
+    NSString       * enumPath     = _posixPath;
     NSString       * currFile;
     NSMutableArray * images       = [ NSMutableArray arrayWithCapacity: 0 ];
     NSMutableArray * chosenImages = nil;
     BOOL             failed       = NO;
-    errno                         = 0;
 
-    /* We consider ourselves in Single Image Mode if using that flag explicitly
-     * or if using SlipCover code for icon generation.
+    errno = 0;
+    if ( error ) *error = nil;
+
+    /* We consider ourselves in cover art mode if using that flag explicitly or
+     * if using SlipCover code for icon generation.
      */
-     
-    BOOL singleImageMode = ( params.singleImageMode == YES || params.slipCoverCase != nil ) ? YES : NO;
+
+    BOOL onlyUseCoverArt = self.iconStyle.onlyUseCoverArt.boolValue |
+                           self.iconStyle.usesSlipCover.boolValue;
 
     /* Directory enumeration is needed in multiple image mode and may be needed
-     * in single image mode; besides, this gives us a quick way to discover if
-     * the path to the folder seems to be invalid.
+     * in cover art mode; besides, this gives us a quick way to discover if the
+     * path to the folder seems to be invalid.
      */
 
     NSDirectoryEnumerator * dirEnum  = [ fileMgr enumeratorAtPath: enumPath ];
     NSDictionary          * dirAttrs = [ dirEnum directoryAttributes ];
 
-    if ( ! dirAttrs ) /* Yes - this is ugly, but at least it's effective */
+    if ( ! dirAttrs )
     {
-        errno       = ENOENT;
-        *thumbState = kPOSIXErrorBase + errno;
+        if ( error )
+        {
+            NSDictionary * dict =
+            @{
+                NSLocalizedDescriptionKey:        @"Unable to generate icon",
+                NSLocalizedFailureReasonErrorKey: @"The folder was either not found or access to it was denied"
+            };
+
+            *error = [ NSError errorWithDomain: NSCocoaErrorDomain
+                                          code: NSFileReadNoPermissionError
+                                      userInfo: dict ];
+        }
+
         require ( dirAttrs, nothingToDo );
     }
 
@@ -163,7 +237,7 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
      * multiple image mode.
      */
 
-    if ( singleImageMode )
+    if ( onlyUseCoverArt )
     {
         /* Although we got hold of a directory enumerator earlier, we get
          * a new one here as we're only interested in finding the right
@@ -219,7 +293,7 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
                  * labelled, "cover" or "folder" leafname images.
                  *
                  * MAXIMUM_IMAGE_SIZE is not obeyed as we're looking for
-                 * specific leafnames or a colour label in single image
+                 * specific leafnames or a colour label in cover art
                  * mode and the implication is that the user wants us to
                  * use that image regardless. This is quite different
                  * from a generic directory scan.
@@ -227,24 +301,28 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
 
                 if ( resourceError == nil )
                 {
-                    if ( [ isDirectory boolValue ] == YES )
+                    if ( isDirectory.boolValue == YES )
                     {
                         [ dirEnum skipDescendants ];
                     }
-                    else if ( [ isRegularFile boolValue ] == YES && isImageFile( fullPath ) == YES )
+                    else if ( isRegularFile.boolValue == YES && isImageFile( fullPath ) == YES )
                     {
                         NSString * leaf = [ [ fullPath lastPathComponent ] stringByDeletingPathExtension ];
 
-                        if ( labelColour != nil && params.useColourLabels )
+                        if ( labelColour != nil && self.useColourLabelsToIdentifyCoverArt )
                         {
                             found = fullPath;
                             break;
                         }
 
+                        NSArray * filenamesToFind = self.overrideCoverArtFilenames
+                                                  ? self.overrideCoverArtFilenames
+                                                  : self.coverArtFilenames;
+
                         NSUInteger foundIndex =
                         [
-                            params.coverArtNames indexOfObjectWithOptions: NSEnumerationConcurrent
-                                                              passingTest: ^BOOL ( NSString * obj, NSUInteger idx, BOOL * stop )
+                            filenamesToFind indexOfObjectWithOptions: NSEnumerationConcurrent
+                            passingTest: ^BOOL ( NSString * obj, NSUInteger idx, BOOL * stop )
                             {
                                 if ( [ obj localizedCaseInsensitiveCompare: leaf ] == NSOrderedSame )
                                 {
@@ -269,8 +347,20 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
         }
         @catch ( id ignored )
         {
-            *thumbState = kPOSIXErrorBase + errno; /* (Just in case errno was updated) */
-            failed      = YES;
+            if ( error )
+            {
+                NSDictionary * dict =
+                @{
+                    NSLocalizedDescriptionKey:        @"Unable to generate icon",
+                    NSLocalizedFailureReasonErrorKey: @"An unexpected internal error occured while reading the folder contents"
+                };
+
+                *error = [ NSError errorWithDomain: NSPOSIXErrorDomain
+                                              code: errno
+                                          userInfo: dict ];
+            }
+
+            failed = YES;
         }
         @finally
         {
@@ -279,7 +369,7 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
 
         if ( found ) [ images addObject: found ];
     }
-    else /* "if ( singleImageMode )" */
+    else /* "if ( onlyUseCoverArt )" */
     {
         srandomdev(); /* Randomise the random number generator */
 
@@ -303,8 +393,8 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
 
                 NSString * fileType = currAttrs[ NSFileType ];
                 NSString * fullPath = [
-                    enumPath stringByAppendingPathComponent: currFile
-                ];
+                                       enumPath stringByAppendingPathComponent: currFile
+                                       ];
 
                 /* Only interested in regular files or directories, nothing more. Skip
                  * directories that appear to have filename extensions because
@@ -315,12 +405,12 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
                 {
                     if ( isImageFile( fullPath ) == YES )
                     {
-                        #ifdef MAXIMUM_IMAGE_SIZE
+#ifdef MAXIMUM_IMAGE_SIZE
                         {
                             NSNumber * size = currAttrs[ NSFileSize ];
-                            if ( [ size unsignedLongLongValue ] > MAXIMUM_IMAGE_SIZE ) continue;
+                            if ( size.unsignedLongLongValue > MAXIMUM_IMAGE_SIZE ) continue;
                         }
-                        #endif
+#endif
 
                         [ images addObject: fullPath ];
 
@@ -334,7 +424,7 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
                     }
                 }
                 else if (
-                               skipPackageLikeEntries
+                            SKIP_PACKAGES
                             && [ fileType isEqualToString: NSFileTypeDirectory ]
                             && isLikeAPackage( fullPath )
                         )
@@ -353,27 +443,35 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
         }
         @catch ( id ignored )
         {
-            *thumbState = kPOSIXErrorBase + errno; /* (Just in case errno was updated) */
-            failed      = YES;
+            if ( error )
+            {
+                NSDictionary * dict =
+                @{
+                    NSLocalizedDescriptionKey:        @"Unable to generate icon",
+                    NSLocalizedFailureReasonErrorKey: @"An unexpected internal error occured while reading the folder contents"
+                };
+
+                *error = [ NSError errorWithDomain: NSPOSIXErrorDomain
+                                              code: errno
+                                          userInfo: dict ];
+            }
+
+            failed = YES;
         }
         @finally
         {
             globalSemaphoreRelease();
         }
 
-    } /* "else" of "if ( singleImageMode )" */
+    } /* "else" of "if ( onlyUseCoverArt )" */
 
     /* If there are no images, exit; the standard folder icon will be used */
 
-    if ( [ images count ] == 0 )
-    {
-        if ( ! failed ) *thumbState = noErr;
-        require( false, nothingToDo );
-    }
+    if ( [ images count ] == 0 ) require( false, nothingToDo );
 
     /* Otherwise, choose up to four images at random */
 
-    NSUInteger maxImages = params.maxImages;
+    NSUInteger maxImages = self.iconStyle.maxImages.unsignedIntegerValue;
 
     if      ( maxImages < 1 ) maxImages = 1;
     else if ( maxImages > 4 ) maxImages = 4;
@@ -385,48 +483,52 @@ static NSMutableArray * allocFoundImagePathArray( NSString       * fullPosixPath
         /* Using random() in this way is fine - unlike rand(), all bits are
          * considered sufficiently random in the generated integer.
          */
-
+        
         NSUInteger randomIndex;
-
-        if ( params.previewMode == YES ) randomIndex = 0;
-        else                             randomIndex = random() % [ images count ];
-
+        
+        if ( self.nonRandomImageSelectionForAPreview == YES ) randomIndex = 0;
+        else                                                  randomIndex = random() % [ images count ];
+        
         [ chosenImages addObject: images[ randomIndex ] ];
         [ images removeObjectAtIndex: randomIndex ];
     }
-
+    
 nothingToDo:
-
-    ;
+    
     return chosenImages;
 }
 
 /******************************************************************************\
- * paintImage()
+ * -paintImageAt:intoRect:usingContext:maintainingAspectRatio:
  *
  * Paint an image found at the given fully specified POSIX-style file path
  * into the given rectangle under the given context. The image is cropped to
  * a square before being painted; if the target rectangle is not also square
  * the image will be distorted when painted.
  *
- * In:  Full POSIX path of the image to load, crop to 1:1 aspect and paint,
- *      or scaled to fit without distortion if 'cropImages' is NO (see below);
+ * Note the prevailing use of Core Foundation / Core Graphics types herein.
  *
- *      Rectangle into which the cropped image should be painted, distorting
- *      its aspect ratio to fit if necessary, or fitted into if 'cropImages'
- *      is NO (see below);
+ * In:  ( CFStringRef ) fullPosixPath
+ *      Full POSIX path of the image to load and paint;
  *
- *      Graphics context for the painting operation;
+ *      ( CGRect ) rect
+ *      Rectangle into which the cropped image should be painted;
  *
- *      YES to crop images to squares, NO to preserve aspect ratio.
+ *      ( CGContextRef ) context
+ *      Core Graphics context for the painting operation;
+ *
+ *      ( BOOL ) maintainAspectRatio
+ *      If NO the image is cropped to a square to fill the parameter in 'rect'.
+ *      If YES the image is scaled to fit, maintaing aspect ratio, so not all
+ *      of the given rectangle will be painted upon for non-square images.
  *
  * Out: YES if successful, NO if failed.
 \******************************************************************************/
 
-static BOOL paintImage( CFStringRef  fullPosixPath,
-                        CGRect       rect,
-                        CGContextRef context,
-                        BOOL         cropImages )
+- ( BOOL ) paintImageAt: ( CFStringRef  ) fullPosixPath
+               intoRect: ( CGRect       ) rect
+           usingContext: ( CGContextRef ) context
+ maintainingAspectRatio: ( BOOL         ) maintainAspectRatio
 {
     BOOL   success = YES;
     size_t width, height;
@@ -472,9 +574,9 @@ static BOOL paintImage( CFStringRef  fullPosixPath,
          *   http://developer.apple.com/library/mac/#samplecode/MyPhoto/Listings/Step8_ImageView_m.html
          *   http://developer.apple.com/library/mac/#samplecode/CGRotation/Introduction/Intro.html
          */
-        
+
         NSDictionary * metadata = (__bridge_transfer  NSDictionary * /* Toll-free bridge */ )
-                                  CGImageSourceCopyPropertiesAtIndex( imageSource, 0, NULL );
+        CGImageSourceCopyPropertiesAtIndex( imageSource, 0, NULL );
 
         if ( metadata )
         {
@@ -483,15 +585,15 @@ static BOOL paintImage( CFStringRef  fullPosixPath,
             int        orientation;
 
             val  = metadata[ ( id ) kCGImagePropertyDPIWidth ];
-            dpi  = [ val floatValue ];
+            dpi  = val.floatValue;
             xdpi = ( dpi == 0 ) ? 72.0 : dpi;
 
             val  = metadata[ ( id ) kCGImagePropertyDPIHeight ];
-            dpi  = [ val floatValue ];
+            dpi  = val.floatValue;
             ydpi = ( dpi == 0 ) ? 72.0 : dpi;
 
             val  = metadata[ ( id ) kCGImagePropertyOrientation ];
-            orientation = [ val intValue ];
+            orientation = val.intValue;
             if ( orientation < 1 || orientation > 8 ) orientation = 1;
 
             CGFloat x = ( ydpi > xdpi ) ? ydpi / xdpi : 1;
@@ -501,7 +603,7 @@ static BOOL paintImage( CFStringRef  fullPosixPath,
             {
                 CGFloat w = x * width;
                 CGFloat h = y * height;
-                
+
                 CGAffineTransform ctms[ 8 ] =
                 {
                     {  x,  0,  0,  y, 0, 0 }, // 1 = row 0 top, col 0 lhs = normal
@@ -559,7 +661,7 @@ static BOOL paintImage( CFStringRef  fullPosixPath,
             }
         }
 
-        if ( cropImages && image )
+        if ( maintainAspectRatio == NO && image )
         {
             /* Create a sub-image based on a square crop of the original. If
              * the image is wider than tall (landscape), use a center crop.
@@ -611,76 +713,68 @@ static BOOL paintImage( CFStringRef  fullPosixPath,
     /* Check 'image' again in case cropping was attempted but failed */
 
     if ( image ) CGContextDrawImage( context, rect, image );
-
+    
     /* Make sure everything is released */
-
+    
     if ( image       ) CFRelease( image       ); else success = NO;
     if ( imageSource ) CFRelease( imageSource ); else success = NO;
     if ( url         ) CFRelease( url         ); else success = NO;
-
+    
     return success;
 }
 
 /******************************************************************************\
- * allocCustomIcon()
+ * -allocCustomIconFrom:withBackground:errorsTo:
  *
  * Generate a folder icon with an array of images to be included as thumbnails,
- * at CANVAS_SIZE x CANVAS_SIZE resolution (see the "IconGenerator.h" header
- * file), using custom icon generation parameters. The caller is responsible
+ * at CANVAS_SIZE x CANVAS_SIZE resolution (see the companion header file),
+ * using custom icon generation parameters. The caller is responsible
  * for releasing the returned object when it is no longer needed.
  *
  * This function allows re-entrant callers from multiple threads using
  * independent execution contexts.
  *
- * The caller must ensure that an autorelease pool is available.
+ * Note the prevailing use of Core Foundation / Core Graphics types herein.
+ * Even so, the caller must ensure that an autorelease pool is available.
  *
- * In:  Pointer to an NSMutableArray of NSString pointers with each string
- *      giving the full POSIX path of an image to be included within the icon;
- *      at least one image must be present; if there are more than needed, then
- *      items at higher indicies will be ignored (e.g. if you provide four
- *      images but the icon parameters specify single image mode, then only the
- *      first item in the array will be used) - this array can be obtained from
- *      a call to "allocFoundImagePathArray";
+ * In:  ( NSArray * ) chosenImages
+ *      Pointer to an array of NSString pointers where each string gives the
+ *      the full POSIX path of an image to be included within the icon. At
+ *      one image must be present. If there are more than needed, then items
+ *      at higher indicies will be ignored (e.g. if you provide four images but
+ *      but the icon style uses cover art mode, only the first item in the
+ *      array will be used). An appropriate array can be obtained from a call
+ *      to "-allocFoundImagePathArray:".
  *
+ *      ( CGImageRef ) backgroundImage
  *      CGImageRef pointing to an icon to put underneath thumbnails if icon
  *      parameters say that this should be used - usually this is obtained by
  *      a call to "allocFolderIcon" from outside the application main thread.
  *      Use NULL for no background image;
  *
- *      YES to generate an opaque background image (e.g. to use it as a
- *      thumbnail in a QuickLook generator, where thumbnails are always
- *      opaque) or NO to generate a transparent background image (e.g. to use
- *      as a preview in a QuickLook generator, or as a thumbanil in a Quick
- *      Look generator when the 'icon mode' options flag is clear);
- *
- *      Pointer to an OSStatus updated on exit with 'noErr' if everything is
- *      OK, else an error code (see also 'errno' in such cases). This is
- *      required in addition to the function's return value to distinguish
- *      between NULL being returned because the folder contains no recognised
- *      images and thus needs no custom icon, or NULL being returned because an
- *      error was encountered while attempting to generate the custom icon;
- *
- *      Pointer to an initialised IconParameters instance describing the way
- *      in which to generate the icons.
+ *      ( NSError ** )
+ *      Pointer to an NSError * updated on exit to point to an initialised
+ *      NSError if anything went wrong, else "nil". If you can't do anything
+ *      about errors anyway, just pass "nil".
  *
  * Out: CGImageRef pointing to thumbnail image or NULL if there is an error, or
  *      if there is no need to assign a custom icon (no images in folder). If
  *      non-NULL, caller must CFRelease() the memory when finished.
 \******************************************************************************/
 
-static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
-                                   CGImageRef       backgroundImage,
-                                   BOOL             opaque,
-                                   OSStatus       * thumbState,
-                                   IconParameters * params )
+- ( CGImageRef ) allocCustomIconFrom: ( NSArray     * ) chosenImages
+                      withBackground: ( CGImageRef    ) backgroundImage
+                            errorsTo: ( NSError    ** ) error;
 {
     CGImageRef finalImage = NULL;
 
-    /* We consider ourselves in Single Image Mode if using that flag explicitly
-     * or if using SlipCover code for icon generation.
+    if ( error ) *error = nil;
+
+    /* We consider ourselves in cover art mode if using that flag explicitly.
+     * This method should never be called for Slip Cover icon styles.
      */
-     
-    BOOL singleImageMode = ( params.singleImageMode == YES || params.slipCoverCase != nil ) ? YES : NO;
+
+    BOOL onlyUseCoverArt = self.iconStyle.onlyUseCoverArt.boolValue;
 
     /**************************************************************************\
      * Create layers representing thumbnails of the images
@@ -778,22 +872,22 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
             CGContextBeginTransparencyLayer( layerCtx, NULL );
             CGContextTranslateCTM( layerCtx, canvasSize / 2, canvasSize / 2 );
 
-            if ( params.rotate == YES )
+            if ( self.iconStyle.randomRotation.boolValue == YES )
             {
                 CGContextRotateCTM( layerCtx, ( ( random() % 300 ) - 150 ) / 2000.0 );
 
                 thumbSize -= dpiValue( ROTATION_PAD );
             }
 
-            if ( params.shadow == YES )
+            if ( self.iconStyle.dropShadow.boolValue == YES )
             {
                 /* Go for a symmetrical border-like drop shadow in multi-image
-                 * mode, else for the larger icon-filling single-image mode,
+                 * mode, else for the larger icon-filling cover art mode,
                  * use a drop shadow modelled on the Finder's typical shadow
                  * style - offset downwards.
                  */
             
-                if ( singleImageMode == NO )
+                if ( onlyUseCoverArt == NO )
                 {
                     CGContextSetShadow
                     (
@@ -843,11 +937,11 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
                 }
             }
 
-            /* Hide the border in single image mode or if borders are disabled,
+            /* Hide the border in cover art mode or if borders are disabled,
              * putting the shadow beneath the image.
              */
 
-            if ( params.border == YES )
+            if ( self.iconStyle.whiteBackground.boolValue == YES )
             {
                 CGFloat borderSize = thumbSize;
                 thumbSize -= dpiValue( THUMB_BORDER * 2 );
@@ -878,19 +972,17 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
                 );
             }
 
-            BOOL success = paintImage
-            (
-                ( __bridge CFStringRef ) currFile, /* Toll-free bridge */
-                CGRectMake
-                (
-                    -thumbSize / 2,
-                    -thumbSize / 2,
-                    thumbSize,
-                    thumbSize
-                ),
-                layerCtx,
-                params.crop
-            );
+            BOOL success = [ self paintImageAt: ( __bridge CFStringRef ) currFile /* Toll-free bridge */
+                                      intoRect: CGRectMake
+                                                (
+                                                    -thumbSize / 2,
+                                                    -thumbSize / 2,
+                                                    thumbSize,
+                                                    thumbSize
+                                                )
+                                  usingContext: layerCtx
+                        maintainingAspectRatio: ! self.iconStyle.cropToSquare.boolValue
+            ];
 
             CGContextEndTransparencyLayer( layerCtx );
 
@@ -931,7 +1023,7 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
          * mode.
          */
 
-        if ( opaque )
+        if ( self.makeBackgroundOpaque )
         {
             if ( layerCount < 3 ) CGContextSetRGBFillColor( context, 1.00, 1.00, 1.00, 1.0 );
             else                  CGContextSetRGBFillColor( context, 0.62, 0.77, 0.85, 1.0 );
@@ -947,14 +1039,16 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
          * the standard folder icon underneath.
          */
 
-        if ( singleImageMode == NO && layerCount <= params.showFolderInBackground && backgroundImage )
+        if ( onlyUseCoverArt == NO &&
+             backgroundImage       &&
+             layerCount <= self.iconStyle.showFolderInBackground.unsignedIntValue )
         {
             CGContextDrawImage( context, pixelRect, backgroundImage );
         }
 
         /* Now plot the thumbnails themselves */
 
-        if ( params.singleImageMode )
+        if ( onlyUseCoverArt == YES )
         {
             CGLayerRef layer = ( CGLayerRef ) CFArrayGetValueAtIndex( layers, 0 );
 
@@ -982,8 +1076,8 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
                 locations[ layerCount - 1 ][ 3 ]
             };
 
-            if ( params.shadow == YES ) adjustSize += ( BLUR_RADIUS + BLUR_OFFSET * 2 );
-            if ( params.rotate == YES ) adjustSize += ROTATION_PAD;
+            if ( self.iconStyle.dropShadow.boolValue     == YES ) adjustSize += ( BLUR_RADIUS + BLUR_OFFSET * 2 );
+            if ( self.iconStyle.randomRotation.boolValue == YES ) adjustSize += ROTATION_PAD;
 
             if ( adjustSize > 0 )
             {
@@ -1072,10 +1166,6 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
 
         CGContextFlush( context );
         finalImage = CGBitmapContextCreateImage( context );
-
-        /* Success? */
-
-        if ( finalImage ) *thumbState = noErr;
     }
 
     /**************************************************************************\
@@ -1086,45 +1176,42 @@ static CGImageRef allocCustomIcon( NSMutableArray * chosenImages,
     CFRelease( context );
 
     return finalImage;
-
 }
 
 /******************************************************************************\
- * allocSlipCoverIcon()
+ * -allocSlipCoverIcon:errorsTo:
  *
  * Generate a folder icon using SlipCover code at CANVAS_SIZE x CANVAS_SIZE
- * resolution (see the "IconGenerator.h" header file). The caller is
- * responsible for releasing the returned object when it is no longer needed.
+ * resolution (see the "GlobalConstants.h" header file). The caller must
+ * release the returned object when it is no longer needed.
  *
  * This function allows re-entrant callers from multiple threads using
  * independent execution contexts.
  *
- * The caller must ensure that an autorelease pool is available.
+ * Note the prevailing use of Core Foundation / Core Graphics types herein.
+ * Even so, the caller must ensure that an autorelease pool is available.
  *
- * In:  Pointer to an NSMutableArray of NSString pointers with each string
- *      giving the full POSIX path of an image to be included within the icon;
- *      at least one image must be present; only one is needed, so if there is
- *      more than one path present, only the first (index 0) will be used;
+ * In:  ( NSArray * ) chosenImages
+ *      Pointer to an array of NSString pointers where each string gives the
+ *      the full POSIX path of an image to be included within the icon. At
+ *      one image must be present. If there are more than needed, then items
+ *      at higher indicies will be ignored (e.g. if you provide four images but
+ *      but the icon style uses cover art mode, only the first item in the
+ *      array will be used). An appropriate array can be obtained from a call
+ *      to "-allocFoundImagePathArray:".
  *
- *      Pointer to an OSStatus updated on exit with 'noErr' if everything is
- *      OK, else an error code (see also 'errno' in such cases). This is
- *      required in addition to the function's return value to distinguish
- *      between NULL being returned because the folder contains no recognised
- *      images and thus needs no custom icon, or NULL being returned because an
- *      error was encountered while attempting to generate the custom icon;
- *
- *      Pointer to an initialised IconParameters instance describing the way
- *      in which to generate the icons (only the SlipCover case definition part
- *      of this is consulted).
+ *      ( NSError ** )
+ *      Pointer to an NSError * updated on exit to point to an initialised
+ *      NSError if anything went wrong, else "nil". If you can't do anything
+ *      about errors anyway, just pass "nil".
  *
  * Out: CGImageRef pointing to thumbnail image or NULL if there is an error, or
  *      if there is no need to assign a custom icon (no images in folder). If
  *      non-NULL, caller must CFRelease() the memory when finished.
 \******************************************************************************/
 
-static CGImageRef allocSlipCoverIcon( NSMutableArray * chosenImages,
-                                      OSStatus       * thumbState,
-                                      IconParameters * params )
+- ( CGImageRef ) allocSlipCoverIcon: ( NSArray  * ) chosenImages
+                           errorsTo: ( NSError ** ) error;
 {
     CGImageRef   finalImage  = NULL;
     NSImage    * sourceImage = nil;
@@ -1135,7 +1222,7 @@ static CGImageRef allocSlipCoverIcon( NSMutableArray * chosenImages,
         sourceImage = [ [ NSImage alloc ] initByReferencingFile: chosenImages[ 0 ] ];
         caseImage   = [ CaseGenerator caseImageAtSize: case512
                                                 cover: sourceImage
-                                       caseDefinition: params.slipCoverCase ];
+                                       caseDefinition: self.slipCoverCase ];
     }
     @catch ( NSException * exception )
     {
@@ -1163,105 +1250,58 @@ static CGImageRef allocSlipCoverIcon( NSMutableArray * chosenImages,
 
 imageGenerationFailed:
 
-    ;
     return finalImage;
 }
 
+
 /******************************************************************************\
- * allocIconForFolder()
+ * -generate:
  *
- * Generate an icon for the folder identified by the given fully specified
- * POSIX-style pathname at CANVAS_SIZE x CANVAS_SIZE resolution (see the
- * "IconGenerator.h" header file). The caller is responsible for releasing the
- * returned object when it is no longer needed.
+ * Generate an icon based on this instance's various property values. It is
+ * generated at CANVAS_SIZE x CANVAS_SIZE resolution (see the
+ * "GlobalConstants.h" header file). The caller must release the returned data
+ * when it is no longer needed.
  *
- * The caller must ensure that an autorelease pool is available.
+ * Note the prevailing use of Core Foundation / Core Graphics types herein.
+ * Even so, the caller must ensure that an autorelease pool is available.
  *
- * In:  Fully specified POSIX-style path of folder of interest;
- *
- *      YES to generate an opaque background image (e.g. to use it as a
- *      thumbnail in a QuickLook generator, where thumbnails are always
- *      opaque) or NO to generate a transparent background image (e.g. to use
- *      as a preview in a QuickLook generator, or as a thumbanil in a Quick
- *      Look generator when the 'icon mode' options flag is clear);
- *
- *      YES to not enumerate contents of subdirectories if the subdirectory
- *      is package-like, else enumerate subdirectories regardless;
- *
- *      CGImageRef pointing to an icon to put underneath thumbnails if there
- *      are fewer than three layers making up the custom icon - usually this
- *      is obtained by a call to "allocFolderIcon" from outside the application
- *      main thread. Use NULL for no background image;
- *
- *      Pointer to an OSStatus updated on exit with 'noErr' if everything is
- *      OK, else an error code (see also 'errno' in such cases). This is
- *      required in addition to the function's return value to distinguish
- *      between NULL being returned because the folder contains no recognised
- *      images and thus needs no custom icon, or NULL being returned because an
- *      error was encountered while attempting to generate the custom icon;
- *
- *      Pointer to an initialised IconParameters instance describing the way
- *      in which to generate the icons.
+ * In:  ( NSError ** )
+ *      Pointer to an NSError * updated on exit to point to an initialised
+ *      NSError if anything went wrong, else "nil". If you can't do anything
+ *      about errors anyway, just pass "nil".
  *
  * Out: CGImageRef pointing to thumbnail image or NULL if there is an error, or
  *      if there is no need to assign a custom icon (no images in folder). If
  *      non-NULL, caller must CFRelease() the memory when finished.
 \******************************************************************************/
 
-CGImageRef allocIconForFolder( NSString       * fullPosixPath,
-                               BOOL             opaque,
-                               BOOL             skipPackageLikeEntries,
-                               CGImageRef       backgroundImage,
-                               OSStatus       * thumbState,
-                               IconParameters * params )
+- ( CGImageRef ) generate: ( NSError ** ) error
 {
-    CGImageRef generatedImage = NULL;
-    *thumbState = memFullErr; /* A potential valid failure mode */
+    if ( error ) *error = nil;
 
-    /* Find images */
+    CGImageRef   generatedImage = NULL;
+    NSArray    * chosenImages   = [ self allocFoundImagePathArray: error ];
 
-    NSMutableArray * chosenImages = allocFoundImagePathArray
-    (
-      fullPosixPath,
-      skipPackageLikeEntries,
-      thumbState,
-      params
-    );
-
-    /* Bail out if there are none */
-
-    require( chosenImages != nil, nothingToDo );
-
-    /* There are now two choices. Either we generate the image using SlipCover,
-     * or the custom painting routines.
-     */
-
-    if ( params.slipCoverCase == nil )
+    if ( chosenImages != nil )
     {
-        generatedImage = allocCustomIcon
-        (
-            chosenImages,
-            backgroundImage,
-            opaque,
-            thumbState,
-            params
-        );
+        /* Generate the image using either the custom painting routines or
+         * with SlipCover code.
+         */
+        
+        if ( self.slipCoverCase == nil )
+        {
+            generatedImage = [ self allocCustomIconFrom: chosenImages
+                                         withBackground: self.backgroundImage
+                                               errorsTo: error ];
+        }
+        else
+        {
+            generatedImage = [ self allocSlipCoverIcon: chosenImages
+                                              errorsTo: error ];
+        }
     }
-    else
-    {
-        generatedImage = allocSlipCoverIcon
-        (
-            chosenImages,
-            thumbState,
-            params
-        );
-    }
-
-    /* Clear the precautionary pre-flagged error if everything looks OK */
-    
-    if ( generatedImage != NULL ) *thumbState = noErr;
-
-nothingToDo:
 
     return generatedImage;
 }
+
+@end

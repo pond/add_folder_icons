@@ -11,23 +11,16 @@
 
 #include <stdio.h>
 
-/* Application functions and data */
-
 #import "ConcurrentPathProcessor.h"
+
 #import "GlobalConstants.h"
-
-/* Library functions and data */
-
 #import "GlobalSemaphore.h"
-#import "IconGenerator.h"
+#import "Icons.h"
+#import "CustomIconGenerator.h"
 
 /* Application communication */
 
 @implementation ConcurrentPathProcessor
-
-@synthesize pathData       = _pathData;
-@synthesize backgroundRef  = _backgroundRef;
-@synthesize iconParameters = _iconParameters;
 
 /******************************************************************************\
  * - initWithPath:andBackground:andParameters:
@@ -39,49 +32,34 @@
  * The global semaphore system must be initialised before calling here. See
  * "globalSemaphoreInit" in "GlobalSemaphore.[h|m]".
  *
- * In:  Pointer to an NSString giving the full POSIX path to the folder of
+ * In:  ( IconStyle * ) iconStyle
+ *      Pointer to the base IconStyle instance to use for icon generation. This
+ *      and the POSIX path parameter below are passed to a CustomIconGenerator
+ *      initialiser, so see that class for more details. The generator does the
+ *      heavy lifting of actual image generation, with other support code used
+ *      to take that image and apply it to a folder as an icon.
+ *
+ *      ( NSString * ) posixPath
+ *      Pointer to an NSString giving the full POSIX path to the folder of
  *      interest - this folder will be given a custom icon if the object's
- *      "main" method gets invoked;
- *
- *      CGImageRef giving a background image - for more information, see the
- *      documentation in the library code for the "backgroundImage" parameter
- *      of "allocIconForFolder" in "IconGenerator.[h|m]";
- *
- *      Pointer to an initialised IconParameters instance describing how the
- *      icons should be generated. Only a reference to this is kept; the caller
- *      is responsible for maintaining that object until the path processor is
- *      finished with. This is done to save CPU cycles and RAM when dealing
- *      with large numbers of paths all using the same icon style, particularly
- *      when that style refers itself to an external complex structure such as
- *      a SlipCover case descriptor.
+ *      "main" method gets invoked.
  *
  * Out: self.
 \******************************************************************************/
 
--( instancetype ) initWithPath : ( NSString       * ) fullPosixPath
-                 andBackground : ( CGImageRef       ) backgroundImage
-                 andParameters : ( IconParameters * ) params;
+- ( instancetype ) initWithIconStyle: ( IconStyle * ) iconStyle
+                        forPOSIXPath: ( NSString  * ) posixPath;
 {
     if ( ( self = [ super init ] ) )
     {
-        self.pathData       = fullPosixPath;
-        self.backgroundRef  = CGImageCreateCopy( backgroundImage );
-        self.iconParameters = params;
+        _pathData      = posixPath;
+        _iconGenerator = [
+            [ CustomIconGenerator alloc ] initWithIconStyle: iconStyle
+                                               forPOSIXPath: posixPath
+        ];
     }
 
     return self;
-}
-
-/******************************************************************************\
- * - initWithpath
- *
- * Release any and all resources claimed during the object's lifecycle. Usually
- * invoked only by the Grand Central Dispatch mechanism's Cocoa code.
-\******************************************************************************/
-
--( void ) dealloc
-{
-    CFRelease( self.backgroundRef );
 }
 
 /******************************************************************************\
@@ -98,20 +76,14 @@
     {
         @try
         {
+            NSError  * error  = nil;
+            OSStatus   status = noErr;
+
             if ( self.isCancelled ) return;
 
             /* Generate the thumbnail */
 
-            OSStatus   status     = noErr;
-            CGImageRef finalImage = allocIconForFolder
-            (
-                self.pathData,
-                NO,
-                SKIP_PACKAGES,
-                self.backgroundRef,
-                &status,
-                self.iconParameters
-            );
+            CGImageRef finalImage = [ _iconGenerator generate: & error ];
 
             if ( self.isCancelled ) return;
 
@@ -125,8 +97,8 @@
                 
                 #ifdef DUMP_ICON_MASTER_IMAGE_TO_PNG_FILE
 
-                    NSString * dumpPath = [ [ pathData stringByAppendingString: @"__AddFolderIconsDumpedIcon__.png" ] retain ];
-                    NSURL    * dumpURL  = [ [ NSURL fileURLWithPath: dumpPath ] retain ];
+                    NSString * dumpPath = [ _pathData stringByAppendingString: @"/__AddFolderIconsDumpedIcon__.png" ];
+                    NSURL    * dumpURL  = [ NSURL fileURLWithPath: dumpPath ];
 
                     CGImageDestinationRef imageDest = CGImageDestinationCreateWithURL
                     (
@@ -135,7 +107,7 @@
                         1,
                         NULL
                     );
-                    
+
                     /* Since this is a debugging function, we're not interested in
                      * detecting or attempting to report problems at run-time.
                      */
@@ -146,9 +118,6 @@
                         ( void ) CGImageDestinationFinalize( imageDest );
                         CFRelease( imageDest );
                     }
-
-                    [ dumpPath release ];
-                    [ dumpURL  release ];
 
                 #endif    
 

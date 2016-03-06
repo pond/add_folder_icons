@@ -18,6 +18,10 @@
 #define AUTHOR_STRING  "Andrew Hodgkinson"
 #define VERSION_STRING "3.0.0.2016.02.27"
 
+/* Standard square icon canvas edge length in 'non-retina' pixels */
+
+#define CANVAS_SIZE 512
+
 /* Avoid subdirectories which are package-like (e.g. applications)? */
 
 #define SKIP_PACKAGES YES

@@ -10,7 +10,7 @@
 #import "SlipCoverSupport.h"
 #import "IconStyleManager.h"
 #import "Icons.h"
-#import "IconGenerator.h"
+#import "CustomIconGenerator.h"
 
 @implementation ManageStylesWindowController
 
@@ -118,16 +118,9 @@
             @"maxImages",
             @"showFolderInBackground"
         ];
-
-        cachedFolderImage = allocFolderIcon();
     }
 
     return self;
-}
-
-- ( void ) dealloc
-{
-    CFRelease( cachedFolderImage );
 }
 
 /******************************************************************************\
@@ -365,56 +358,27 @@
      * three general and one with the name "cover.jpg" as a cover art example.
      * There are no subdirectories. It is used as a source for the icon
      * generator to create previews.
-     *
-     * Before a preview can be built, we need to map an IconStyle to an
-     * IconParameters structure.
      */
-
-    IconParameters * params = [ [ IconParameters alloc ] init ];
-
-    params.previewMode            = YES;
-
-    params.crop                   = [ [ editedStyle cropToSquare           ] boolValue        ];
-    params.border                 = [ [ editedStyle whiteBackground        ] boolValue        ];
-    params.shadow                 = [ [ editedStyle dropShadow             ] boolValue        ];
-    params.rotate                 = [ [ editedStyle randomRotation         ] boolValue        ];
-    params.singleImageMode        = [ [ editedStyle onlyUseCoverArt        ] boolValue        ];
-    params.maxImages              = [ [ editedStyle maxImages              ] unsignedIntValue ];
-    params.showFolderInBackground = [ [ editedStyle showFolderInBackground ] unsignedIntValue ];
-    params.coverArtNames          = @[ @"cover" ];
-
-    /* Do we need to find the SlipCover case definition? */
-
-    if ( [ [ editedStyle usesSlipCover ] boolValue ] == YES )
-    {
-        params.slipCoverCase =
-        [
-            SlipCoverSupport findDefinitionFromName: [ editedStyle slipCoverName ]
-                                  withinDefinitions: [ iconStyleManager slipCoverDefinitions ]
-        ];
-    }
-    else
-    {
-        params.slipCoverCase = nil;
-    }
-
-    /* Now make the preview image */
 
     [ NSGraphicsContext saveGraphicsState ];
 
-    NSImage    * preview  = nil;
-    OSStatus     status   = noErr;
-    CGImageRef   imageRef = allocIconForFolder
-    (
-        [ [ [ NSBundle mainBundle ] resourcePath ] stringByAppendingPathComponent: @"Preview" ],
-        NO,  /* Opaque (no, this isn't for QuickLook) */
-        YES, /* Skip package-like folders */
-        cachedFolderImage,
-        & status,
-        params
-    );
+    NSImage  * preview = nil;
+    NSString * path    = [
+        [ [ NSBundle mainBundle ] resourcePath ] stringByAppendingPathComponent: @"Preview"
+    ];
 
-    if ( imageRef != NULL ) preview = [ [ NSImage alloc ] initWithCGImage: imageRef size: NSZeroSize ];
+    CustomIconGenerator * generator = [
+        [ CustomIconGenerator alloc ] initWithIconStyle: editedStyle
+                                           forPOSIXPath: path
+    ];
+
+    generator.nonRandomImageSelectionForAPreview = YES;
+    generator.overrideCoverArtFilenames          = @[ @"cover" ];
+
+    CGImageRef imageRef = [ generator generate: nil ];
+
+    if ( imageRef != NULL ) preview = [ [ NSImage alloc ] initWithCGImage: imageRef
+                                                                     size: NSZeroSize ];
 
     [ NSGraphicsContext restoreGraphicsState ];
 

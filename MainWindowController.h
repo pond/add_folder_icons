@@ -6,6 +6,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+
 #import "IconStyleArrayController.h"
 #import "IconStyleManager.h"
 
@@ -20,7 +21,6 @@
     IBOutlet NSButton                 * removeButton;
     IBOutlet NSPopUpButton            * popUpButton;
     IBOutlet NSTableView              * folderList;
-    IBOutlet NSTableColumn            * folderListStyleColumn;
     IBOutlet NSProgressIndicator      * spinner;
     IBOutlet NSTextField              * spinnerLabel;
 
@@ -49,9 +49,9 @@
     NSManagedObjectModel              * managedObjectModel;
 }
 
-@property (            strong, readonly ) IconStyleManager       * iconStyleManager;
-@property ( nonatomic, strong, readonly ) NSManagedObjectContext * managedObjectContext;
-@property ( nonatomic, strong, readonly ) NSManagedObjectModel   * managedObjectModel;
+@property ( strong, readonly ) IconStyleManager       * iconStyleManager;
+@property ( strong, readonly ) NSManagedObjectContext * managedObjectContext;
+@property ( strong, readonly ) NSManagedObjectModel   * managedObjectModel;
 
 /* Actions */
 

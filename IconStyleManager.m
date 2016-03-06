@@ -19,6 +19,10 @@
 #import "ApplicationSupport.h"
 #import "SlipCoverSupport.h"
 
+@interface IconStyleManager ()
+  - ( void ) checkIconStylesForValidity;
+@end
+
 @implementation IconStyleManager
 
 @synthesize persistentStoreCoordinator,
@@ -37,14 +41,14 @@
  *      Value of "self".
 \******************************************************************************/
 
-static IconStyleManager * iconStyleManagerSingletonInstance = nil;
-
 + ( IconStyleManager * ) iconStyleManager
 {
-    if ( iconStyleManagerSingletonInstance == nil )
-    {
+    static dispatch_once_t    onceToken;
+    static IconStyleManager * iconStyleManagerSingletonInstance;
+
+    dispatch_once( &onceToken, ^{
         iconStyleManagerSingletonInstance = [ [ self alloc ] init ];
-    }
+    } );
 
     return iconStyleManagerSingletonInstance;
 }
@@ -77,26 +81,16 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
 
         [ coreDataObjectIDTransformer setPersistentStoreCoordinator: [ self persistentStoreCoordinator ] ];
 
-        /* Make sure the presets are set up */
+        /* Make sure the presets are set up; this call is synchronous */
 
         [ self establishPresetIconStyles ];
 
-        /* Construct SlipCover case definitions and in passing make sure that
-         * all existing icon styles are valid.
+        /* Establish SlipCover preset styles if present and watch for any
+         * changes, if need be. THIS CALL IS ASYNCHRONOUS - at the point the
+         * method returns, styles may not yet be defined.
          */
 
-        [ self checkIconStylesForValidity ];
-
-        /* Watch SlipCover paths to make sure definitions don't change */
-
-        NSMutableArray * watchPaths = [ SlipCoverSupport searchPathsForCovers ];
-
-        if ( watchPaths != nil )
-        {
-            slipCoverCaseFolderWatcher = [ [ SCEvents alloc ] init ];
-            [ slipCoverCaseFolderWatcher setDelegate: self ];
-            [ slipCoverCaseFolderWatcher startWatchingPaths: watchPaths ];
-        }
+        [ self establishSlipCoverIconStyles ];
     }
 
     return self;
@@ -286,7 +280,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
     [ newStyle setIsPreset:      @YES ];
     [ newStyle setUsesSlipCover: @NO  ];
     [ newStyle setCreatedAt:     [ NSDate date ] ];
-    [ newStyle setName:          NSLocalizedString( @"Preset: Square covers (e.g. CDs)", @"Name of 'CD cover' preset icon style" ) ];
+    [ newStyle setName:          NSLocalizedString( ICON_STYLE_PRESET_PREFIX @"Square covers (e.g. CDs)", @"Name of 'CD cover' preset icon style" ) ];
 
     [ newStyle setWhiteBackground: @NO  ];
     [ newStyle setRandomRotation:  @NO  ];
@@ -301,7 +295,7 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
     [ newStyle setIsPreset:      @YES ];
     [ newStyle setUsesSlipCover: @NO  ];
     [ newStyle setCreatedAt:     [ NSDate date ] ];
-    [ newStyle setName:          NSLocalizedString( @"Preset: Rectangular covers (e.g. DVDs)", @"Name of 'DVD cover' preset icon style" ) ];
+    [ newStyle setName:          NSLocalizedString( ICON_STYLE_PRESET_PREFIX @"Rectangular covers (e.g. DVDs)", @"Name of 'DVD cover' preset icon style" ) ];
 
     [ newStyle setCropToSquare:    @NO  ];
     [ newStyle setWhiteBackground: @NO  ];
@@ -316,10 +310,48 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
 }
 
 /******************************************************************************\
+ * -establishSlipCoverIconStyles
+ *
+ * Set up any icon styles derived from SlipCover case definitions.
+ *
+ * - The user may be prompted one or more times for outside-sandbox access
+ * - Compares any discovered SlipCover case definitions against current
+ *   styles in the database
+ * - Warns the user if existing styles must be deleted or asks the user for
+ *   permission if new styles should be added
+ *
+ * Called from "-init", but RUNS ASYNCHRONOUSLY. On exit, the SlipCover styles
+ * will definitely not yet have been established in the database.
+\******************************************************************************/
+
+- ( void ) establishSlipCoverIconStyles
+{
+    slipCoverDefinitions = [ [ NSMutableArray alloc ] init ];
+
+    [ SlipCoverSupport enumerateSlipCoverDefinitionsInto: slipCoverDefinitions
+                                                thenCall: self
+                                                    with: @selector( checkIconStylesForValidity ) ];
+
+    /* Watch SlipCover paths to make sure definitions don't change */
+
+    NSMutableArray * watchPaths = [ SlipCoverSupport searchPathsForCovers ];
+
+    if ( watchPaths != nil )
+    {
+        slipCoverCaseFolderWatcher = [ [ SCEvents alloc ] init ];
+        [ slipCoverCaseFolderWatcher setDelegate: self ];
+        [ slipCoverCaseFolderWatcher startWatchingPaths: watchPaths ];
+    }
+}
+
+/******************************************************************************\
  * -findSlipCoverStyles
  *
  * Returns an array of Icon Style objects which all use SlipCover case designs.
  * If an error occurs internally, it is reported and 'nil' will be returned.
+ *
+ * You should only call this if -establishSlipCoverIconStyles has previously
+ * run to completion.
  *
  * Out: ( NSArray * )
  *      Autoreleased array of pointers to IconStyle structures for each style
@@ -352,30 +384,20 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
  * more of those used designs disappear. Call here to check for such styles and
  * delete them, warning the user about the problem in passing.
  *
- * As a side-effect this method caches the known SlipCover case definitions
- * internally into the public read-only 'slipCoverDefinitions' property.
- *
- * It is safe to call this method even if SlipCover case definitions have not
- * changed, but the method may take a comparatively long time to run, so it
- * should not be called arbitrarily; only call if you *suspect* a change might
- * have occurred (e.g. at application startup, or due to a change event being
- * received for some watched SlipCover case definition filesystem path).
+ * You should only call this via -establishSlipCoverIconStyles's callback.
 \******************************************************************************/
 
 - ( void ) checkIconStylesForValidity
 {
     NSManagedObjectContext * moc = [ self managedObjectContext ];
 
-    /* Find all styles that use SlipCover */
-
-    NSArray * slipCoverStyles = [ self findSlipCoverStyles ];
-
-    /* (Re-)Generate the SlipCover definitions and get an array of unique
-     * case names from the results.
+    /* Find all styles that currently use SlipCover, and all known case names
+     * in whatever a prior call to -establishSlipCoverIconStyles determined are
+     * now accessible / available.
      */
 
-    slipCoverDefinitions = [ SlipCoverSupport enumerateSlipCoverDefinitions ];
-    NSArray * caseNames  = [ slipCoverDefinitions valueForKeyPath: @"@unionOfObjects.name" ]; /* http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueCoding/Articles/CollectionOperators.html#//apple_ref/doc/uid/20002176-SW2 */
+    NSArray * slipCoverStyles = [ self findSlipCoverStyles ];
+    NSArray * caseNames       = [ slipCoverDefinitions valueForKeyPath: @"@unionOfObjects.name" ]; /* http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueCoding/Articles/CollectionOperators.html#//apple_ref/doc/uid/20002176-SW2 */
 
     /* Make sure that all styles use valid names */
 
@@ -460,9 +482,21 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
                informativeTextWithFormat: message, count
         ];
 
-        [ alert setShowsHelp:  YES ];
-        [ alert setHelpAnchor: @"slipcover" ];
-        [ alert runModal ];
+        /* Must be run async to allow the main window to open and avoid issues
+         * with the 'grant permission to read SlipCover styles' panel trying to
+         * show itself as a modal sheet.
+         */
+
+        dispatch_after
+        (
+            dispatch_time( DISPATCH_TIME_NOW, 1 ),
+            dispatch_get_main_queue(),
+            ^{
+                [ alert setShowsHelp:  YES ];
+                [ alert setHelpAnchor: @"slipcover" ];
+                [ alert runModal ];
+            }
+        );
     }
 
     /* Never mind deleting things - should we ask to add some styles if
@@ -510,50 +544,62 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
                    informativeTextWithFormat: NSLocalizedString( @"One or more SlipCover case designs not yet used by Add Folder Icons have been found. Would you like to create Add Folder Icons styles for each of those case designs?", @"Question shown in alert asking if SlipCover cases should be automatically added as styles" )
             ];
 
-            [ alert setShowsSuppressionButton: YES ];
-            [ alert setShowsHelp:              YES ];
-            [ alert setHelpAnchor:             @"slipcover" ];
+            /* Must be run async to allow the main window to open and avoid
+             * issues with the 'grant permission to read SlipCover styles'
+             * panel trying to show itself as a modal sheet.
+             */
+            
+            dispatch_after
+            (
+                dispatch_time( DISPATCH_TIME_NOW, 1 ),
+                dispatch_get_main_queue(),
+                ^{
+                    [ alert setShowsSuppressionButton: YES ];
+                    [ alert setShowsHelp:              YES ];
+                    [ alert setHelpAnchor:             @"slipcover" ];
 
-            /* Run the alert box and only add styles if asked to do so */
+                    /* Run the alert box and only add styles if asked to do so */
 
-            if ( [ alert runModal ] == NSAlertDefaultReturn )
-            {
-                NSManagedObjectModel * mom         = [ self managedObjectModel   ];
-                NSEntityDescription  * styleEntity = [ mom entitiesByName ][ @"IconStyle" ];
-                IconStyle            * newStyle;
+                    if ( [ alert runModal ] == NSAlertDefaultReturn )
+                    {
+                        NSManagedObjectModel * mom         = [ self managedObjectModel   ];
+                        NSEntityDescription  * styleEntity = [ mom entitiesByName ][ @"IconStyle" ];
+                        IconStyle            * newStyle;
 
-                /* Loop over unused case names and created styles for each */
+                        /* Loop over unused case names and created styles for each */
 
-                for ( NSString * unusedCaseName in unusedCaseNames )
-                {
-                    NSString * styleName =
-                    [
-                        NSString stringWithFormat: NSLocalizedString( @"SlipCover: %@", @"Name of an auto-defined style created for a SlipCover case"),
-                                                   unusedCaseName
-                    ];
-                
-                    newStyle = [ [ IconStyle alloc ] initWithEntity: styleEntity
-                                       insertIntoManagedObjectContext: moc ];
+                        for ( NSString * unusedCaseName in unusedCaseNames )
+                        {
+                            NSString * styleName =
+                            [
+                                NSString stringWithFormat: NSLocalizedString( @"SlipCover: %@", @"Name of an auto-defined style created for a SlipCover case"),
+                                                           unusedCaseName
+                            ];
+                        
+                            newStyle = [ [ IconStyle alloc ] initWithEntity: styleEntity
+                                               insertIntoManagedObjectContext: moc ];
 
-                    [ newStyle setIsPreset:      @NO           ];
-                    [ newStyle setUsesSlipCover: @YES          ];
-                    [ newStyle setSlipCoverName: unusedCaseName  ];
-                    [ newStyle setCreatedAt:     [ NSDate date ] ];
-                    [ newStyle setName:          styleName       ];
+                            [ newStyle setIsPreset:      @NO           ];
+                            [ newStyle setUsesSlipCover: @YES          ];
+                            [ newStyle setSlipCoverName: unusedCaseName  ];
+                            [ newStyle setCreatedAt:     [ NSDate date ] ];
+                            [ newStyle setName:          styleName       ];
+                        }
+
+                        /* Save the results */
+
+                        NSError * error = nil;
+                        if ( ! [ moc save: &error ] ) [ NSApp presentError: error ];
+                    }
+
+                    /* Whatever happens, make sure that "do not show again" is honoured */
+
+                    if ( [ [ alert suppressionButton ] state ] == NSOnState )
+                    {
+                        [ defaults setBool: YES forKey: suppressionKey ];
+                    }
                 }
-
-                /* Save the results */
-
-                NSError * error = nil;
-                if ( ! [ moc save: &error ] ) [ NSApp presentError: error ];
-            }
-
-            /* Whatever happens, make sure that "do not show again" is honoured */
-
-            if ( [ [ alert suppressionButton ] state ] == NSOnState )
-            {
-                [ defaults setBool: YES forKey: suppressionKey ];
-            }
+            );
         }
     }
 }
@@ -723,11 +769,9 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
      * SlipCover isn't present, 'No Value' is fine.
      */
 
-    NSArray * caseDefinitions = [ SlipCoverSupport enumerateSlipCoverDefinitions ];
-
-    if ( [ caseDefinitions count ] > 0 )
+    if ( [ slipCoverDefinitions count ] > 0 )
     {
-        [ newStyle setSlipCoverName: [ caseDefinitions[ 0 ] name ] ];
+        [ newStyle setSlipCoverName: [ slipCoverDefinitions[ 0 ] name ] ];
     }
 
     /* OK, tell CoreData to process the new object and return the result */
@@ -754,11 +798,11 @@ static IconStyleManager * iconStyleManagerSingletonInstance = nil;
     ( void ) pathWatcher;
     ( void ) event;
     
-    [ self checkIconStylesForValidity ];
+    [ self establishSlipCoverIconStyles ];
 }
 
 /******************************************************************************\
- * -checkIconStylesForValidity
+ * -alertShowHelp:
  *
  * NSAlertDelegate: Show help for the alert. Without this, an alert's help
  * button uses its anchor and a nil book. We want to be more specific. Read

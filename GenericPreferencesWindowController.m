@@ -16,7 +16,6 @@
 
 @implementation GenericPreferencesWindowController
 
-
 /******************************************************************************\
  * +allocPreferencesWindowController
  *

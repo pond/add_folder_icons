@@ -7,7 +7,7 @@
 \******************************************************************************/
 
 #import "Icons.h"
-#import "IconGenerator.h" /* For CANVAS_SIZE only */
+#import "GlobalConstants.h" /* For CANVAS_SIZE only */
 
 /* Local functions */
 
@@ -25,57 +25,61 @@ static OSStatus addImageOrMask ( IconFamilyHandle iconHnd,
                                  size_t           width,
                                  Boolean          mask );
 
-/******************************************************************************\
- * allocFolderIcon()
- *
- * Obtain an CGImageRef containing the standard folder icon. Caller must
- * release this when no longer needed. Returns the largest icon available.
- *
- * In:  N/A
- *
- * Out: CGImageRef for the standard folder icon image, or NULL if something
- *      went wrong. The caller is responsible for calling CFRelease on a non-
- *      NULL return value when the image is no longer needed.
-\******************************************************************************/
-
-CGImageRef allocFolderIcon( void )
-{
-    /* This is a really simple interface added in OS X 10.6. For an OS X 10.5
-     * compatible equivalent, this rather more verbose code would work:
-     *
-     * NSImage * folder =
-     * [
-     *     [ NSWorkspace sharedWorkspace ]
-     *     iconForFileType: NSFileTypeForHFSTypeCode( kGenericFolderIcon ) 
-     * ];
-     */
-
-    NSImage * folder = [ NSImage imageNamed: NSImageNameFolder ];
-
-    if ( folder )
-    {
-        /* To turn into a CGImage, just try to fill the canvas with the folder
-         * icon. The OS selects the best image.
-         */
-
-        NSInteger  canvasSize = dpiValue( CANVAS_SIZE );
-        NSRect     imageRect  = NSMakeRect( 0, 0, canvasSize, canvasSize );
-        CGImageRef folderRef  = 
-        [
-            folder CGImageForProposedRect: &imageRect
-                                  context: nil
-                                    hints: nil
-        ];
-
-        /* The above is owned by the NSImage and when the NSImage goes, the
-         * folder goes with it. We need to return a copy.
-         */
-
-        if ( folderRef ) return CGImageCreateCopy( folderRef );
-    }
-
-    return NULL;
-}
+///******************************************************************************\
+// * allocFolderIcon()
+// *
+// * Obtain an CGImageRef containing the standard folder icon. Returns the
+// * largest icon available. Caches the result in a local static variable; call
+// * from the main thread only the first time around, or anywhere subsequently.
+// *
+// * In:  N/A
+// *
+// * Out: CGImageRef for the standard folder icon image, or NULL if something
+// *      went wrong.
+//\******************************************************************************/
+//
+//CGImageRef allocFolderIcon( void )
+//{
+//    static CGImageRef folderIconRef = NULL;
+//
+//    if ( folderIconRef == NULL )
+//    {
+//        NSImage * folder = [ NSImage imageNamed: NSImageNameFolder ];
+//
+//        if ( folder )
+//        {
+//            /* To turn into a CGImage, just try to fill the canvas with the folder
+//             * icon. The OS selects the best image.
+//             *
+//             * We *DO NOT* adjust the requested size for retina DPI. The OS does
+//             * that internally, it seems; at least on OS X 10.11, requesting an
+//             * adjusted 512 for high DPI and thus asking for 1024, results in a
+//             * failure to fetch an image and a logged complaint from
+//             * iconservicesagent about being able to find a 2048x2048 image.
+//             */
+//
+//            NSInteger  canvasSize = CANVAS_SIZE; /* (was 'dpiValue( CANVAS_SIZE )' */
+//            NSRect     imageRect  = NSMakeRect( 0, 0, canvasSize, canvasSize );
+//            CGImageRef localRef   =
+//            [
+//                folder CGImageForProposedRect: &imageRect
+//                                      context: nil
+//                                        hints: nil
+//            ];
+//
+//            /* The above is owned by the NSImage and when the NSImage goes, the
+//             * folder goes with it. We need to store a copy.
+//             */
+//
+//            if ( localRef )
+//            {
+//                folderIconRef = CGImageCreateCopy( localRef );
+//            }
+//        }
+//    }
+//
+//    return folderIconRef;
+//}
 
 /******************************************************************************\
  * createIconFamilyFromCGImage()
@@ -387,30 +391,6 @@ OSStatus saveCustomIcon( NSString * fullPosixPath, IconFamilyHandle icnsH )
     /* All done - close the resource fork */
 
     CloseResFile( refNum );
-
-    /* The following code adds volume icon support but uses the deprecated API
-     * so is compiled out for now. Maybe I'll get around to writing an updated
-     * equivalent one day (...unlikely though!).
-     */
-
-#if 0
-
-    if ( targetSpec->parID == fsRtParID )                                                   //  As of Mac OS X 10.4, the disk icon requires it be stored in ".VolumeIcon.icns"
-    {
-        FSSpec      volumeIconSpec;
-        long        ioCount;
-        refNum  = 0;
-        err = FSMakeFSSpec( targetSpec->vRefNum, fsRtDirID, "\p.VolumeIcon.icns", &volumeIconSpec );    //  "." files are always invisible
-        if ( err == noErr ) (void) FSpDelete( &volumeIconSpec );
-        err = FSpCreate( &volumeIconSpec, 0, 0, smSystemScript );           if ( err != noErr ) goto BailOnTenFour;
-        err = FSpOpenDF( &volumeIconSpec, fsWrPerm, &refNum );              if ( err != noErr ) goto BailOnTenFour;
-        ioCount = GetHandleSize( (Handle) icnsH );
-        err = FSWrite( refNum, &ioCount, *icnsH );                          if ( err != noErr ) goto BailOnTenFour; //  Write the icns file
-BailOnTenFour:
-        if ( refNum != 0 )  FSClose( refNum );
-    }
-
-#endif
 
     /* Set the 'has custom icon' attribute */
 

@@ -15,8 +15,10 @@
 
 + ( NSString       * ) slipCoverApplicationPath;
 + ( NSMutableArray * ) searchPathsForCovers;
-+ ( NSMutableArray * ) enumerateSlipCoverDefinitions;
-+ ( CaseDefinition * ) findDefinitionFromName: ( NSString * ) name;
++ ( void             ) enumerateSlipCoverDefinitionsInto: ( NSMutableArray * ) slipCoverDefinitions
+                                                thenCall: ( id               ) instance
+                                                    with: ( SEL              ) selector;
+
 + ( CaseDefinition * ) findDefinitionFromName: ( NSString * ) name
                             withinDefinitions: ( NSArray  * ) caseDefinitions;
 

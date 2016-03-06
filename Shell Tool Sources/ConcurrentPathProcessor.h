@@ -10,29 +10,17 @@
 \******************************************************************************/
 
 #import <Cocoa/Cocoa.h>
-#import "IconParameters.h"
+#import "CustomIconGenerator.h"
 
 @interface ConcurrentPathProcessor : NSOperation
 {
 }
 
--( id ) init NS_UNAVAILABLE; /* Use -initWithPath:... instead */
+@property          CustomIconGenerator * iconGenerator;
+@property ( copy ) NSString            * pathData;
 
-@property ( strong, nonatomic ) NSString       * pathData;
-@property                       CGImageRef       backgroundRef;
-@property ( strong, nonatomic ) IconParameters * iconParameters;
-
-/* Initialise the class by passing a full POSIX path to the folder of interest
- * and a background image or NULL. For more on this second parameter, see the
- * documentation in the library code for the "backgroundImage" parameter of
- * "allocIconForFolder" in "IconGenerator.[h|m]". Pass also a pointer to an
- * initialised icon parameters structure describing how the icons are to be
- * constructed. A deep copy of this is taken internally so the caller can
- * discard their copy afterwards.
- */
-
--( instancetype ) initWithPath: ( NSString       * ) fullPosixPath
-                 andBackground: ( CGImageRef       ) backgroundImage
-                 andParameters: ( IconParameters * ) params NS_DESIGNATED_INITIALIZER;
+- ( instancetype ) init NS_UNAVAILABLE; /* Use -initWithIconStyle:... instead */
+- ( instancetype ) initWithIconStyle: ( IconStyle * ) theIconStyle
+                        forPOSIXPath: ( NSString  * ) thePosixPath;
 
 @end /* @interface ConcurrentPathProcessor : NSOperation */

@@ -35,7 +35,7 @@
  * start plotting in the bottom right corner and work anti-clockwise.
  */
 
-static CGRect locations[ 4 ][ 4 ] =
+static CGRect locations_os_x_10_6_to_10_9[ 4 ][ 4 ] =
 {
     {
         { .origin.x = 112, .origin.y =  76, .size.width = 288, .size.height = 288 }
@@ -59,6 +59,33 @@ static CGRect locations[ 4 ][ 4 ] =
         { .origin.x =   0, .origin.y = 264, .size.width = 248, .size.height = 248 }
     }
 };
+
+static CGRect locations_os_x_10_10_or_later[ 4 ][ 4 ] =
+{
+    {
+        { .origin.x = 123, .origin.y =  90, .size.width = 268, .size.height = 276 }
+    },
+
+    {
+        { .origin.x = 268, .origin.y = 134, .size.width = 216, .size.height = 216 },
+        { .origin.x =  32, .origin.y = 134, .size.width = 216, .size.height = 216 }
+    },
+
+    {
+        { .origin.x = 264, .origin.y =   0, .size.width = 248, .size.height = 248 },
+        { .origin.x =   0, .origin.y =   0, .size.width = 248, .size.height = 248 },
+        { .origin.x = 132, .origin.y = 264, .size.width = 248, .size.height = 248 }
+    },
+
+    {
+        { .origin.x = 264, .origin.y =   0, .size.width = 248, .size.height = 248 },
+        { .origin.x =   0, .origin.y =   0, .size.width = 248, .size.height = 248 },
+        { .origin.x = 264, .origin.y = 264, .size.width = 248, .size.height = 248 },
+        { .origin.x =   0, .origin.y = 264, .size.width = 248, .size.height = 248 }
+    }
+};
+
+static CGRect (*locations)[4] = NULL; /* Initialised in the constructor */
 
 @interface CustomIconGenerator()
 
@@ -151,6 +178,27 @@ static CGRect locations[ 4 ][ 4 ] =
         }
 
         _backgroundImage = [ [ NSApp delegate ] standardFolderIcon ];
+
+        /* This is a lazy-initialised static variable defined towards the top
+         * of this source file.
+         */
+
+        if ( locations == NULL )
+        {
+            if ( [ [ NSProcessInfo processInfo ] respondsToSelector: @selector( operatingSystemVersion ) ] )
+            {
+                /* The above interface only exists in OS X 10.10 or later and,
+                 * happily, that's the version at which we change our position
+                 * matrix for the thumbnails.
+                 */
+
+                locations = locations_os_x_10_10_or_later;
+            }
+            else
+            {
+                locations = locations_os_x_10_6_to_10_9;
+            }
+        }
     }
 
     return self;

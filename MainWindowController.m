@@ -646,7 +646,7 @@
      * from the folder list (depending on preferences it may or may not do so).
      */
 
-    if ( globalErrorFlag || true )
+    if ( globalErrorFlag )
     {
         [ self performSelectorOnMainThread: @selector( showAdditionFailureAlert )
                                 withObject: nil

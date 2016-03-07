@@ -44,7 +44,7 @@
                             <rect key="frame" x="1" y="0.0" width="598" height="272"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" autosaveColumns="NO" rowHeight="32" headerView="xV7-5l-VcZ" id="28" customClass="ATDynamicTableView">
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" autosaveColumns="NO" rowHeight="32" headerView="xV7-5l-VcZ" id="28">
                                     <rect key="frame" x="0.0" y="0.0" width="598" height="255"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>

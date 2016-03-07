@@ -52,7 +52,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="480" height="280"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <scrollView toolTip="List of styles; preset styles cannot be removed or edited" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="87">
+                    <scrollView toolTip="List of styles; preset styles cannot be removed or edited" autohidesScrollers="YES" horizontalLineScroll="20" horizontalPageScroll="10" verticalLineScroll="20" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="87">
                         <rect key="frame" x="20" y="52" width="440" height="208"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="Rlr-jv-jq9">
@@ -60,9 +60,9 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="100" id="99">
-                                    <rect key="frame" x="0.0" y="0.0" width="438" height="190"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="439" height="190"/>
                                     <autoresizingMask key="autoresizingMask"/>
-                                    <size key="intercellSpacing" width="3" height="2"/>
+                                    <size key="intercellSpacing" width="4" height="3"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
@@ -98,8 +98,8 @@
                             </subviews>
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
-                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="0.18553459119496854" horizontal="YES" id="98">
-                            <rect key="frame" x="1" y="154" width="318" height="15"/>
+                        <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="98">
+                            <rect key="frame" x="1" y="191" width="438" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="97">
@@ -107,7 +107,7 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <tableHeaderView key="headerView" id="100">
-                            <rect key="frame" x="0.0" y="0.0" width="438" height="17"/>
+                            <rect key="frame" x="0.0" y="0.0" width="439" height="17"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>

@@ -27,6 +27,12 @@
 		23420A711C883C8C009F40F9 /* CustomIconGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A6F1C883C8C009F40F9 /* CustomIconGenerator.m */; };
 		23420A741C8A7F85009F40F9 /* ConcurrentCellProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A731C8A7F85009F40F9 /* ConcurrentCellProcessor.m */; };
 		23420A751C8A7F85009F40F9 /* ConcurrentCellProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A731C8A7F85009F40F9 /* ConcurrentCellProcessor.m */; };
+		23420A771C8BED16009F40F9 /* AddFolderIcons.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 23420A761C8BED16009F40F9 /* AddFolderIcons.sdef */; };
+		23420A781C8BED16009F40F9 /* AddFolderIcons.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 23420A761C8BED16009F40F9 /* AddFolderIcons.sdef */; };
+		23420A7C1C8C0EF6009F40F9 /* AFIApplyCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A7B1C8C0EF6009F40F9 /* AFIApplyCommand.m */; };
+		23420A7D1C8C0EF6009F40F9 /* AFIApplyCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A7B1C8C0EF6009F40F9 /* AFIApplyCommand.m */; };
+		23420A851C8D94A0009F40F9 /* AFIRemoveCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */; };
+		23420A861C8D94A0009F40F9 /* AFIRemoveCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */; };
 		2349142812FAB6AF00A59086 /* ApplicationSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2349142712FAB6AF00A59086 /* ApplicationSupport.m */; };
 		2364AF0212ED8E98007C6521 /* IconStyleArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2364AF0112ED8E98007C6521 /* IconStyleArrayController.m */; };
 		2364AF8612EDBA8A007C6521 /* IconStyleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2364AF8512EDBA8A007C6521 /* IconStyleManager.m */; };
@@ -165,6 +171,11 @@
 		23420A6F1C883C8C009F40F9 /* CustomIconGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomIconGenerator.m; sourceTree = "<group>"; };
 		23420A721C8A7F85009F40F9 /* ConcurrentCellProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcurrentCellProcessor.h; sourceTree = "<group>"; };
 		23420A731C8A7F85009F40F9 /* ConcurrentCellProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConcurrentCellProcessor.m; sourceTree = "<group>"; };
+		23420A761C8BED16009F40F9 /* AddFolderIcons.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AddFolderIcons.sdef; sourceTree = "<group>"; };
+		23420A7A1C8C0EF6009F40F9 /* AFIApplyCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFIApplyCommand.h; sourceTree = "<group>"; };
+		23420A7B1C8C0EF6009F40F9 /* AFIApplyCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFIApplyCommand.m; sourceTree = "<group>"; };
+		23420A831C8D94A0009F40F9 /* AFIRemoveCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFIRemoveCommand.h; sourceTree = "<group>"; };
+		23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFIRemoveCommand.m; sourceTree = "<group>"; };
 		234912A112F3857000A59086 /* GlobalSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalSemaphore.h; path = "Shared Sources/GlobalSemaphore.h"; sourceTree = SOURCE_ROOT; };
 		234912A212F3857000A59086 /* Icons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Icons.h; path = "Shared Sources/Icons.h"; sourceTree = SOURCE_ROOT; };
 		234912A312F3857000A59086 /* Miscellaneous.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Miscellaneous.h; path = "Shared Sources/Miscellaneous.h"; sourceTree = SOURCE_ROOT; };
@@ -365,6 +376,17 @@
 			name = Global;
 			sourceTree = "<group>";
 		};
+		23420A791C8C0EBA009F40F9 /* AppleScript */ = {
+			isa = PBXGroup;
+			children = (
+				23420A7A1C8C0EF6009F40F9 /* AFIApplyCommand.h */,
+				23420A7B1C8C0EF6009F40F9 /* AFIApplyCommand.m */,
+				23420A831C8D94A0009F40F9 /* AFIRemoveCommand.h */,
+				23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */,
+			);
+			name = AppleScript;
+			sourceTree = "<group>";
+		};
 		23AED2FB12FF2601003181D8 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
@@ -446,6 +468,7 @@
 				230EE19D12E35CDA00C9F14E /* Models and Core Data */,
 				23C15D1E12F37E1900D99934 /* Icon Creation And Application */,
 				080E96DDFE201D6D7F000001 /* User Interface */,
+				23420A791C8C0EBA009F40F9 /* AppleScript */,
 				29B97315FDCFA39411CA2CEA /* Others */,
 				23AED2FB12FF2601003181D8 /* Third Party */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -477,6 +500,7 @@
 				23F829FC1A7C9CDC00BE26B7 /* RTF assets */,
 				23F829FB1A7C9CC000BE26B7 /* Image assets */,
 				8D1107310486CEB800E47090 /* Add_Folder_Icons-Info.plist */,
+				23420A761C8BED16009F40F9 /* AddFolderIcons.sdef */,
 				235D7A0814DD82B100CD503D /* Add Folder Icons.entitlements */,
 				230BA02514DD8AB100CC9DFC /* container-migration.plist */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
@@ -542,6 +566,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = Hipposoft;
 				TargetAttributes = {
@@ -581,6 +606,7 @@
 				230BA02814DD95E400CC9DFC /* Add Folder Icons.entitlements in Resources */,
 				230BA02714DD95E100CC9DFC /* container-migration.plist in Resources */,
 				23D3FB3313055044004FDA09 /* InfoPlist.strings in Resources */,
+				23420A781C8BED16009F40F9 /* AddFolderIcons.sdef in Resources */,
 				23D3FB3413055044004FDA09 /* MainMenu.xib in Resources */,
 				23D3FB3713055044004FDA09 /* Preferences.xib in Resources */,
 				23D3FB3813055044004FDA09 /* Application.icns in Resources */,
@@ -609,6 +635,7 @@
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				2389C661114D6AC3003466DE /* Sparkle.icns in Resources */,
 				23CB8B4812E09E9200E66CDA /* Preferences.xib in Resources */,
+				23420A771C8BED16009F40F9 /* AddFolderIcons.sdef in Resources */,
 				23CB8BA612E0C1CC00E66CDA /* Application.icns in Resources */,
 				23CBD71212E1ED270024A106 /* ManageStyles.xib in Resources */,
 				23CBD7B712E203F20024A106 /* MainWindow.xib in Resources */,
@@ -670,7 +697,9 @@
 				23D3FB4713055044004FDA09 /* GenericPreferencesWindowController.m in Sources */,
 				23D3FB4813055044004FDA09 /* ApplicationSpecificPreferencesWindowController.m in Sources */,
 				23D3FB4913055044004FDA09 /* ManageStylesWindowController.m in Sources */,
+				23420A7D1C8C0EF6009F40F9 /* AFIApplyCommand.m in Sources */,
 				23D3FB4A13055044004FDA09 /* IconStyle.xcdatamodel in Sources */,
+				23420A861C8D94A0009F40F9 /* AFIRemoveCommand.m in Sources */,
 				23D3FB4B13055044004FDA09 /* IconStyle.m in Sources */,
 				23D3FB4C13055044004FDA09 /* CoreDataObjectIDTransformer.m in Sources */,
 				23D3FB4D13055044004FDA09 /* IconStyleArrayController.m in Sources */,
@@ -705,6 +734,7 @@
 				233D820C115FF0E900D62B8C /* MainWindowController.m in Sources */,
 				23F8929112DE096B00C022EE /* GenericPreferencesWindowController.m in Sources */,
 				23F8931212DF00C000C022EE /* ApplicationSpecificPreferencesWindowController.m in Sources */,
+				23420A851C8D94A0009F40F9 /* AFIRemoveCommand.m in Sources */,
 				232F57AA12E0718F00FEB1C2 /* ManageStylesWindowController.m in Sources */,
 				230EE19C12E3501B00C9F14E /* IconStyle.xcdatamodel in Sources */,
 				23420A701C883C8C009F40F9 /* CustomIconGenerator.m in Sources */,
@@ -726,6 +756,7 @@
 				23F0B07A1304062A0085A876 /* MainMenuController.m in Sources */,
 				2397AF781305761B00931AD3 /* UpdateHelper.m in Sources */,
 				2382900F15714395005C60A5 /* SplashWindowController.m in Sources */,
+				23420A7C1C8C0EF6009F40F9 /* AFIApplyCommand.m in Sources */,
 				2341099C15714F0400AF9999 /* WhiteBackgroundView.m in Sources */,
 				23C83128193A983600486A48 /* ConcurrentPathProcessor.m in Sources */,
 			);

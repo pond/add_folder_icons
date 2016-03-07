@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+
+<dictionary title="Add Folder Icons Terminology">
+
+    <suite name="Add Folder Icons Suite" code="AFIs" description="Add Folder Icons scripts">
+
+        <command name="apply" code="AFIapply" description="Apply a named icon style to a list of folders.">
+            <cocoa class="AFIApplyCommand"/>
+            <direct-parameter description="The name of the icon style to apply. This is case sensitive; it must precisely match the style's name shown in the 'Manage Styles' window.">
+                <type type="text" />
+            </direct-parameter>
+            <parameter name="to" code="AFIt" description="A list of one or more folder(s) to receive customised icons. Regardless of settings in Add Folder Icons' user interface, sub-folders are never included. You must list everything you want in this parameter via appropriate AppleScript code.">
+                <type type="file" list="yes"/>
+                <cocoa key="toFolders"/>
+            </parameter>
+        </command>
+
+        <command name="remove" code="AFIremov" description="Remove custom icons from a list of folders.">
+            <cocoa class="AFIRemoveCommand"/>
+            <parameter name="from" code="AFIf" description="A list of one or more folder(s) to be restored to default icons. Regardless of settings in Add Folder Icons' user interface, sub-folders are never included. You must list everything you want in this parameter via appropriate AppleScript code.">
+                <type type="file" list="yes"/>
+                <cocoa key="fromFolders"/>
+            </parameter>
+        </command>
+
+<!--        <class name="style" code="AFSt" description="An Add Folder Icons icon style">-->
+<!--            <cocoa class="IconStyle"/>-->
+<!--            <property name="name" code="PNAm" type="text" access="r" description="The style's name.">-->
+<!--                <cocoa key="name"/>-->
+<!--            </property>-->
+<!--            <property name="creation date" code="CDat" type="date" access="r" description="The style's creation date.">-->
+<!--                <cocoa key="createdAt"/>-->
+<!--            </property>-->
+<!---->
+<!--            <property name="uses slip cover" code="USCo" type="boolean" access="r" description="Does this style use SlipCover, rather than being a preset or user-defined?">-->
+<!--                <cocoa key="usesSlipCover"/>-->
+<!--            </property>-->
+<!--            <property name="slip cover name" code="SNam" type="text" access="r" description="If the 'is slip cover' property is true, this holds the SlipCover definition's name.">-->
+<!--                <cocoa key="slipCoverName"/>-->
+<!--            </property>-->
+<!---->
+<!--            <property name="is preset" code="IPre" type="boolean" access="r" description="Is it a preset style, rather than user-defined or from SlipCover?">-->
+<!--                <cocoa key="isPreset"/>-->
+<!--            </property>-->
+<!--            <property name="crop to square" code="CTSq" type="boolean" access="r" description="Crop images to squares?">-->
+<!--                <cocoa key="cropToSquare"/>-->
+<!--            </property>-->
+<!--            <property name="white background" code="WBac" type="boolean" access="r" description="Add a white background to images?">-->
+<!--                <cocoa key="whiteBackground"/>-->
+<!--            </property>-->
+<!--            <property name="drop shadow" code="DSha" type="boolean" access="r" description="Add a drop shadow to images?">-->
+<!--                <cocoa key="dropShadow"/>-->
+<!--            </property>-->
+<!--            <property name="random rotatino" code="RRot" type="boolean" access="r" description="Add a small, random rotation to images?">-->
+<!--                <cocoa key="randomRotation"/>-->
+<!--            </property>-->
+<!--            <property name="only use cover art" code="OUCA" type="boolean" access="r" description="Only use cover art as source images?">-->
+<!--                <cocoa key="onlyUseCoverArt"/>-->
+<!--            </property>-->
+<!---->
+<!--            <enumeration name="max images options" code="MImO">-->
+<!--                <enumerator name="1" code="mim1" description="Show only 1 folder image">-->
+<!--                    <cocoa integer-value="1"/>-->
+<!--                </enumerator>-->
+<!--                <enumerator name="2" code="mim2" description="Show up to 2 folder images">-->
+<!--                    <cocoa integer-value="2"/>-->
+<!--                </enumerator>-->
+<!--                <enumerator name="3" code="mim3" description="Show up to 3 folder images">-->
+<!--                    <cocoa integer-value="3"/>-->
+<!--                </enumerator>-->
+<!--                <enumerator name="4" code="mim4" description="Show up to 4 folder images">-->
+<!--                    <cocoa integer-value="4"/>-->
+<!--                </enumerator>-->
+<!--            </enumeration>-->
+<!---->
+<!--            <property name="max images" code="MIma" type="max images options" access="r" description="Maximum number of images to include (between 1 and 4).">-->
+<!--                <cocoa key="maxImages"/>-->
+<!--            </property>-->
+<!---->
+<!--            <enumeration name="show folder in background options" code="SFIo">-->
+<!--                <enumerator name="Never" code="sfi0" description="Never show the folder icon">-->
+<!--                    <cocoa integer-value="0"/>-->
+<!--                </enumerator>-->
+<!--                <enumerator name="1 only" code="sfi1" description="Show the folder icon if there's only one thumbnail image">-->
+<!--                    <cocoa integer-value="1"/>-->
+<!--                </enumerator>-->
+<!--                <enumerator name="2 or fewer" code="sfi2" description="Show the folder icon only if there are two or fewer thumbnail images">-->
+<!--                    <cocoa integer-value="2"/>-->
+<!--                </enumerator>-->
+<!--                <enumerator name="3 or fewer" code="sfi3" description="Show the folder icon only if there are three or fewer thumbnail images">-->
+<!--                    <cocoa integer-value="3"/>-->
+<!--                </enumerator>-->
+<!--                <enumerator name="Always" code="sfi4" description="Always show the folder icon">-->
+<!--                    <cocoa integer-value="4"/>-->
+<!--                </enumerator>-->
+<!--            </enumeration>-->
+<!---->
+<!--            <property name="show folder in background" code="SFIB" type="show folder in background options" access="r" description="When to show the folder icon behind the thumbnail images.">-->
+<!--                <cocoa key="showFolderInBackground"/>-->
+<!--            </property>-->
+<!--        </class>-->
+
+    </suite>
+
+</dictionary>

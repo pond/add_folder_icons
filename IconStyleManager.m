@@ -605,6 +605,50 @@
 }
 
 /******************************************************************************\
+ * -findStyleByName:
+ *
+ * Return an IconStyle instance given a name which matches one of them.
+ *
+ * In:  ( NSSring * ) name
+ *      Name of the style to find. It must match precisely.
+ *
+ * Out: ( IconStyle * ) 
+ *      Pointer to the icon style, a managed autoreleased object; or "nil" if
+ *      no style with the given name can be found.
+\******************************************************************************/
+
+- ( IconStyle * ) findStyleByName: ( NSString * ) name
+{
+    IconStyle              * foundStyle  = nil;
+    NSError                * error       = nil;
+    NSManagedObjectContext * moc         = [ self managedObjectContext ];
+    NSManagedObjectModel   * mom         = [ self managedObjectModel   ];
+    NSEntityDescription    * styleEntity = [ mom entitiesByName ][ @"IconStyle" ];
+    NSFetchRequest         * request     = [ [ NSFetchRequest alloc ] init ];
+    NSPredicate            * predicate   =
+    [
+        NSPredicate predicateWithFormat: @"(name == %@)",
+        name
+    ];
+
+    [ request setEntity:              styleEntity ];
+    [ request setIncludesSubentities: NO          ];
+    [ request setPredicate:           predicate   ];
+
+    NSArray * results = [ moc executeFetchRequest: request error: &error ];
+
+    if ( error != nil )
+    {
+        [ NSApp presentError: error ];
+        [ NSApp terminate:    nil   ];
+    }
+
+    if ( [ results count ] == 1 ) foundStyle = results[ 0 ];
+
+    return foundStyle;
+}
+
+/******************************************************************************\
  * -findDefaultIconStyle
  *
  * Return the configured defaulticon style. If there are problems retrieving

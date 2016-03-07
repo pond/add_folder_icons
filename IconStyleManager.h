@@ -66,10 +66,13 @@
 - ( void ) establishPresetIconStyles;
 - ( void ) establishSlipCoverIconStyles;
 
-@property ( readonly, copy   ) NSArray   * findSlipCoverStyles;
-@property ( readonly, strong ) IconStyle * findDefaultIconStyle;
-@property ( readonly, strong ) IconStyle * findClassicIconStyle;
-@property ( readonly, strong ) IconStyle * insertBlankUserStyleAndProcessChanges;
+- ( NSArray   * ) findSlipCoverStyles;
+
+- ( IconStyle * ) findStyleByName:      ( NSString * ) name;
+- ( IconStyle * ) findDefaultIconStyle;
+- ( IconStyle * ) findClassicIconStyle;
+
+- ( IconStyle * ) insertBlankUserStyleAndProcessChanges;
 
 /* Implement SCEventListenerProtocol */
 

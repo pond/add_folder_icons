@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1- transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Add Folder Icons Help: AppleScript Support</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <meta name="robots"   content="segments" />
+    <meta name="keywords" content="advanced, scripting, applescript, automation, folder actions">
+
+    <link href="../sty/default.css" rel="stylesheet" type="text/css" media="all" />
+  </head>
+
+  <body>
+    <div id="navigation">
+
+      <a name="applescript"></a>
+      <a name="autoindex"></a>
+
+      <div id="navigation_left">
+        <a href="help:anchor=access bookID=uk.org.pond.Add-Folder-Icons.help">Home</a>
+      </div>
+      <div id="navigation_right">
+        <a href="help:topic_list=autoindex bookID=uk.org.pond.Add-Folder-Icons.help template=xpgs/autoindex.html stylesheet=sty/default.css Other=Index">Index</a>
+      </div>
+    </div>
+
+    <div id="header">
+      <div id="icon">
+        <img src="../../shrd/AddFolderIcons32.png" width="32" height="32" alt="Add Folder Icons icon" />
+      </div>
+      <div id="title">
+        <h1>AppleScript Support</h1>
+      </div>
+    </div>
+
+    <div class="columns_one">
+      <h2>Introduction</h2>
+
+      <p>Apple provide a system-wide scripting language called <a href="https://developer.apple.com/library/mac/documentation/AppleScript/Conceptual/AppleScriptX/AppleScriptX.html">AppleScript</a>. This lets advanced users write a series of instructions which tell other applications to do things without you needing to point and click. The <a href="http://www.macosxautomation.com/applescript/">Mac OS X Automation</a> web site has a good AppleScript overview.</p>
+
+      <p>Add Folder Icons works with the automation system in OS X to allow you to operate some of its features using AppleScript.</p>
+
+      <p>In Mac OS X 10.10, Apple also introduced support for <a href="https://developer.apple.com/library/mac/releasenotes/InterapplicationCommunication/RN-JavaScriptForAutomation/Articles/Introduction.html">commanding automation through the JavaScript language</a>. This alternative language works with Add Folder Icons too.</p>
+
+      <h2>Automate your icons through Folder Actions</h2>
+
+      <p>Add Folder Icons provides two very simple commands - <tt>apply</tt> and <tt>remove</tt> - which apply or remove customised icons to folders, respectively. This is done without any graphical interruption from Add Folder Icons; unlike when you operate the application manually, you won't get a progress bar or the opportunity to cancel things, so beware. This interruption-free approach lets you start to introduce automatic application of customised folder icons which are updated when folders change, by creating scripts which are saved as Folder Actions. See the <a href="https://developer.apple.com/library/mac/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_folder_actions.html">Apple documentation</a> for more information.
+
+      <h2>Examples</h2>
+
+      <p>The <tt>apply</tt> command is used thus: <tt>apply "style name" to { list of POSIX files }</tt> where the POSIX file references must all refer to folders. Here, we ask the Finder to let us choose some folders, convert the results from Finder Items into POSIX files and send that over to Add Folder Icons:</p>
+
+<pre>
+tell application "Finder"
+  set theFolders to ¬
+    choose folder with prompt ¬
+      "Select as many folders for icon customisation as you like" with multiple selections allowed
+end tell
+
+set thePOSIXFiles to {}
+
+repeat with theFolder in theFolders
+  copy {POSIX file (POSIX path of theFolder)} to end of thePOSIXFiles
+end repeat
+
+tell application "Add Folder Icons"
+  apply "Preset: Classic thumbnails" to thePOSIXFiles
+end tell
+</pre>
+
+    <p>The <tt>remove</tt> command just takes a list of POSIX files and removes custom icons from them. Assuming the same <tt>thePOSIXFiles</tt> list has been set up as in the example above, then:</p>
+
+<pre>
+tell application "Add Folder Icons"
+  remove from thePOSIXFiles
+end tell
+</pre>
+
+    <h3>The JavaScript equivalent</h3>
+
+    <p>First choose and apply the new icons:</p>
+
+<pre>
+finder = Application( 'Finder' );
+
+finder.includeStandardAdditions = true
+folders = finder.chooseFolder( {
+  withPrompt: 'Select as many folders for icon customisation as you like',
+  multipleSelectionsAllowed: true
+} );
+
+posixFiles = folders.map(
+  function( folder ) { return Path( folder ); }
+);
+
+add_folder_icons = Application( 'Add Folder Icons' );
+add_folder_icons.apply( 'Preset: Classic thumbnails', { to: posixFiles } );
+</pre>
+
+      <p>Then, again assuming the same <tt>posixFiles</tt> array has been set up as in the example above:</p>
+
+<pre>
+add_folder_icons = Application( 'Add Folder Icons' );
+add_folder_icons.remove( { from: posixFiles } );
+</pre>
+    </div>
+  </body>
+</html>

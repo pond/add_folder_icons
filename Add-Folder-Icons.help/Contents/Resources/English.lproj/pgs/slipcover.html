@@ -13,10 +13,11 @@
   </head>
 
   <body>
-    <a name="slipcover"></a>
-    <a name="autoindex"></a>
-
     <div id="navigation">
+
+      <a name="slipcover"></a>
+      <a name="autoindex"></a>
+
       <div id="navigation_left">
         <a href="help:anchor=access bookID=uk.org.pond.Add-Folder-Icons.help">Home</a>
       </div>
@@ -25,7 +26,7 @@
       </div>
     </div>
 
-    <div id="header"
+    <div id="header">
       <div id="icon">
         <img src="../../shrd/AddFolderIcons32.png" width="32" height="32" alt="Add Folder Icons icon" />
       </div>
@@ -41,17 +42,19 @@
 
       <p>Add Folder Icons lets you define styles which use SlipCover case designs, thanks to code generously donated by the SlipCover author. For more about this and other contributions, please see the "About" window, accessed from the "About Add Folder Icons" menu entry in the "Add Folder Icons" menu.</p>
 
-      <p>If Add Folder Icons detects the presence of any SlipCover case designs which it hasn't seen before, it will ask you if you want to automatically create styles for each of the case designs it has found. Please note that SlipCover must be installed directly in your Applications folder, rather than in any subdirectory of Applications or any other folder, in order to be detected.</p>
+      <p>In later versions of Mac OS X, <i>sandboxing</i> means that Add Folder Icons is not allowed to "see" the SlipCover application or read any of its case styles by default. If Add Folder Icons starts up and detects the presence of SlipCover but cannot access the case designs, it will pop up a file selector window asking you to grant access. You just click on the "Grant Access" button to proceed or, if you don't want SlipCover integration, cancel the window.</p>
+
+      <p>Assuming you grant it access, then if Add Folder Icons detects the presence of any SlipCover case designs which it hasn't seen before, it will ask you if you want to automatically create styles for each of the case designs it has found.</p>
 
       <p class="illustration window">
-        <img src="../gfx/16 - SlipCover new.png" width="486" height="273" alt="SlipCover New" />
+        <img src="../gfx/16 - SlipCover new.png" width="532" height="319" alt="SlipCover New" />
         <br /><span class="caption">New SlipCover Styles Found</span>
       </p>
 
       <p>You can also choose to add SlipCover based styles by hand at any time - <a href="help:anchor=styles bookID=uk.org.pond.Add-Folder-Icons.help">go to the Edit Style panel</a> and select "SlipCover cases" from the "Generate folder icons using:" menu at the top.</p>
 
       <p class="illustration">
-        <img src="../gfx/13 - Editing SlipCover.png" width="652" height="393" alt="Editing SlipCover" />
+        <img src="../gfx/13 - Editing SlipCover.png" width="674" height="474" alt="Editing SlipCover" />
         <br /><span class="caption">Editing a SlipCover Style</span>
       </p>
 
@@ -64,7 +67,7 @@
       <p>If you ever delete a SlipCover case design which has an associated Add Folder Icons style, Add Folder Icons will be forced to delete that style as it is no longer valid. It will warn you when this happens.</p>
 
       <p class="illustration window">
-        <img src="../gfx/15 - SlipCover gone.png" width="486" height="222" alt="SlipCover Gone" />
+        <img src="../gfx/15 - SlipCover gone.png" width="532" height="268" alt="SlipCover Gone" />
         <br /><span class="caption">SlipCover Styles Deleted</span>
       </p>
     </div>

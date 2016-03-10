@@ -33,6 +33,8 @@
 		23420A7D1C8C0EF6009F40F9 /* AFIApplyCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A7B1C8C0EF6009F40F9 /* AFIApplyCommand.m */; };
 		23420A851C8D94A0009F40F9 /* AFIRemoveCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */; };
 		23420A861C8D94A0009F40F9 /* AFIRemoveCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */; };
+		23420A8C1C903B41009F40F9 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */; };
+		23420A8D1C903B41009F40F9 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */; };
 		2349142812FAB6AF00A59086 /* ApplicationSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2349142712FAB6AF00A59086 /* ApplicationSupport.m */; };
 		2364AF0212ED8E98007C6521 /* IconStyleArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2364AF0112ED8E98007C6521 /* IconStyleArrayController.m */; };
 		2364AF8612EDBA8A007C6521 /* IconStyleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2364AF8512EDBA8A007C6521 /* IconStyleManager.m */; };
@@ -40,8 +42,6 @@
 		2364B22112EEE058007C6521 /* tb_classic.png in Resources */ = {isa = PBXBuildFile; fileRef = 2364B21E12EEE058007C6521 /* tb_classic.png */; };
 		2364B22212EEE058007C6521 /* tb_dvd.png in Resources */ = {isa = PBXBuildFile; fileRef = 2364B21F12EEE058007C6521 /* tb_dvd.png */; };
 		2370F3E71302ACE200448013 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2370F3E61302ACE200448013 /* Cocoa.framework */; };
-		237F3835133A3B8800A23219 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 237F3834133A3B8800A23219 /* Add-Folder-Icons.help */; };
-		237F3836133A3B8800A23219 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 237F3834133A3B8800A23219 /* Add-Folder-Icons.help */; };
 		2382900915712962005C60A5 /* SplashWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23A86A2F1560111E000B2861 /* SplashWindow.xib */; };
 		2382900B1571414B005C60A5 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 2382900A1571414B005C60A5 /* splash.png */; };
 		2382900C1571414B005C60A5 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 2382900A1571414B005C60A5 /* splash.png */; };
@@ -176,6 +176,7 @@
 		23420A7B1C8C0EF6009F40F9 /* AFIApplyCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFIApplyCommand.m; sourceTree = "<group>"; };
 		23420A831C8D94A0009F40F9 /* AFIRemoveCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFIRemoveCommand.h; sourceTree = "<group>"; };
 		23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFIRemoveCommand.m; sourceTree = "<group>"; };
+		23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Add-Folder-Icons.help"; sourceTree = "<group>"; };
 		234912A112F3857000A59086 /* GlobalSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalSemaphore.h; path = "Shared Sources/GlobalSemaphore.h"; sourceTree = SOURCE_ROOT; };
 		234912A212F3857000A59086 /* Icons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Icons.h; path = "Shared Sources/Icons.h"; sourceTree = SOURCE_ROOT; };
 		234912A312F3857000A59086 /* Miscellaneous.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Miscellaneous.h; path = "Shared Sources/Miscellaneous.h"; sourceTree = SOURCE_ROOT; };
@@ -199,7 +200,6 @@
 		2370F3E21302ACCB00448013 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		2370F3E41302ACCF00448013 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2370F3E61302ACE200448013 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		237F3834133A3B8800A23219 /* Add-Folder-Icons.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Add-Folder-Icons.help"; sourceTree = "<group>"; };
 		2382900A1571414B005C60A5 /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash.png; sourceTree = "<group>"; };
 		2382900D15714395005C60A5 /* SplashWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashWindowController.h; sourceTree = "<group>"; };
 		2382900E15714395005C60A5 /* SplashWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashWindowController.m; sourceTree = "<group>"; };
@@ -510,7 +510,7 @@
 				23CB8B4612E09E9200E66CDA /* Preferences.xib */,
 				2397AF7A130578FA00931AD3 /* Updates.xib */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				237F3834133A3B8800A23219 /* Add-Folder-Icons.help */,
+				23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */,
 				23FF74DD1301D1C700D656DB /* Preview */,
 			);
 			name = Resources;
@@ -614,12 +614,12 @@
 				23D3FB3A13055044004FDA09 /* MainWindow.xib in Resources */,
 				23D3FB3B13055044004FDA09 /* tb_cd.png in Resources */,
 				23D3FB3C13055044004FDA09 /* tb_classic.png in Resources */,
+				23420A8D1C903B41009F40F9 /* Add-Folder-Icons.help in Resources */,
 				23D3FB3D13055044004FDA09 /* tb_dvd.png in Resources */,
 				23D3FB3E13055044004FDA09 /* Preview in Resources */,
 				23D3FB7A13055B6B004FDA09 /* CreditsBottom.rtf in Resources */,
 				23D3FB7C13055B6B004FDA09 /* CreditsMAS.rtf in Resources */,
 				23D3FB8013055B6B004FDA09 /* CreditsTop.rtf in Resources */,
-				237F3836133A3B8800A23219 /* Add-Folder-Icons.help in Resources */,
 				2382900915712962005C60A5 /* SplashWindow.xib in Resources */,
 				2382900C1571414B005C60A5 /* splash.png in Resources */,
 			);
@@ -629,6 +629,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23420A8C1C903B41009F40F9 /* Add-Folder-Icons.help in Resources */,
 				230BA02914DD95FA00CC9DFC /* Add Folder Icons.entitlements in Resources */,
 				230BA02614DD8AB100CC9DFC /* container-migration.plist in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
@@ -647,7 +648,6 @@
 				23D3FB7D13055B6B004FDA09 /* CreditsPOU.rtf in Resources */,
 				23D3FB7F13055B6B004FDA09 /* CreditsTop.rtf in Resources */,
 				2397AF7C130578FA00931AD3 /* Updates.xib in Resources */,
-				237F3835133A3B8800A23219 /* Add-Folder-Icons.help in Resources */,
 				23A86A311560111E000B2861 /* SplashWindow.xib in Resources */,
 				2382900B1571414B005C60A5 /* splash.png in Resources */,
 			);

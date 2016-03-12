@@ -35,6 +35,8 @@
 		23420A861C8D94A0009F40F9 /* AFIRemoveCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */; };
 		23420A8C1C903B41009F40F9 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */; };
 		23420A8D1C903B41009F40F9 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */; };
+		23420A921C917465009F40F9 /* Application.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 23420A911C917465009F40F9 /* Application.xcassets */; };
+		23420A931C917465009F40F9 /* Application.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 23420A911C917465009F40F9 /* Application.xcassets */; };
 		2349142812FAB6AF00A59086 /* ApplicationSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2349142712FAB6AF00A59086 /* ApplicationSupport.m */; };
 		2364AF0212ED8E98007C6521 /* IconStyleArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2364AF0112ED8E98007C6521 /* IconStyleArrayController.m */; };
 		2364AF8612EDBA8A007C6521 /* IconStyleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2364AF8512EDBA8A007C6521 /* IconStyleManager.m */; };
@@ -60,13 +62,11 @@
 		23C831271937521700486A48 /* ConcurrentPathProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912AF12F3857C00A59086 /* ConcurrentPathProcessor.m */; };
 		23C83128193A983600486A48 /* ConcurrentPathProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912AF12F3857C00A59086 /* ConcurrentPathProcessor.m */; };
 		23CB8B4812E09E9200E66CDA /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23CB8B4612E09E9200E66CDA /* Preferences.xib */; };
-		23CB8BA612E0C1CC00E66CDA /* Application.icns in Resources */ = {isa = PBXBuildFile; fileRef = 23CB8BA512E0C1CC00E66CDA /* Application.icns */; };
 		23CBD71212E1ED270024A106 /* ManageStyles.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23CBD71012E1ED270024A106 /* ManageStyles.xib */; };
 		23CBD7B712E203F20024A106 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23CBD7B512E203F20024A106 /* MainWindow.xib */; };
 		23D3FB3313055044004FDA09 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		23D3FB3413055044004FDA09 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		23D3FB3713055044004FDA09 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23CB8B4612E09E9200E66CDA /* Preferences.xib */; };
-		23D3FB3813055044004FDA09 /* Application.icns in Resources */ = {isa = PBXBuildFile; fileRef = 23CB8BA512E0C1CC00E66CDA /* Application.icns */; };
 		23D3FB3913055044004FDA09 /* ManageStyles.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23CBD71012E1ED270024A106 /* ManageStyles.xib */; };
 		23D3FB3A13055044004FDA09 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23CBD7B512E203F20024A106 /* MainWindow.xib */; };
 		23D3FB3B13055044004FDA09 /* tb_cd.png in Resources */ = {isa = PBXBuildFile; fileRef = 2364B21D12EEE058007C6521 /* tb_cd.png */; };
@@ -177,6 +177,7 @@
 		23420A831C8D94A0009F40F9 /* AFIRemoveCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFIRemoveCommand.h; sourceTree = "<group>"; };
 		23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFIRemoveCommand.m; sourceTree = "<group>"; };
 		23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Add-Folder-Icons.help"; sourceTree = "<group>"; };
+		23420A911C917465009F40F9 /* Application.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Application.xcassets; sourceTree = "<group>"; };
 		234912A112F3857000A59086 /* GlobalSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalSemaphore.h; path = "Shared Sources/GlobalSemaphore.h"; sourceTree = SOURCE_ROOT; };
 		234912A212F3857000A59086 /* Icons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Icons.h; path = "Shared Sources/Icons.h"; sourceTree = SOURCE_ROOT; };
 		234912A312F3857000A59086 /* Miscellaneous.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Miscellaneous.h; path = "Shared Sources/Miscellaneous.h"; sourceTree = SOURCE_ROOT; };
@@ -226,7 +227,6 @@
 		23BD73F212E9FFA100BE620C /* CoreDataObjectIDTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataObjectIDTransformer.h; sourceTree = "<group>"; };
 		23BD73F312E9FFA100BE620C /* CoreDataObjectIDTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataObjectIDTransformer.m; sourceTree = "<group>"; };
 		23CB8B4712E09E9200E66CDA /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Preferences.xib; sourceTree = "<group>"; };
-		23CB8BA512E0C1CC00E66CDA /* Application.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Application.icns; sourceTree = "<group>"; };
 		23CBD71112E1ED270024A106 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/ManageStyles.xib; sourceTree = "<group>"; };
 		23CBD7B612E203F20024A106 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		23D3FB6213055044004FDA09 /* Add Folder Icons.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Add Folder Icons.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -439,8 +439,8 @@
 		23F829FB1A7C9CC000BE26B7 /* Image assets */ = {
 			isa = PBXGroup;
 			children = (
+				23420A911C917465009F40F9 /* Application.xcassets */,
 				2382900A1571414B005C60A5 /* splash.png */,
-				23CB8BA512E0C1CC00E66CDA /* Application.icns */,
 				2389C660114D6AC3003466DE /* Sparkle.icns */,
 				2364B21D12EEE058007C6521 /* tb_cd.png */,
 				2364B21E12EEE058007C6521 /* tb_classic.png */,
@@ -609,7 +609,6 @@
 				23420A781C8BED16009F40F9 /* AddFolderIcons.sdef in Resources */,
 				23D3FB3413055044004FDA09 /* MainMenu.xib in Resources */,
 				23D3FB3713055044004FDA09 /* Preferences.xib in Resources */,
-				23D3FB3813055044004FDA09 /* Application.icns in Resources */,
 				23D3FB3913055044004FDA09 /* ManageStyles.xib in Resources */,
 				23D3FB3A13055044004FDA09 /* MainWindow.xib in Resources */,
 				23D3FB3B13055044004FDA09 /* tb_cd.png in Resources */,
@@ -619,6 +618,7 @@
 				23D3FB3E13055044004FDA09 /* Preview in Resources */,
 				23D3FB7A13055B6B004FDA09 /* CreditsBottom.rtf in Resources */,
 				23D3FB7C13055B6B004FDA09 /* CreditsMAS.rtf in Resources */,
+				23420A931C917465009F40F9 /* Application.xcassets in Resources */,
 				23D3FB8013055B6B004FDA09 /* CreditsTop.rtf in Resources */,
 				2382900915712962005C60A5 /* SplashWindow.xib in Resources */,
 				2382900C1571414B005C60A5 /* splash.png in Resources */,
@@ -637,7 +637,6 @@
 				2389C661114D6AC3003466DE /* Sparkle.icns in Resources */,
 				23CB8B4812E09E9200E66CDA /* Preferences.xib in Resources */,
 				23420A771C8BED16009F40F9 /* AddFolderIcons.sdef in Resources */,
-				23CB8BA612E0C1CC00E66CDA /* Application.icns in Resources */,
 				23CBD71212E1ED270024A106 /* ManageStyles.xib in Resources */,
 				23CBD7B712E203F20024A106 /* MainWindow.xib in Resources */,
 				2364B22012EEE058007C6521 /* tb_cd.png in Resources */,
@@ -645,6 +644,7 @@
 				2364B22212EEE058007C6521 /* tb_dvd.png in Resources */,
 				23FF74DE1301D1C700D656DB /* Preview in Resources */,
 				23D3FB7913055B6B004FDA09 /* CreditsBottom.rtf in Resources */,
+				23420A921C917465009F40F9 /* Application.xcassets in Resources */,
 				23D3FB7D13055B6B004FDA09 /* CreditsPOU.rtf in Resources */,
 				23D3FB7F13055B6B004FDA09 /* CreditsTop.rtf in Resources */,
 				2397AF7C130578FA00931AD3 /* Updates.xib in Resources */,
@@ -860,6 +860,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -888,6 +889,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";

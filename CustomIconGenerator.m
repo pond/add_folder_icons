@@ -299,9 +299,10 @@ static CGRect (*locations)[4] = NULL; /* Initialised in the constructor */
 
         dirEnum = [ fileMgr enumeratorAtURL: enumPathAsURL
                  includingPropertiesForKeys: @[
-                                                 NSURLLabelColorKey,
                                                  NSURLIsDirectoryKey,
-                                                 NSURLIsRegularFileKey
+                                                 NSURLIsRegularFileKey,
+                                                 NSURLLabelColorKey,
+                                                 NSURLLabelNumberKey
                                              ]
                                     options: NSDirectoryEnumerationSkipsHiddenFiles
                                errorHandler: nil ];
@@ -318,24 +319,17 @@ static CGRect (*locations)[4] = NULL; /* Initialised in the constructor */
 
                 /* Extract the cached directory and color label data */
 
-                NSError  * resourceError = nil;
-                NSNumber * isDirectory;
-
-                [ theURL getResourceValue: &isDirectory
-                                   forKey: NSURLIsDirectoryKey
-                                    error: &resourceError ];
-
-                NSNumber * isRegularFile;
-
-                [ theURL getResourceValue: &isRegularFile
-                                   forKey: NSURLIsRegularFileKey
-                                    error: &resourceError ];
-
-                NSColor * labelColour;
-
-                [ theURL getResourceValue: &labelColour
-                                   forKey: NSURLLabelColorKey
-                                    error: &resourceError ];
+                NSError      * resourceError = nil;
+                NSDictionary * info          =
+                [
+                    theURL resourceValuesForKeys: @[
+                                                      NSURLIsDirectoryKey,
+                                                      NSURLIsRegularFileKey,
+                                                      NSURLLabelColorKey,
+                                                      NSURLLabelNumberKey
+                                                  ]
+                                           error: &resourceError
+                ];
 
                 /* Assuming no errors, skip subdirectories and look for
                  * labelled, "cover" or "folder" leafname images.
@@ -349,27 +343,39 @@ static CGRect (*locations)[4] = NULL; /* Initialised in the constructor */
 
                 if ( resourceError == nil )
                 {
-                    if ( isDirectory.boolValue == YES )
+                    BOOL       isDirectory;
+                    BOOL       isRegularFile;
+                    NSColor  * labelColour;
+                    NSNumber * labelNumber;
+
+                    isDirectory   = [ info[ @"NSURLIsDirectoryKey"   ] boolValue ];
+                    isRegularFile = [ info[ @"NSURLIsRegularFileKey" ] boolValue ];
+                    labelColour   =   info[ @"NSURLLabelColorKey"    ];
+                    labelNumber   =   info[ @"NSURLLabelNumberKey"   ];
+
+                    if ( isDirectory == YES )
                     {
                         [ dirEnum skipDescendants ];
                     }
-                    else if ( isRegularFile.boolValue == YES && isImageFile( fullPath ) == YES )
+                    else if ( isRegularFile == YES && isImageFile( fullPath ) == YES )
                     {
                         NSString * leaf = [ [ fullPath lastPathComponent ] stringByDeletingPathExtension ];
 
-                        if ( labelColour != nil && self.useColourLabelsToIdentifyCoverArt )
+                        if (
+                               self.useColourLabelsToIdentifyCoverArt &&
+                               (
+                                   labelColour != nil ||
+                                   [ labelNumber integerValue ] > 0
+                               )
+                           )
                         {
                             found = fullPath;
                             break;
                         }
 
-                        NSArray * filenamesToFind = self.overrideCoverArtFilenames
-                                                  ? self.overrideCoverArtFilenames
-                                                  : self.coverArtFilenames;
-
                         NSUInteger foundIndex =
                         [
-                            filenamesToFind indexOfObjectWithOptions: NSEnumerationConcurrent
+                            self.coverArtFilenames indexOfObjectWithOptions: NSEnumerationConcurrent
                             passingTest: ^BOOL ( NSString * obj, NSUInteger idx, BOOL * stop )
                             {
                                 if ( [ obj localizedCaseInsensitiveCompare: leaf ] == NSOrderedSame )

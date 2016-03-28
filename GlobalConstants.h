@@ -9,14 +9,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-/* Some useful strings. The MASTER_VERSION... definitions are defined in the
- * project build settings under "Preprocessor Macros" and should be set up with
- * identical values in all configurations.
- */
+/* Some useful strings */
 
 #define PROGRAM_STRING "addfoldericons"
 #define AUTHOR_STRING  "Andrew Hodgkinson"
-#define VERSION_STRING "3.0.1.2016.03.21"
+#define VERSION_STRING "3.0.2.2016.03.28"
 
 /* Standard square icon canvas edge length in 'non-retina' pixels */
 

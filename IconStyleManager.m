@@ -774,6 +774,34 @@
 }
 
 /******************************************************************************\
+ * -getStyles
+ *
+ * Get an array of all IconStyles, ordered by name.
+ *
+ * Out: ( NSArray * )
+ *      Array of IconStyle instances retrieved from Core Data.
+\******************************************************************************/
+
+- ( NSArray * ) getStyles
+{
+    NSError                * error       = nil;
+    NSManagedObjectContext * moc         = [ self managedObjectContext ];
+    NSManagedObjectModel   * mom         = [ self managedObjectModel   ];
+    NSEntityDescription    * styleEntity = [ mom entitiesByName ][ @"IconStyle" ];
+    NSFetchRequest         * request     = [ [ NSFetchRequest alloc ] init ];
+    NSSortDescriptor       * sort        = [ [ NSSortDescriptor alloc ] initWithKey: @"name" ascending: YES ];
+
+    [ request setEntity:              styleEntity ];
+    [ request setIncludesSubentities: NO          ];
+    [ request setSortDescriptors:     @[ sort ]   ];
+
+    NSArray * results = [ moc executeFetchRequest: request error: &error ];
+
+    if ( error != nil ) return nil;
+    else                return results;
+}
+
+/******************************************************************************\
  * -insertBlankUserStyleAndProcessChanges
  *
  * Create a user (non-preset) icon style with a date-based "undefined..." name

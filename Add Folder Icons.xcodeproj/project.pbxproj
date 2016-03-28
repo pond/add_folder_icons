@@ -103,6 +103,8 @@
 		23D3FB7D13055B6B004FDA09 /* CreditsPOU.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 23D3FB7513055B6B004FDA09 /* CreditsPOU.rtf */; };
 		23D3FB7F13055B6B004FDA09 /* CreditsTop.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 23D3FB7713055B6B004FDA09 /* CreditsTop.rtf */; };
 		23D3FB8013055B6B004FDA09 /* CreditsTop.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 23D3FB7713055B6B004FDA09 /* CreditsTop.rtf */; };
+		23E3416C1CA8A7E800EDB581 /* AFIScriptabilityCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 23E3416B1CA8A7E800EDB581 /* AFIScriptabilityCategory.m */; };
+		23E3416D1CA8A7E800EDB581 /* AFIScriptabilityCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 23E3416B1CA8A7E800EDB581 /* AFIScriptabilityCategory.m */; };
 		23F0B07A1304062A0085A876 /* MainMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23F0B0791304062A0085A876 /* MainMenuController.m */; };
 		23F8929112DE096B00C022EE /* GenericPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23F8929012DE096B00C022EE /* GenericPreferencesWindowController.m */; };
 		23F8931212DF00C000C022EE /* ApplicationSpecificPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23F8931112DF00C000C022EE /* ApplicationSpecificPreferencesWindowController.m */; };
@@ -234,6 +236,8 @@
 		23D3FB7413055B6B004FDA09 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/CreditsMAS.rtf; sourceTree = "<group>"; };
 		23D3FB7613055B6B004FDA09 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/CreditsPOU.rtf; sourceTree = "<group>"; };
 		23D3FB7813055B6B004FDA09 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/CreditsTop.rtf; sourceTree = "<group>"; };
+		23E3416A1CA8A7E800EDB581 /* AFIScriptabilityCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFIScriptabilityCategory.h; sourceTree = "<group>"; };
+		23E3416B1CA8A7E800EDB581 /* AFIScriptabilityCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFIScriptabilityCategory.m; sourceTree = "<group>"; };
 		23F0B0781304062A0085A876 /* MainMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuController.h; sourceTree = "<group>"; };
 		23F0B0791304062A0085A876 /* MainMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuController.m; sourceTree = "<group>"; };
 		23F8928F12DE096B00C022EE /* GenericPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericPreferencesWindowController.h; sourceTree = "<group>"; };
@@ -379,10 +383,13 @@
 		23420A791C8C0EBA009F40F9 /* AppleScript */ = {
 			isa = PBXGroup;
 			children = (
+				23420A761C8BED16009F40F9 /* AddFolderIcons.sdef */,
 				23420A7A1C8C0EF6009F40F9 /* AFIApplyCommand.h */,
 				23420A7B1C8C0EF6009F40F9 /* AFIApplyCommand.m */,
 				23420A831C8D94A0009F40F9 /* AFIRemoveCommand.h */,
 				23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */,
+				23E3416A1CA8A7E800EDB581 /* AFIScriptabilityCategory.h */,
+				23E3416B1CA8A7E800EDB581 /* AFIScriptabilityCategory.m */,
 			);
 			name = AppleScript;
 			sourceTree = "<group>";
@@ -500,7 +507,6 @@
 				23F829FC1A7C9CDC00BE26B7 /* RTF assets */,
 				23F829FB1A7C9CC000BE26B7 /* Image assets */,
 				8D1107310486CEB800E47090 /* Add_Folder_Icons-Info.plist */,
-				23420A761C8BED16009F40F9 /* AddFolderIcons.sdef */,
 				235D7A0814DD82B100CD503D /* Add Folder Icons.entitlements */,
 				230BA02514DD8AB100CC9DFC /* container-migration.plist */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
@@ -567,7 +573,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = Hipposoft;
 				TargetAttributes = {
 					23D3FB2F13055044004FDA09 = {
@@ -716,6 +722,7 @@
 				23D3FB5713055044004FDA09 /* Icons.m in Sources */,
 				23D3FB5913055044004FDA09 /* CaseGenerator.m in Sources */,
 				23D3FB5A13055044004FDA09 /* MainMenuController.m in Sources */,
+				23E3416D1CA8A7E800EDB581 /* AFIScriptabilityCategory.m in Sources */,
 				23420A751C8A7F85009F40F9 /* ConcurrentCellProcessor.m in Sources */,
 				2382901015714395005C60A5 /* SplashWindowController.m in Sources */,
 				23420A711C883C8C009F40F9 /* CustomIconGenerator.m in Sources */,
@@ -754,6 +761,7 @@
 				23FF74DF1301D69300D656DB /* Icons.m in Sources */,
 				23FF74E21301D76000D656DB /* CaseGenerator.m in Sources */,
 				23F0B07A1304062A0085A876 /* MainMenuController.m in Sources */,
+				23E3416C1CA8A7E800EDB581 /* AFIScriptabilityCategory.m in Sources */,
 				2397AF781305761B00931AD3 /* UpdateHelper.m in Sources */,
 				2382900F15714395005C60A5 /* SplashWindowController.m in Sources */,
 				23420A7C1C8C0EF6009F40F9 /* AFIApplyCommand.m in Sources */,
@@ -977,7 +985,6 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -997,7 +1004,6 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

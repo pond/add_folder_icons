@@ -71,6 +71,7 @@
 - ( IconStyle * ) findStyleByName:      ( NSString * ) name;
 - ( IconStyle * ) findDefaultIconStyle;
 - ( IconStyle * ) findClassicIconStyle;
+- ( NSArray   * ) getStyles;
 
 - ( IconStyle * ) insertBlankUserStyleAndProcessChanges;
 

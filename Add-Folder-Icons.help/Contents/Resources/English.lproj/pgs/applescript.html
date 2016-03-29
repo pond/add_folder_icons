@@ -46,9 +46,11 @@
 
       <h2>Automate your icons through Folder Actions</h2>
 
-      <p>Add Folder Icons provides two very simple commands - <tt>apply</tt> and <tt>remove</tt> - which apply or remove customised icons to folders, respectively. This is done without any graphical interruption from Add Folder Icons; unlike when you operate the application manually, you won't get a progress bar or the opportunity to cancel things, so beware. This interruption-free approach lets you start to introduce automatic application of customised folder icons which are updated when folders change, by creating scripts which are saved as Folder Actions. See the <a href="https://developer.apple.com/library/mac/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_folder_actions.html">Apple documentation</a> for more information.
+      <h3>Apply and remove</h3>
 
-      <h2>Examples</h2>
+      <p>In Add Folder Icons versions 3.0.0 and 3.0.1, Add Folder Icons provides only two very simple commands - <tt>apply</tt> and <tt>remove</tt> - which apply or remove customised icons to folders, respectively. This is done without any graphical interruption from Add Folder Icons; unlike when you operate the application manually, you won't get a progress bar or the opportunity to cancel things, so beware. This interruption-free approach lets you start to introduce automatic application of customised folder icons which are updated when folders change, by creating scripts which are saved as Folder Actions. See the <a href="https://developer.apple.com/library/mac/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_folder_actions.html">Apple documentation</a> for more information.
+
+      <h4>Examples</h4>
 
       <p>The <tt>apply</tt> command is used thus: <tt>apply "style name" to { list of POSIX files }</tt> where the POSIX file references must all refer to folders. Here, we ask the Finder to let us choose some folders, convert the results from Finder Items into POSIX files and send that over to Add Folder Icons:</p>
 
@@ -78,7 +80,7 @@ tell application "Add Folder Icons"
 end tell
 </pre>
 
-    <h3>The JavaScript equivalent</h3>
+    <h5>The JavaScript equivalent</h5>
 
     <p>First choose and apply the new icons:</p>
 
@@ -95,15 +97,81 @@ posixFiles = folders.map(
   function( folder ) { return Path( folder ); }
 );
 
-add_folder_icons = Application( 'Add Folder Icons' );
-add_folder_icons.apply( 'Preset: Classic thumbnails', { to: posixFiles } );
+addFolderIcons = Application( 'Add Folder Icons' );
+addFolderIcons.apply( 'Preset: Classic thumbnails', { to: posixFiles } );
 </pre>
 
       <p>Then, again assuming the same <tt>posixFiles</tt> array has been set up as in the example above:</p>
 
 <pre>
-add_folder_icons = Application( 'Add Folder Icons' );
-add_folder_icons.remove( { from: posixFiles } );
+addFolderIcons = Application( 'Add Folder Icons' );
+addFolderIcons.remove( { from: posixFiles } );
+</pre>
+
+      <h3>Application and icon style properties</h3>
+
+      <p>In Add Folder Icons version 3.0.2, AppleScript support was extended quite a lot. You can query aspects of Add Folder Icons as an application as well as enquire about styles, in a read-only fashion. The application <tt>name</tt>, <tt>version</tt> and <tt>frontmost</tt> properties come from the core suite. The <tt>iconStyles</tt> enumeration lists all defined styles sorted alphabetically by name, with properties that you can examine through the built-in Script Editor application's dictionary browser - in OS X 10.11 "El Capitan", this is under "File" -> "Open Dictionary...".</p>
+
+      <h4>Examples</h4>
+<pre>
+-- Core suite
+
+name of application "Add Folder Icons"
+-- => "Add Folder Icons"
+version of application "Add Folder Icons"
+-- => "3.0.2"
+frontmost of application "Add Folder Icons"
+-- => 'false' (or 'true'!)
+</pre>
+
+<pre>
+-- Add Folder Icons additions
+-- Get a specific icon style by list index, starting from 1
+
+tell application "Add Folder Icons"
+  name of icon style 1
+end tell
+-- => e.g. "Preset: Classic thumbnails"
+
+-- Get a specific icon style by name and read its "show folder
+-- in background" property
+
+tell application "Add Folder Icons"
+ show folder in background of icon style "Preset: Classic thumbnails"
+end tell
+-- => '2 or fewer'
+
+-- Let the user choose from a list of styles and store the result in
+-- variable "theStyleName"
+tell application "Add Folder Icons"
+  set theStyleNames to name of icon styles
+  set theStyleName to choose from list theStyleNames
+end tell
+</pre>
+
+    <h5>The JavaScript equivalent</h5>
+
+<pre>
+// Core suite
+
+addFolderIcons = Application( 'Add Folder Icons' );
+addFolderIcons.name(); // Or version(), or frontmost()
+</pre>
+
+<pre>
+// Add Folder Icons additions
+// Get a specific icon style by list index, starting from 0
+addFolderIcons.iconStyles[ 0 ].name();
+
+// Get a specific icon style by name and read its "show folder
+// in background" property
+addFolderIcons.iconStyles[ 'Preset: Classic thumbnails' ].showFolderInBackground();
+
+// Let the user choose from a list of styles and store the result in
+// variable "styleName"
+addFolderIcons.includeStandardAdditions = true;
+styleNames = addFolderIcons.iconStyles.name()
+styleName  = addFolderIcons.chooseFromList( styleNames )
 </pre>
     </div>
   </body>

@@ -24,10 +24,10 @@
 
     <suite name="Add Folder Icons Suite" code="AFIs" description="Add Folder Icons scripts">
 
-        <class name="iconStyle" code="iSTY" description="An icon style description." plural="iconStyles">
+        <class name="icon style" code="iSTY" description="An icon style description." plural="icon styles">
             <cocoa class="IconStyle" inherits="item"/>
 
-            <property name="name" code="pnam" description="The icon style's name." type="text" access="r">
+            <property name="name" code="pnam" description="The style's name." type="text" access="r">
                 <cocoa key="name"/>
             </property>
             <property name="creation date" code="CDat" type="date" access="r" description="The style's creation date.">
@@ -111,7 +111,7 @@
 
             <property name="version" code="vers" description="The version of the application." type="text" access="r"/>
 
-            <element type="iconStyle" description="The currently defined icon styles.">
+            <element type="icon style" description="The currently defined icon styles.">
                 <cocoa key="iconStyleArray"/>
             </element>
         </class>

@@ -9,6 +9,10 @@
 #import "SlipCoverSupport.h"
 #import "ApplicationSupport.h"
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 @interface SlipCoverSupport ()
 
 + ( void ) addCaseDefinitionsAt: ( NSString       * ) searchPath
@@ -74,14 +78,36 @@
 
     BOOL isSandboxed = NO;
 
-    for ( NSString * path in likelyFolders )
+    NSString * possibleSandboxHomePath =NSHomeDirectory();
+    NSString * nonSandboxHomePath;
+    
+    struct passwd * pw = getpwuid( getuid() );
+
+    /* If we have a result from getpwuid, compare the definitely non-sandbox
+     * path to the possible-sandbox path. If the same - not sandboxed; else,
+     * sandboxed.
+     *
+     * If we don't have a result from getpwuid, give up and use the horrible
+     * hack of assuming "/Library/Containers" appears in the possible-sandbox
+     * only if a sandbox is in use.
+     */
+
+    if ( pw )
     {
-        NSRange found = [ path rangeOfString: @"/Library/Containers/" ];
+      nonSandboxHomePath = [ NSString stringWithUTF8String: pw->pw_dir ];
+
+      if ( ! [ possibleSandboxHomePath isEqualToString: nonSandboxHomePath ] )
+      {
+          isSandboxed = YES;
+      }
+    }
+    else
+    {
+        NSRange found = [ possibleSandboxHomePath rangeOfString: @"/Library/Containers/" ];
 
         if ( found.location != NSNotFound )
         {
             isSandboxed = YES;
-            break;
         }
     }
 
@@ -91,7 +117,7 @@
 
     if ( isSandboxed )
     {
-        NSString * nonSandboxPath = [ NSString stringWithFormat: @"/Users/%@/Library/Application Support/SlipCover", NSUserName() ];
+        NSString * nonSandboxPath = [ NSString stringWithFormat: @"%@/Library/Application Support/SlipCover", nonSandboxHomePath ];
 
         [ likelyFolders insertObject: nonSandboxPath atIndex: 0 ];
     }

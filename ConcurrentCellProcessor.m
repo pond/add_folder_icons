@@ -111,10 +111,19 @@
 
 - ( BOOL ) rowIsVisible
 {
-    NSScrollView * scrollView  = [ self.tableView enclosingScrollView ];
-    CGRect         visibleRect = scrollView.contentView.visibleRect;
-    NSRange        range       = [ self.tableView rowsInRect: visibleRect ];
-    NSInteger      foundIndex  =
+    __block NSRange range;
+
+    dispatch_sync(
+        dispatch_get_main_queue(),
+        ^{
+            NSScrollView * scrollView  = [ self.tableView enclosingScrollView ];
+            CGRect         visibleRect = scrollView.contentView.visibleRect;
+
+            range = [ self.tableView rowsInRect: visibleRect ];
+        }
+    );
+
+    NSInteger foundIndex =
     [
         self.tableContents indexOfObjectWithOptions: NSEnumerationConcurrent
                                         passingTest:

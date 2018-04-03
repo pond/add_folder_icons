@@ -161,7 +161,7 @@ static CFStringRef _strip_trailing_slash(CFStringRef string);
         
         [self setWatchedPaths:paths];
         
-        self->_eventStream = _create_events_stream(self, ((__bridge CFArrayRef)self->_watchedPaths), self->_notificationLatency, _resumeFromEventId);
+        self->_eventStream = _create_events_stream(self, ((__bridge CFArrayRef)self->_watchedPaths), self->_notificationLatency, self->_resumeFromEventId);
         
         // Schedule the event stream on the supplied run loop
         FSEventStreamScheduleWithRunLoop(self->_eventStream, self->_runLoop, kCFRunLoopDefaultMode);

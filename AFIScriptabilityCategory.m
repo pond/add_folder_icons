@@ -105,8 +105,6 @@
 
 - ( NSScriptObjectSpecifier * ) objectSpecifier
 {
-    NSLog(@"personObjectSpecifier");
-
     NSScriptClassDescription * appDesc = ( NSScriptClassDescription * ) [ NSApp classDescription ];
 
     return

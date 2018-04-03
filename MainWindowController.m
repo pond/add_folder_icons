@@ -129,8 +129,6 @@
                                                     name: NSTableViewSelectionDidChangeNotification
                                                   object: folderList ];
 
-NSLog(@"Folder list container: %@",folderListClipView);
-
     [ folderListClipView setPostsBoundsChangedNotifications: YES ];
 
     [ [ NSNotificationCenter defaultCenter ] addObserver: self
@@ -1293,8 +1291,6 @@ NSLog(@"Folder list container: %@",folderListClipView);
     NSString            * columnId = tableColumn.identifier;
     NSMutableDictionary * record   = tableContents[ row ];
     id                    value    = record[ columnId ];
-
-    NSLog(@"Table for column %@", columnId);
 
     if ( [ columnId isEqualToString: @"style" ] )
     {

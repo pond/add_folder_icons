@@ -1131,7 +1131,7 @@
     ( void ) notification;
 
     [ NSObject cancelPreviousPerformRequestsWithTarget: folderList selector: @selector( reloadData ) object: nil ];
-    [ folderList performSelector: @selector( reloadData ) withObject: nil afterDelay: 0.1 ];
+    [ folderList performSelector: @selector( reloadData ) withObject: nil afterDelay: 0.05 ];
 }
 
 /******************************************************************************\

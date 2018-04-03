@@ -51,7 +51,7 @@
     return [ iconStyleManager getStyles ];
 }
 
-- ( unsigned int ) countOfIconStyleArray
+- ( unsigned long ) countOfIconStyleArray
 {
     IconStyleManager * iconStyleManager = [ IconStyleManager iconStyleManager ];
 

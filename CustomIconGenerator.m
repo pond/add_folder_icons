@@ -177,7 +177,7 @@ static CGRect (*locations)[4] = NULL; /* Initialised in the constructor */
             _slipCoverCase = nil;
         }
 
-        _backgroundImage = [ [ NSApp delegate ] standardFolderIcon ];
+        _backgroundImage = [ ( Add_Folder_IconsAppDelegate * ) [ NSApp delegate ] standardFolderIcon ];
 
         /* This is a lazy-initialised static variable defined towards the top
          * of this source file.
@@ -277,7 +277,7 @@ static CGRect (*locations)[4] = NULL; /* Initialised in the constructor */
                                       userInfo: dict ];
         }
 
-        require ( dirAttrs, nothingToDo );
+        __Require( dirAttrs, nothingToDo );
     }
 
     /* Look for image files. The search is exited early if a certain number
@@ -521,7 +521,7 @@ static CGRect (*locations)[4] = NULL; /* Initialised in the constructor */
 
     /* If there are no images, exit; the standard folder icon will be used */
 
-    if ( [ images count ] == 0 ) require( false, nothingToDo );
+    if ( [ images count ] == 0 ) __Require( false, nothingToDo );
 
     /* Otherwise, choose up to four images at random */
 
@@ -678,8 +678,8 @@ nothingToDo:
                 CGContextRef transformationContext;
                 size_t contextWidth, contextHeight;
 
-                if ( orientation <= 4 ) contextWidth = width, contextHeight = height;
-                else                    contextWidth = height, contextHeight = width;
+                if ( orientation <= 4 ) { contextWidth = width; contextHeight = height; }
+                else                    { contextWidth = height; contextHeight = width; }
 
                 transformationContext = CGBitmapContextCreate
                 (

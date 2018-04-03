@@ -210,7 +210,7 @@ OSErr sendFinderAppleEvent( AliasHandle aliasH, AEEventID appleEventID )
            break;
     }
 
-    require_noerr( err, bailOut );
+    __Require_noErr( err, bailOut );
 
     /* Create the AppleEvent (kAEFinderSuite, appleEventID) */
 
@@ -222,7 +222,7 @@ OSErr sendFinderAppleEvent( AliasHandle aliasH, AEEventID appleEventID )
         &aeDesc
     );
 
-    require_noerr( err, bailOut );
+    __Require_noErr( err, bailOut );
 
     err = AECreateAppleEvent
     (
@@ -235,7 +235,7 @@ OSErr sendFinderAppleEvent( AliasHandle aliasH, AEEventID appleEventID )
     );
 
     ( void ) AEDisposeDesc( &aeDesc );
-    require_noerr( err, bailOut );
+    __Require_noErr( err, bailOut );
 
     /* Send the AppleEvent */
 
@@ -247,11 +247,11 @@ OSErr sendFinderAppleEvent( AliasHandle aliasH, AEEventID appleEventID )
         &aeDesc
     );
 
-    require_noerr( err, bailOut );
+    __Require_noErr( err, bailOut );
 
     err = AEPutParamDesc( &appleEvent, keyDirectObject, &aeDesc );
     (void) AEDisposeDesc( &aeDesc );
-    require_noerr( err, bailOut );
+    __Require_noErr( err, bailOut );
 
     err = AESend
     (
@@ -265,7 +265,7 @@ OSErr sendFinderAppleEvent( AliasHandle aliasH, AEEventID appleEventID )
     );
 
     (void) AEDisposeDesc( &aeReply );
-    require_noerr( err, bailOut );
+    __Require_noErr( err, bailOut );
 
     (void) AEDisposeDesc( &appleEvent );
 

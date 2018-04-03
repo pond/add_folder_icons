@@ -4,7 +4,7 @@
  * Global application constant definitions. Other hard-coded constant values of
  * interest can be found in the library code.
  *
- * (C) Hipposoft 2009-2016 <ahodgkin@rowing.org.uk>
+ * (C) Hipposoft 2009-2017 <ahodgkin@rowing.org.uk>
 \******************************************************************************/
 
 #import <Cocoa/Cocoa.h>
@@ -13,7 +13,7 @@
 
 #define PROGRAM_STRING "addfoldericons"
 #define AUTHOR_STRING  "Andrew Hodgkinson"
-#define VERSION_STRING "3.0.2.2016.03.29"
+#define VERSION_STRING "3.0.3.2017.12.11"
 
 /* Standard square icon canvas edge length in 'non-retina' pixels */
 
@@ -49,4 +49,4 @@
  * approach is a decent balance of simplicity and information.
  */
 
-Boolean globalErrorFlag; /* See main.m */
+extern Boolean globalErrorFlag; /* See main.m */

@@ -52,6 +52,8 @@
 		2389C661114D6AC3003466DE /* Sparkle.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2389C660114D6AC3003466DE /* Sparkle.icns */; };
 		2397AF781305761B00931AD3 /* UpdateHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2397AF761305761B00931AD3 /* UpdateHelper.m */; };
 		2397AF7C130578FA00931AD3 /* Updates.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2397AF7A130578FA00931AD3 /* Updates.xib */; };
+		23A4902F1FDE7456008114C6 /* GlobalConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 23A4902E1FDE7456008114C6 /* GlobalConstants.m */; };
+		23A490301FDE7523008114C6 /* GlobalConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 23A4902E1FDE7456008114C6 /* GlobalConstants.m */; };
 		23A86A311560111E000B2861 /* SplashWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23A86A2F1560111E000B2861 /* SplashWindow.xib */; };
 		23AED30A12FF3E13003181D8 /* SlipCoverSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED30912FF3E13003181D8 /* SlipCoverSupport.m */; };
 		23AED30B12FF54EA003181D8 /* CaseDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED2FD12FF2601003181D8 /* CaseDefinition.m */; };
@@ -210,6 +212,7 @@
 		2397AF751305761B00931AD3 /* UpdateHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateHelper.h; sourceTree = "<group>"; };
 		2397AF761305761B00931AD3 /* UpdateHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpdateHelper.m; sourceTree = "<group>"; };
 		2397AF7B130578FA00931AD3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Updates.xib; sourceTree = "<group>"; };
+		23A4902E1FDE7456008114C6 /* GlobalConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GlobalConstants.m; sourceTree = "<group>"; };
 		23A86A301560111E000B2861 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SplashWindow.xib; sourceTree = "<group>"; };
 		23AED2FC12FF2601003181D8 /* CaseDefinition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaseDefinition.h; sourceTree = "<group>"; };
 		23AED2FD12FF2601003181D8 /* CaseDefinition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaseDefinition.m; sourceTree = "<group>"; };
@@ -374,6 +377,7 @@
 			isa = PBXGroup;
 			children = (
 				23319C161C8146B600EA6DD6 /* GlobalConstants.h */,
+				23A4902E1FDE7456008114C6 /* GlobalConstants.m */,
 				234912A112F3857000A59086 /* GlobalSemaphore.h */,
 				234912A512F3857000A59086 /* GlobalSemaphore.m */,
 			);
@@ -573,7 +577,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = Hipposoft;
 				TargetAttributes = {
 					23D3FB2F13055044004FDA09 = {
@@ -698,6 +702,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				23D3FB4413055044004FDA09 /* main.m in Sources */,
+				23A490301FDE7523008114C6 /* GlobalConstants.m in Sources */,
 				23D3FB4513055044004FDA09 /* Add_Folder_IconsAppDelegate.m in Sources */,
 				23D3FB4613055044004FDA09 /* MainWindowController.m in Sources */,
 				23D3FB4713055044004FDA09 /* GenericPreferencesWindowController.m in Sources */,
@@ -739,6 +744,7 @@
 				23319C191C815EFC00EA6DD6 /* VerticallyAlignedTextFieldCell.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* Add_Folder_IconsAppDelegate.m in Sources */,
 				233D820C115FF0E900D62B8C /* MainWindowController.m in Sources */,
+				23A4902F1FDE7456008114C6 /* GlobalConstants.m in Sources */,
 				23F8929112DE096B00C022EE /* GenericPreferencesWindowController.m in Sources */,
 				23F8931212DF00C000C022EE /* ApplicationSpecificPreferencesWindowController.m in Sources */,
 				23420A851C8D94A0009F40F9 /* AFIRemoveCommand.m in Sources */,
@@ -878,6 +884,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Add_Folder_Icons_Prefix.pch;
@@ -905,6 +912,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_MODEL_TUNING = G5;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Add_Folder_Icons_Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -981,13 +989,35 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1001,11 +1031,33 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "";

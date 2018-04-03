@@ -194,7 +194,10 @@ static CFStringRef _strip_trailing_slash(CFStringRef string);
         
         FSEventStreamInvalidate(_eventStream);
         
-        if (_eventStream) FSEventStreamRelease(_eventStream), _eventStream = NULL;
+        if (_eventStream) {
+            FSEventStreamRelease(_eventStream);
+            _eventStream = NULL;
+        }
         
         _isWatchingPaths = NO;    
     });

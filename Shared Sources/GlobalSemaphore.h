@@ -9,10 +9,6 @@
 
 #include <Cocoa/Cocoa.h>
 
-/* Global semaphore data structure - never use or modify this directly */
-
-dispatch_semaphore_t globalSemaphore;
-
 /******************************************************************************\
  * globalSemaphoreInit()
  *

@@ -117,7 +117,7 @@ OSStatus createIconFamilyFromCGImage( CGImageRef cgImage, IconFamilyHandle * ico
     theSize = sizeof( OSType ) * 2;
     iconHnd = ( IconFamilyHandle ) NewHandle( theSize );
 
-    require ( iconHnd, bailOut );
+    __Require( iconHnd, bailOut );
 
     ( *iconHnd )->resourceType = EndianU32_NtoB( kIconFamilyType );
     ( *iconHnd )->resourceSize = EndianU32_NtoB( theSize         );
@@ -125,7 +125,7 @@ OSStatus createIconFamilyFromCGImage( CGImageRef cgImage, IconFamilyHandle * ico
     /* Add the images and return the handle of the populated icon family */
 
     err = addImages( iconHnd, cgImage );
-    require ( err == noErr, bailOut );
+    __Require( err == noErr, bailOut );
 
     *iconHndRef = iconHnd;
     return noErr;
@@ -165,7 +165,7 @@ Boolean hasCustomIcon( NSString * fullPosixPath )
         ( UInt8 * ) [ fullPosixPath fileSystemRepresentation ], &ref, &dir
     );
 
-    require( err == noErr, bailOut );
+    __Require( err == noErr, bailOut );
 
     /* If it's a directory, change to looking for the resource file inside */
 
@@ -184,7 +184,7 @@ Boolean hasCustomIcon( NSString * fullPosixPath )
             &ignored
         );
 
-        require( err == noErr, bailOut );
+        __Require( err == noErr, bailOut );
     }
 
     /* Open the resource fork; if this fails, assume no resource fork and
@@ -202,7 +202,7 @@ Boolean hasCustomIcon( NSString * fullPosixPath )
         &refNum
     );
 
-    require( err == noErr, bailOut );
+    __Require( err == noErr, bailOut );
 
     /* Provided that the resources file was opened, check for the 'icns'
      * resource explicitly and if found, note that there was a custom icon
@@ -261,7 +261,7 @@ OSStatus saveCustomIcon( NSString * fullPosixPath, IconFamilyHandle icnsH )
         ( UInt8 * ) [ fullPosixPath fileSystemRepresentation ], &par, &dir
     );
 
-    require( err == noErr, bailOut );
+    __Require( err == noErr, bailOut );
 
     HFSUniStr255  fork   = { 0, };
     ResFileRefNum refNum = kResFileNotOpened;
@@ -336,7 +336,7 @@ OSStatus saveCustomIcon( NSString * fullPosixPath, IconFamilyHandle icnsH )
 
     /* "dupFNErr" is allowed - means resource fork already exists */
 
-    require( err == noErr || err == dupFNErr, bailOut );
+    __Require( err == noErr || err == dupFNErr, bailOut );
 
     /* Open the resource file ready for writing */
 
@@ -349,7 +349,7 @@ OSStatus saveCustomIcon( NSString * fullPosixPath, IconFamilyHandle icnsH )
         &refNum
     );
 
-    require( err == noErr, bailOut );
+    __Require( err == noErr, bailOut );
 
     if ( refNum == kResFileNotOpened )
     {
@@ -378,15 +378,15 @@ OSStatus saveCustomIcon( NSString * fullPosixPath, IconFamilyHandle icnsH )
 
     AddResource( ( Handle ) icnsH, 'icns', kCustomIconResource, "\p" );
     err = ResError();
-    require( err == noErr, bailOut );
+    __Require( err == noErr, bailOut );
 
     WriteResource( ( Handle ) icnsH );
     err = ResError();
-    require( err == noErr, bailOut );
+    __Require( err == noErr, bailOut );
 
     DetachResource( ( Handle ) icnsH );
     err = ResError();
-    require( err == noErr, bailOut );
+    __Require( err == noErr, bailOut );
 
     /* All done - close the resource fork */
 
@@ -404,12 +404,12 @@ OSStatus saveCustomIcon( NSString * fullPosixPath, IconFamilyHandle icnsH )
         NULL
     );
 
-    require( err == noErr, bailOut );
+    __Require( err == noErr, bailOut );
 
     ( ( FileInfo * ) ( &info.finderInfo ) )->finderFlags = kHasCustomIcon;
 
     err = FSSetCatalogInfo( &par, kFSCatInfoFinderInfo, &info );
-    require( err == noErr, bailOut );
+    __Require( err == noErr, bailOut );
 
     /* Tell the finder about the change */
 
@@ -573,9 +573,9 @@ static OSStatus addImageOrMask( IconFamilyHandle iconHnd,
                                 size_t           width,
                                 Boolean          mask )
 {
-    size_t       pixelSize, dataSize;
-    CGBitmapInfo info;
-    OSType       type;
+    size_t           pixelSize, dataSize;
+    CGImageAlphaInfo info;
+    OSType           type;
 
     /* Figure out the various types and sizes needed */
 

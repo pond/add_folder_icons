@@ -136,7 +136,7 @@
 		[URLStorage setAttributedString:[self attributedStringValue]];
 	}
 	
-	unsigned myLength = [URLStorage length];
+	unsigned long myLength = [URLStorage length];
 	NSRange returnRange = { NSNotFound, 0 }, stringRange = { 0, myLength }, glyphRange = { NSNotFound, 0 };
 	NSCursor *pointingCursor = nil;
 	
@@ -188,8 +188,8 @@
 		id aVal = nil;
 		NSRange returnRange = { NSNotFound, 0 }, glyphRange = { NSNotFound, 0 };
 		NSRectArray linkRect = NULL;
-		unsigned glyphIndex = [URLManager glyphIndexForPoint:mousePoint inTextContainer:URLContainer];
-		unsigned charIndex = [URLManager characterIndexForGlyphAtIndex:glyphIndex];
+		unsigned long glyphIndex = [URLManager glyphIndexForPoint:mousePoint inTextContainer:URLContainer];
+		unsigned long charIndex = [URLManager characterIndexForGlyphAtIndex:glyphIndex];
 		// 2011-01-07 (ADH): Changed use of 'unsigned' to 'NSUInteger'
 		// to solve compiler warnings.
 		NSUInteger numRects = 0, j = 0;

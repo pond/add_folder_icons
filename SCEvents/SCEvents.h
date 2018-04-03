@@ -62,7 +62,7 @@
     NSArray              *_watchedPaths;
     NSArray              *_excludedPaths;
 	
-    dispatch_queue_t     _eventsQueue;
+    pthread_mutex_t      _eventsLock;
 }
 
 /**

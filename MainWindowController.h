@@ -21,6 +21,7 @@
     IBOutlet NSButton                 * removeButton;
     IBOutlet NSPopUpButton            * popUpButton;
     IBOutlet NSTableView              * folderList;
+    IBOutlet NSView                   * folderListClipView;
     IBOutlet NSProgressIndicator      * spinner;
     IBOutlet NSTextField              * spinnerLabel;
 
@@ -102,6 +103,7 @@
                                comparedAgainst: ( NSIndexSet * ) matchBlock;
 
 - ( void ) folderListSelectionChanged: ( NSNotificationCenter * ) center;
+- ( void )      scrollPositionChanged: ( NSNotificationCenter * ) center;
 
 /* Styles sub-menu and general style management */
 

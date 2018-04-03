@@ -129,6 +129,15 @@
                                                     name: NSTableViewSelectionDidChangeNotification
                                                   object: folderList ];
 
+NSLog(@"Folder list container: %@",folderListClipView);
+
+    [ folderListClipView setPostsBoundsChangedNotifications: YES ];
+
+    [ [ NSNotificationCenter defaultCenter ] addObserver: self
+                                                selector: @selector( scrollPositionChanged: )
+                                                    name: NSViewBoundsDidChangeNotification
+                                                  object: folderListClipView ];
+
     /* Set up supported user interaction operations */
 
     [ folderList registerForDraggedTypes: @[ NSFilenamesPboardType, NSINDEXSET_ON_PBOARD ] ];
@@ -604,7 +613,7 @@
         [
             processThisPath setCompletionBlock: ^
             {
-                if ( [ workerThread isCancelled ]  == YES )
+                if ( [ self->workerThread isCancelled ]  == YES )
                 {
                     [ self.queue cancelAllOperations ];
                 }
@@ -1036,12 +1045,12 @@
     [
         matchBlock enumerateIndexesUsingBlock: ^ ( NSUInteger matchIndex, BOOL * stop )
         {
-            NSDictionary * matchRecord = tableContents[ matchIndex ];
+            NSDictionary * matchRecord = self->tableContents[ matchIndex ];
             NSString     * matchPath   = [ matchRecord valueForKey: @"path" ];
 
             NSUInteger found =
             [
-                tableContents indexOfObjectWithOptions: NSEnumerationConcurrent
+             self->tableContents indexOfObjectWithOptions: NSEnumerationConcurrent
                                            passingTest: ^ ( id obj, NSUInteger index, BOOL * stop )
                 {
                     /* Proceed on the basis that checking for an index in a set
@@ -1106,6 +1115,28 @@
 }
 
 /******************************************************************************\
+ * -scrollPositionChanged:
+ *
+ * Called via the default NSNotificationCenter when notification message is
+ * "NSViewBoundsDidChangeNotification" sent by the folder list, implying a
+ * scroll event. Kicks the table to make sure that lazy generation of preview
+ * icons is carried out on all OS versions.
+ *
+ * In:       ( NSNotification * ) notification
+ *           The notification details (ignored).
+ *
+ * See also: -tableView:objectValueForTableColumn:row:
+\******************************************************************************/
+
+- ( void ) scrollPositionChanged: ( NSNotification * ) notification
+{
+    ( void ) notification;
+
+    [ NSObject cancelPreviousPerformRequestsWithTarget: folderList selector: @selector( reloadData ) object: nil ];
+    [ folderList performSelector: @selector( reloadData ) withObject: nil afterDelay: 0.1 ];
+}
+
+/******************************************************************************\
  * -addButtonPressed:
  *
  * Handle clicks on the '+' (add) button - open the file dialogue box stored in
@@ -1127,10 +1158,10 @@
              * how many new items are to be added, then add them.
              */
 
-            NSUInteger originalCount = tableContents.count;
-            NSUInteger additionCount = openPanel.URLs.count;
+            NSUInteger originalCount = self->tableContents.count;
+            NSUInteger additionCount = self->openPanel.URLs.count;
 
-            for ( NSURL * url in openPanel.URLs )
+            for ( NSURL * url in self->openPanel.URLs )
             {
                 NSString * pathBeingAdded = url.path;
                 [ self addFolder: pathBeingAdded ];
@@ -1160,8 +1191,8 @@
              * list, it would be much more fiddly for the user.
              */
 
-            [ folderList reloadData ];
-            [ self considerInsertingSubfoldersOf: @{ @"urls": openPanel.URLs } ];
+            [ self->folderList reloadData ];
+            [ self considerInsertingSubfoldersOf: @{ @"urls": self->openPanel.URLs } ];
         }
 	};
 
@@ -1229,7 +1260,14 @@
  * -tableView:objectValueForTableColumn:row:
  *
  * NSTableViewDataSource: Return an item of data to show in the given table,
- * table row and table column.
+ * table row and table column. In some versions of OS X this is called whenever
+ * the user scrolls the table. In other versions, the whole table is populated
+ * up-front and only limited calls are subsequently made. Since we want to
+ * avoid loading potentially hundreds of images into the table, we only show
+ * preview icons for visible rows; but since this method is not reliably then
+ * called if the view scrolls, we need to use a notification for scroll events
+ * and make sure that the mechanism here is given a little kick. See
+ * -scrollPositionChanged: for details.
  *
  * In:  ( NSTableView * ) tableView
  *      View making the request;
@@ -1244,6 +1282,8 @@
  * Out: ( id )
  *      Data to display - an autoreleased NSString pointer cast to 'id' or
  *      an NSString.
+ *
+ * See also: -scrollPositionChanged:
 \******************************************************************************/
 
 - ( id )                 tableView: ( NSTableView   * ) tableView
@@ -1253,6 +1293,8 @@
     NSString            * columnId = tableColumn.identifier;
     NSMutableDictionary * record   = tableContents[ row ];
     id                    value    = record[ columnId ];
+
+    NSLog(@"Table for column %@", columnId);
 
     if ( [ columnId isEqualToString: @"style" ] )
     {
@@ -1652,7 +1694,7 @@
         selectedIndices enumerateIndexesUsingBlock:
         ^ ( NSUInteger index, BOOL * stop )
         {
-            NSMutableDictionary * record = tableContents[ index ];
+            NSMutableDictionary * record = self->tableContents[ index ];
             [ record setValue: iconStyle forKey: @"style" ];
         }
     ];

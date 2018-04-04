@@ -51,7 +51,7 @@
     return [ iconStyleManager getStyles ];
 }
 
-- ( unsigned int ) countOfIconStyleArray
+- ( unsigned long ) countOfIconStyleArray
 {
     IconStyleManager * iconStyleManager = [ IconStyleManager iconStyleManager ];
 
@@ -105,8 +105,6 @@
 
 - ( NSScriptObjectSpecifier * ) objectSpecifier
 {
-    NSLog(@"personObjectSpecifier");
-
     NSScriptClassDescription * appDesc = ( NSScriptClassDescription * ) [ NSApp classDescription ];
 
     return

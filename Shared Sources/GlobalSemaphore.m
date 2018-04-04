@@ -9,6 +9,10 @@
 
 #import "GlobalSemaphore.h"
 
+/* Global semaphore data structure */
+
+static dispatch_semaphore_t globalSemaphore;
+
 /******************************************************************************\
  * globalSemaphoreInit()
  *

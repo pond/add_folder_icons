@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -33,8 +33,6 @@
 		23420A7D1C8C0EF6009F40F9 /* AFIApplyCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A7B1C8C0EF6009F40F9 /* AFIApplyCommand.m */; };
 		23420A851C8D94A0009F40F9 /* AFIRemoveCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */; };
 		23420A861C8D94A0009F40F9 /* AFIRemoveCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */; };
-		23420A8C1C903B41009F40F9 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */; };
-		23420A8D1C903B41009F40F9 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */; };
 		23420A921C917465009F40F9 /* Application.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 23420A911C917465009F40F9 /* Application.xcassets */; };
 		23420A931C917465009F40F9 /* Application.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 23420A911C917465009F40F9 /* Application.xcassets */; };
 		2349142812FAB6AF00A59086 /* ApplicationSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 2349142712FAB6AF00A59086 /* ApplicationSupport.m */; };
@@ -108,6 +106,8 @@
 		23E3416C1CA8A7E800EDB581 /* AFIScriptabilityCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 23E3416B1CA8A7E800EDB581 /* AFIScriptabilityCategory.m */; };
 		23E3416D1CA8A7E800EDB581 /* AFIScriptabilityCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 23E3416B1CA8A7E800EDB581 /* AFIScriptabilityCategory.m */; };
 		23F0B07A1304062A0085A876 /* MainMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23F0B0791304062A0085A876 /* MainMenuController.m */; };
+		23F45B15208C693100DC7054 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 23F45B12208C676400DC7054 /* Add-Folder-Icons.help */; };
+		23F45B16208C693800DC7054 /* Add-Folder-Icons.help in Resources */ = {isa = PBXBuildFile; fileRef = 23F45B12208C676400DC7054 /* Add-Folder-Icons.help */; };
 		23F8929112DE096B00C022EE /* GenericPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23F8929012DE096B00C022EE /* GenericPreferencesWindowController.m */; };
 		23F8931212DF00C000C022EE /* ApplicationSpecificPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23F8931112DF00C000C022EE /* ApplicationSpecificPreferencesWindowController.m */; };
 		23FF74DE1301D1C700D656DB /* Preview in Resources */ = {isa = PBXBuildFile; fileRef = 23FF74DD1301D1C700D656DB /* Preview */; };
@@ -180,7 +180,6 @@
 		23420A7B1C8C0EF6009F40F9 /* AFIApplyCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFIApplyCommand.m; sourceTree = "<group>"; };
 		23420A831C8D94A0009F40F9 /* AFIRemoveCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFIRemoveCommand.h; sourceTree = "<group>"; };
 		23420A841C8D94A0009F40F9 /* AFIRemoveCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFIRemoveCommand.m; sourceTree = "<group>"; };
-		23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Add-Folder-Icons.help"; sourceTree = "<group>"; };
 		23420A911C917465009F40F9 /* Application.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Application.xcassets; sourceTree = "<group>"; };
 		234912A112F3857000A59086 /* GlobalSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalSemaphore.h; path = "Shared Sources/GlobalSemaphore.h"; sourceTree = SOURCE_ROOT; };
 		234912A212F3857000A59086 /* Icons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Icons.h; path = "Shared Sources/Icons.h"; sourceTree = SOURCE_ROOT; };
@@ -243,6 +242,7 @@
 		23E3416B1CA8A7E800EDB581 /* AFIScriptabilityCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFIScriptabilityCategory.m; sourceTree = "<group>"; };
 		23F0B0781304062A0085A876 /* MainMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuController.h; sourceTree = "<group>"; };
 		23F0B0791304062A0085A876 /* MainMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuController.m; sourceTree = "<group>"; };
+		23F45B12208C676400DC7054 /* Add-Folder-Icons.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Add-Folder-Icons.help"; sourceTree = "<group>"; };
 		23F8928F12DE096B00C022EE /* GenericPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericPreferencesWindowController.h; sourceTree = "<group>"; };
 		23F8929012DE096B00C022EE /* GenericPreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GenericPreferencesWindowController.m; sourceTree = "<group>"; };
 		23F8931012DF00C000C022EE /* ApplicationSpecificPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationSpecificPreferencesWindowController.h; sourceTree = "<group>"; };
@@ -520,7 +520,7 @@
 				23CB8B4612E09E9200E66CDA /* Preferences.xib */,
 				2397AF7A130578FA00931AD3 /* Updates.xib */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				23420A8B1C903B41009F40F9 /* Add-Folder-Icons.help */,
+				23F45B12208C676400DC7054 /* Add-Folder-Icons.help */,
 				23FF74DD1301D1C700D656DB /* Preview */,
 			);
 			name = Resources;
@@ -589,7 +589,7 @@
 				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Add Folder Icons" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -614,6 +614,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				230BA02814DD95E400CC9DFC /* Add Folder Icons.entitlements in Resources */,
+				23F45B15208C693100DC7054 /* Add-Folder-Icons.help in Resources */,
 				230BA02714DD95E100CC9DFC /* container-migration.plist in Resources */,
 				23D3FB3313055044004FDA09 /* InfoPlist.strings in Resources */,
 				23420A781C8BED16009F40F9 /* AddFolderIcons.sdef in Resources */,
@@ -623,7 +624,6 @@
 				23D3FB3A13055044004FDA09 /* MainWindow.xib in Resources */,
 				23D3FB3B13055044004FDA09 /* tb_cd.png in Resources */,
 				23D3FB3C13055044004FDA09 /* tb_classic.png in Resources */,
-				23420A8D1C903B41009F40F9 /* Add-Folder-Icons.help in Resources */,
 				23D3FB3D13055044004FDA09 /* tb_dvd.png in Resources */,
 				23D3FB3E13055044004FDA09 /* Preview in Resources */,
 				23D3FB7A13055B6B004FDA09 /* CreditsBottom.rtf in Resources */,
@@ -639,8 +639,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				23420A8C1C903B41009F40F9 /* Add-Folder-Icons.help in Resources */,
 				230BA02914DD95FA00CC9DFC /* Add Folder Icons.entitlements in Resources */,
+				23F45B16208C693800DC7054 /* Add-Folder-Icons.help in Resources */,
 				230BA02614DD8AB100CC9DFC /* container-migration.plist in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,

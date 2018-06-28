@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1- transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Add Folder Icons Help: Automation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <meta name="robots"   content="segments" />
+    <meta name="keywords" content="scripting, applescript, automation, folder actions">
+
+    <link href="../sty/default.css" rel="stylesheet" type="text/css" media="all" />
+  </head>
+
+  <body>
+    <div id="navigation">
+
+      <a name="automation"></a>
+      <a name="autoindex"></a>
+
+      <div id="navigation_left">
+        <a href="help:anchor=access bookID=uk.org.pond.Add-Folder-Icons.help">Home</a>
+      </div>
+    </div>
+
+    <div id="header">
+      <div id="icon">
+        <img src="../../shrd/AddFolderIcons32.png" width="32" height="32" alt="Add Folder Icons icon" />
+      </div>
+      <div id="title">
+        <h1>Automation</h1>
+      </div>
+    </div>
+
+    <div class="columns_one">
+      <h2>Introduction</h2>
+
+      <p>Apple provide a system-wide automation system which can be used with Add Folder Icons to automate addition of icons to new folders. This Help page provides a walk-through guide to setting this up. For more detailed technical information on Add Folder Icons automation, see the <a href="help:anchor=applescript bookID=uk.org.pond.Add-Folder-Icons.help">AppleScript help section</a>.
+
+      <h3>Automate your icons through Folder Actions</h3>
+
+      <p>The Finder can run AppleScript scripts when changes happen to certain folders. These are referred to as "Folder Actions". You can use these to instruct Add Folder Icons to automatically apply an icon style to a new sub-folder when it is added to some containing folder. The exact way to set them up varies with Mac OS X version, so you might have to dig around in Finder menus a little bit if you cannot find the exact entries described below. These instructions here are written for macOS X 10.13, "High Sierra".</p>
+
+      <h3>Overview of the process</h3>
+
+      <ol>
+        <li>You write a script (see below for details) which adds icons to folders added inside some container folder. For example, it might add album art to sub-folders holding music files for albums, contained in a parent folder called "Music".</li>
+        <li>You save the script as a Folder Action simply by saving it in a special location - this is by far the most fiddly part of the process, the rest is quite easy!</li>
+        <li>You Control-Click (or 'right-click') on the parent folder (e.g. the "Music" folder) and navigate to a menu item that lets you manage associated Folder Actions.</li>
+      </ol>
+
+      <p>At the time of writing, Apple host <a href="https://developer.apple.com/library/content/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/WatchFolders.html">a page <strong>here</strong> with general details</a> about setting up Folder Actions and a <a href="https://developer.apple.com/library/content/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_folder_actions.html">related page <strong>here</strong> with technical details</a>. These might be useful if you get stuck.</p>
+
+      <h3>1: Write a script</h3>
+
+      <p>Here we add icons using the "Classic" preset to any non-application folders added to some containing folder. The first part just makes sure that things the script is considering really do seem to be simple folders, while the second part does the actual work of taking the list of added items from the Finder and sending them on to Add Folder Icons. Right at the end, you can see the preset name chosen - you can replace this with different presets of your choosing.</p>
+
+<pre>
+-- This is a hacky but workable way of determining that a Mac alias to a
+-- file or folder is indeed a folder (ends in special character ":") but
+-- not an application (ends in ".app:").
+--
+on isNonAppFolder(theItem)
+	set isFolder to false
+
+	try
+		set theAppExtension to characters -1 thru -5 of theItem as string
+	on error
+		set theAppExtension to ""
+	end try
+
+	if theAppExtension is not ".app:" then
+		set theLastCharacter to character -1 of theItem as string
+		if theLastCharacter is ":" then
+			set isFolder to true
+		end if
+	end if
+	return isFolder
+end isNonAppFolder
+
+-- This is the main folder action, which tolerates additions of non-folder
+-- items such as files or applications and ignores those.
+--
+on adding folder items to theAttachedFolder after receiving theNewItems
+	set thePOSIXFolderPaths to {}
+
+	repeat with theItem in theNewItems
+		if isNonAppFolder(theItem as string) then
+			copy {POSIX file (POSIX path of theItem)} to end of thePOSIXFolderPaths
+		end if
+	end repeat
+
+	if length of thePOSIXFolderPaths is not 0 then
+		tell application "Finder"
+			activate
+		end tell
+
+		tell application "Add Folder Icons"
+			apply "Preset: Classic thumbnails" to thePOSIXFolderPaths
+		end tell
+	end if
+end adding folder items to
+</pre>
+
+
+      <p>To use this script:</p>
+
+      <ol>
+        <li>Start the Script Editor application (in your Application folder's Utilities sub-folder)</li>
+        <li>Press Command+N to open a new document</li>
+        <li>At the top left in the toolbar, if there's a piece of text saying "JavaScript", click on this to open a small popup menu and choose "AppleScript" instead - that's to tell Script Editor the correct language we used for our script</li>
+        <li>Paste in the script contents</li>
+        <li>To make sure you got it right, press Command+K or click on the fourth toolbar icon - looks like a hammer - to check the script is OK by compiling it; the text should change into a mixture of normal, bold, italic and different coloured styles if all is well.</li>
+      </ol>
+
+      <p class="illustration window">
+        <img src="../gfx/26a - Script Editor.png" width="812" height="817" alt="Script Editor" />
+        <br /><span class="caption">Successful script creation</span>
+      </p>
+
+      <p>You might want to change the line near the end to apply a different preset - e.g. <tt>"Preset: Square covers (e.g. CDs)"</tt> if you're setting up a folder to hold folders of music albums. Any name <strong>copied exactly</strong> from the Add Folder Icons "Manage Styles" window will do.</p>
+
+      <h3>2: Save the script as a Folder Action</h3>
+
+      <p>Saving the script into the correct location has been made quite difficult on modern versions of Mac OS X. Press Command+S (or navigate to File -> Save&hellip;). In the "Save As" filename field, type the "~" character (on may Mac keyboards this is at the top left, just underneath the physical, or touch-bar-based Escape key). If you get it right, rather than "~" appearing, a "Go to the folder:" prompt appears. Continue typing to enter, "~/Library/Scripts" (note carefully the forwards slashes, including the one just after "~"):</p>
+
+      <p class="illustration window">
+        <img src="../gfx/26b - Go to the folder.png" width="812" height="817" alt="Go to the folder" />
+        <br /><span class="caption">"Go to the folder"</span>
+      </p>
+
+      <p>Press Return. We're almost done, but you need to save your script inside one more nested containng folder for it to live in the correct "magic location", but this folder isn't always created in new, clean user accounts. To make sure, click on the up/arrow just to the right of "Save As" field to expand the dialogue box to full size. The window should look at bit like this:</p>
+
+      <p class="illustration window">
+        <img src="../gfx/26c - Expanded view.png" width="822" height="817" alt="Expanded 'Save As' view" />
+        <br /><span class="caption">Expanded "Save As" view</span>
+      </p>
+
+      <p>If you can see a "Folder Action Scripts" folder already there, then just double-click on it. Otherwise, click on the "New folder" button as shown above and in the pop-up window that appears, enter the precise text, "Folder Action Scripts" (capitalised as shown):</p>
+
+      <p class="illustration window">
+        <img src="../gfx/26d - New folder.png" width="398" height="273" alt="New folder" />
+        <br /><span class="caption">New folder</span>
+      </p>
+
+      <p>Whether you had to create that last folder or whether it already existed, you should now have your "Save As" window ready to go. Give the action a meaningful name - e.g. "Add - Classic Icons", if that's appropriate for the preset your Folder Actions script applies - and you're almost ready to save. First make sure you really are inside that "Folder Action Scripts" location by double-checking the location name shown to the left of the search box, and that the "File Format" selection towards the bottom left is "Script", both as shown in the screenshot below:</p>
+
+      <p class="illustration window">
+        <img src="../gfx/26e - Final name.png" width="822" height="817" alt="Final name" />
+        <br /><span class="caption">Final name</span>
+      </p>
+
+      <h3>3: Activate the new Folder Action</h3>
+
+      <p>In the Finder, navigate to a folder which is going to contain other folders that need to gain icons. For example, if you had folders full of music albums and wanted to automatically change their icon to album art whenever you added a new album folder, then whatever containing folder - "Music", "Albums" or similar - would be the one to choose. Ctrl+Click (secondary/right-click, two-finger tap if configured) on this folder. A menu for that folder opens. At or near the bottom will be "Services". In the submenu from there, select "Folder Actions Setup...". A small window opens, which will already have added the folder you clicked on:</p>
+
+      <p class="illustration window">
+        <img src="../gfx/26f - Folder Actions Setup selection.png" width="592" height="478" alt="Folder Actions Setup selection" />
+        <br /><span class="caption">Folder Actions Setup selection</span>
+      </p>
+
+      <p>Choose the action you saved earlier. Make sure the "Enable Folder Actions" check box at the top left of the window is enabled:</p>
+
+      <p class="illustration window">
+        <img src="../gfx/26g - Folder Actions Setup complete.png" width="592" height="478" alt="Folder Actions Setup complete" />
+        <br /><span class="caption">Folder Actions Setup complete</span>
+      </p>
+
+      <p>That is, at last, all. You can close the setup window. When you add folders inside the container you selected, Add Folder Icons will be invoked automatically for them.</p>
+
+    </div>
+  </body>
+</html>

@@ -485,10 +485,14 @@ static OSStatus addImages( IconFamilyHandle iconHnd,
      * given size out of dpiValue(512), 512, 256, 128, 32 or 16.
      */
 
-    OSStatus                 err     = noErr;
-    NSOperatingSystemVersion version = [ [ NSProcessInfo processInfo ] operatingSystemVersion ];
+    OSStatus                 err        = noErr;
+    NSOperatingSystemVersion highSierra = { 10, 13, 0 };
 
-    if ( dpiValue( 1 ) != 1 && version.minorVersion <= 12 )
+    if (
+         dpiValue( 1 ) != 1 &&
+         [ NSProcessInfo.processInfo respondsToSelector: @selector( isOperatingSystemAtLeastVersion: ) ] &&
+         false == [ NSProcessInfo.processInfo isOperatingSystemAtLeastVersion: highSierra ]
+       )
     {
         err = addImage( iconHnd, cgImage, cgColourSpace, dpiValue( 512 ) );
     }

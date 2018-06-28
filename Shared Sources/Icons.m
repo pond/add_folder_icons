@@ -414,7 +414,7 @@ OSStatus saveCustomIcon( NSString * fullPosixPath, IconFamilyHandle icnsH )
     /* Tell the finder about the change */
 
     err = FNNotify( &par, kFNDirectoryModifiedMessage, kNilOptions );
-    
+
 bailOut:
 
     return err;
@@ -477,22 +477,19 @@ static OSStatus addImages( IconFamilyHandle iconHnd,
      *
      *   https://bugreport.apple.com/web/?problemID=35990277
      *
-     * Until this is fixed or I find a better workaround, in OS X 10.13 or
-     * later, Add Folder Icons skips the high DPI icon.
+     * This remained broken for the entire 10.13 lifecycle but was happily
+     * fixed during the 10.14 beta, so we skip the high end icon for OS X
+     * 10.13 only.
      *
      * Comment or uncomment lines below to include or exclude sizes. All
      * relevant colour and mask variations are handled automatically for any
      * given size out of dpiValue(512), 512, 256, 128, 32 or 16.
      */
 
-    OSStatus                 err        = noErr;
-    NSOperatingSystemVersion highSierra = { 10, 13, 0 };
+    OSStatus                 err     = noErr;
+    NSOperatingSystemVersion version = [ [ NSProcessInfo processInfo ] operatingSystemVersion ];
 
-    if (
-         dpiValue( 1 ) != 1 &&
-         [ NSProcessInfo.processInfo respondsToSelector: @selector( isOperatingSystemAtLeastVersion: ) ] &&
-         false == [ NSProcessInfo.processInfo isOperatingSystemAtLeastVersion: highSierra ]
-       )
+    if ( dpiValue( 1 ) != 1 && version.minorVersion != 13 )
     {
         err = addImage( iconHnd, cgImage, cgColourSpace, dpiValue( 512 ) );
     }
@@ -501,12 +498,8 @@ static OSStatus addImages( IconFamilyHandle iconHnd,
 
 #ifdef GENERATE_ALL_ICON_SIZES
     if ( err == noErr ) err = addImage( iconHnd, cgImage, cgColourSpace, 256 );
-#endif
-
     if ( err == noErr ) err = addImage( iconHnd, cgImage, cgColourSpace, 128 );
     if ( err == noErr ) err = addImage( iconHnd, cgImage, cgColourSpace,  32 );
-
-#ifdef GENERATE_ALL_ICON_SIZES
     if ( err == noErr ) err = addImage( iconHnd, cgImage, cgColourSpace,  16 );
 #endif
 
@@ -670,7 +663,7 @@ static OSStatus addImageOrMask( IconFamilyHandle iconHnd,
 
     free( paintBuffer );
     if ( err != noErr ) return err;
-    
+
     err = SetIconFamilyData( iconHnd, type, tmpHnd );
     DisposeHandle( tmpHnd );
     return err;

@@ -476,10 +476,14 @@ static OSStatus addImages( IconFamilyHandle iconHnd,
 
     OSStatus err = noErr;
 
-    if ( dpiValue( 1 ) != 1 )
-    {
-        err = addImage( iconHnd, cgImage, cgColourSpace, dpiValue( 512 ) );
-    }
+//    A bug in OS X 10.13 that seemed to be fixed in 10.14 reappeared in
+//    around Sonoma or Sequoia and this time, it didn't get fixed. Do
+//    not generate the high DPI variant.
+//
+//    if ( dpiValue( 1 ) != 1 )
+//    {
+//        err = addImage( iconHnd, cgImage, cgColourSpace, dpiValue( 512 ) );
+//    }
 
     if ( err == noErr ) err = addImage( iconHnd, cgImage, cgColourSpace, 512 );
 

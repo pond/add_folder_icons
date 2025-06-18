@@ -36,7 +36,26 @@
 + ( NSString * ) slipCoverApplicationPath
 {
     NSWorkspace * workspace = [ NSWorkspace sharedWorkspace ];
-    return [ workspace absolutePathForAppBundleWithIdentifier: @"com.bohemiancoding.slipcover" ];
+    NSString   * path       = [ workspace absolutePathForAppBundleWithIdentifier: @"com.bohemiancoding.slipcover" ];
+
+    // SlipCover is 32-bit Intel and won't be returned by the above call even
+    // if present on the filesystem, but where the OS can't run the binary.
+    // That makes sense but we don't need to run it - we just want the Cases.
+    //
+    if ( path == nil )
+    {
+        NSString * standardPath = @"/Applications/SlipCover.app/Contents/Plugins/Cases";
+        NSURL    * pathAsUrl    = [ NSURL fileURLWithPath: standardPath ];
+        NSError  * error        = nil;
+        BOOL       isPresent    = [ pathAsUrl checkResourceIsReachableAndReturnError: &error ];
+
+        if ( isPresent && error == nil )
+        {
+            path = @"/Applications/SlipCover.app";
+        }
+    }
+
+    return path;
 }
 
 /******************************************************************************\

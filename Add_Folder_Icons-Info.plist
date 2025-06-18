@@ -5,7 +5,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>3.1.1</string>
 	<key>CFBundleVersion</key>
-	<string>2025.06.19</string>
+	<string>20250619</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleName</key>

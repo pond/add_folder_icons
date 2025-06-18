@@ -469,30 +469,14 @@ static OSStatus addImages( IconFamilyHandle iconHnd,
      * modes (for 'correctness', the translated value of 512x512 is used, just
      * in case the translation factor ever differs from multiply-by-two).
      *
-     * OS X 10.13 introduced a bug in the OS image generation code and/or the
-     * Finder. Retina icons generated in earlier OS versions display correctly
-     * in the Finder in high DPI display modes, but retina icons generated in
-     * OS X 10.13 itself don't display correctly in the OS X 10.13 Finder.
-     * Things work fine in standard DPI display modes, just not in high DPI.
-     *
-     *   https://bugreport.apple.com/web/?problemID=35990277
-     *
-     * Until this is fixed or I find a better workaround, in OS X 10.13 or
-     * later, Add Folder Icons skips the high DPI icon.
-     *
      * Comment or uncomment lines below to include or exclude sizes. All
      * relevant colour and mask variations are handled automatically for any
      * given size out of dpiValue(512), 512, 256, 128, 32 or 16.
      */
 
-    OSStatus                 err        = noErr;
-    NSOperatingSystemVersion highSierra = { 10, 13, 0 };
+    OSStatus err = noErr;
 
-    if (
-         dpiValue( 1 ) != 1 &&
-         [ NSProcessInfo.processInfo respondsToSelector: @selector( isOperatingSystemAtLeastVersion: ) ] &&
-         false == [ NSProcessInfo.processInfo isOperatingSystemAtLeastVersion: highSierra ]
-       )
+    if ( dpiValue( 1 ) != 1 )
     {
         err = addImage( iconHnd, cgImage, cgColourSpace, dpiValue( 512 ) );
     }

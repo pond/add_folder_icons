@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -154,8 +154,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		230BA02514DD8AB100CC9DFC /* container-migration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "container-migration.plist"; sourceTree = "<group>"; };
 		230EE19B12E3501B00C9F14E /* IconStyle.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; path = IconStyle.xcdatamodel; sourceTree = "<group>"; };
 		2311B0321302AD4500644100 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -210,9 +208,18 @@
 		2389C660114D6AC3003466DE /* Sparkle.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Sparkle.icns; sourceTree = "<group>"; };
 		2397AF751305761B00931AD3 /* UpdateHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateHelper.h; sourceTree = "<group>"; };
 		2397AF761305761B00931AD3 /* UpdateHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpdateHelper.m; sourceTree = "<group>"; };
-		2397AF7B130578FA00931AD3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Updates.xib; sourceTree = "<group>"; };
+		23A1C6BD2E02BDE300398B21 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		23A1C6C42E02BDE300398B21 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/CreditsBottom.rtf; sourceTree = "<group>"; };
+		23A1C6C52E02BDE300398B21 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/CreditsMAS.rtf; sourceTree = "<group>"; };
+		23A1C6C62E02BDE300398B21 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/CreditsPOU.rtf; sourceTree = "<group>"; };
+		23A1C6C72E02BDE300398B21 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/CreditsTop.rtf; sourceTree = "<group>"; };
+		23A1C6C82E02BDE900398B21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		23A1C6C92E02BDE900398B21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		23A1C6CA2E02BDE900398B21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SplashWindow.xib; sourceTree = "<group>"; };
+		23A1C6CB2E02BDE900398B21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ManageStyles.xib; sourceTree = "<group>"; };
+		23A1C6CC2E02BDE900398B21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
+		23A1C6CD2E02BDEA00398B21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Updates.xib; sourceTree = "<group>"; };
 		23A4902E1FDE7456008114C6 /* GlobalConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GlobalConstants.m; sourceTree = "<group>"; };
-		23A86A301560111E000B2861 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SplashWindow.xib; sourceTree = "<group>"; };
 		23AED2FC12FF2601003181D8 /* CaseDefinition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaseDefinition.h; sourceTree = "<group>"; };
 		23AED2FD12FF2601003181D8 /* CaseDefinition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaseDefinition.m; sourceTree = "<group>"; };
 		23AED2FE12FF2601003181D8 /* CaseGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaseGenerator.h; sourceTree = "<group>"; };
@@ -230,14 +237,7 @@
 		23BD71AE12E8A1D700BE620C /* IconStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconStyle.m; sourceTree = "<group>"; };
 		23BD73F212E9FFA100BE620C /* CoreDataObjectIDTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataObjectIDTransformer.h; sourceTree = "<group>"; };
 		23BD73F312E9FFA100BE620C /* CoreDataObjectIDTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataObjectIDTransformer.m; sourceTree = "<group>"; };
-		23CB8B4712E09E9200E66CDA /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Preferences.xib; sourceTree = "<group>"; };
-		23CBD71112E1ED270024A106 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/ManageStyles.xib; sourceTree = "<group>"; };
-		23CBD7B612E203F20024A106 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		23D3FB6213055044004FDA09 /* Add Folder Icons.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Add Folder Icons.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		23D3FB7213055B6B004FDA09 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/CreditsBottom.rtf; sourceTree = "<group>"; };
-		23D3FB7413055B6B004FDA09 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/CreditsMAS.rtf; sourceTree = "<group>"; };
-		23D3FB7613055B6B004FDA09 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/CreditsPOU.rtf; sourceTree = "<group>"; };
-		23D3FB7813055B6B004FDA09 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/CreditsTop.rtf; sourceTree = "<group>"; };
 		23E3416A1CA8A7E800EDB581 /* AFIScriptabilityCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFIScriptabilityCategory.h; sourceTree = "<group>"; };
 		23E3416B1CA8A7E800EDB581 /* AFIScriptabilityCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFIScriptabilityCategory.m; sourceTree = "<group>"; };
 		23F0B0781304062A0085A876 /* MainMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuController.h; sourceTree = "<group>"; };
@@ -576,27 +576,21 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1640;
 				ORGANIZATIONNAME = Hipposoft;
-				TargetAttributes = {
-					23D3FB2F13055044004FDA09 = {
-						DevelopmentTeam = XT4V976D8Y;
-					};
-					8D1107260486CEB800E47090 = {
-						DevelopmentTeam = XT4V976D8Y;
-					};
-				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Add Folder Icons" */;
 			compatibilityVersion = "Xcode 9.3";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				fr,
+				de,
+				ja,
+				en,
+				Base,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Add Folder Icons */;
 			projectDirPath = "";
@@ -782,7 +776,7 @@
 		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				089C165DFE840E0CC02AAC07 /* English */,
+				23A1C6BD2E02BDE300398B21 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -790,7 +784,7 @@
 		1DDD58140DA1D0A300B32029 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1DDD58150DA1D0A300B32029 /* English */,
+				23A1C6C82E02BDE900398B21 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -798,7 +792,7 @@
 		2397AF7A130578FA00931AD3 /* Updates.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				2397AF7B130578FA00931AD3 /* English */,
+				23A1C6CD2E02BDEA00398B21 /* Base */,
 			);
 			name = Updates.xib;
 			sourceTree = "<group>";
@@ -806,7 +800,7 @@
 		23A86A2F1560111E000B2861 /* SplashWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				23A86A301560111E000B2861 /* English */,
+				23A1C6CA2E02BDE900398B21 /* Base */,
 			);
 			name = SplashWindow.xib;
 			sourceTree = "<group>";
@@ -814,7 +808,7 @@
 		23CB8B4612E09E9200E66CDA /* Preferences.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				23CB8B4712E09E9200E66CDA /* English */,
+				23A1C6CC2E02BDE900398B21 /* Base */,
 			);
 			name = Preferences.xib;
 			sourceTree = "<group>";
@@ -822,7 +816,7 @@
 		23CBD71012E1ED270024A106 /* ManageStyles.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				23CBD71112E1ED270024A106 /* English */,
+				23A1C6CB2E02BDE900398B21 /* Base */,
 			);
 			name = ManageStyles.xib;
 			sourceTree = "<group>";
@@ -830,7 +824,7 @@
 		23CBD7B512E203F20024A106 /* MainWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				23CBD7B612E203F20024A106 /* English */,
+				23A1C6C92E02BDE900398B21 /* Base */,
 			);
 			name = MainWindow.xib;
 			sourceTree = "<group>";
@@ -838,7 +832,7 @@
 		23D3FB7113055B6B004FDA09 /* CreditsBottom.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
-				23D3FB7213055B6B004FDA09 /* English */,
+				23A1C6C42E02BDE300398B21 /* en */,
 			);
 			name = CreditsBottom.rtf;
 			sourceTree = "<group>";
@@ -846,7 +840,7 @@
 		23D3FB7313055B6B004FDA09 /* CreditsMAS.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
-				23D3FB7413055B6B004FDA09 /* English */,
+				23A1C6C52E02BDE300398B21 /* en */,
 			);
 			name = CreditsMAS.rtf;
 			sourceTree = "<group>";
@@ -854,7 +848,7 @@
 		23D3FB7513055B6B004FDA09 /* CreditsPOU.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
-				23D3FB7613055B6B004FDA09 /* English */,
+				23A1C6C62E02BDE300398B21 /* en */,
 			);
 			name = CreditsPOU.rtf;
 			sourceTree = "<group>";
@@ -862,7 +856,7 @@
 		23D3FB7713055B6B004FDA09 /* CreditsTop.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
-				23D3FB7813055B6B004FDA09 /* English */,
+				23A1C6C72E02BDE300398B21 /* en */,
 			);
 			name = CreditsTop.rtf;
 			sourceTree = "<group>";
@@ -876,11 +870,16 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2025.06.18;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = XT4V976D8Y;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -890,8 +889,11 @@
 				GCC_PREFIX_HEADER = Add_Folder_Icons_Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Add_Folder_Icons-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = /Applications;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MARKETING_VERSION = 3.1.0;
 				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.org.pond.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Add Folder Icons";
@@ -906,10 +908,15 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 2025.06.18;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = XT4V976D8Y;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_MODEL_TUNING = G5;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -917,8 +924,11 @@
 				GCC_PREFIX_HEADER = Add_Folder_Icons_Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Add_Folder_Icons-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = /Applications;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MARKETING_VERSION = 3.1.0;
 				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.org.pond.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Add Folder Icons";
@@ -931,12 +941,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2025.06.18;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = XT4V976D8Y;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -948,8 +965,11 @@
 				GCC_PREFIX_HEADER = Add_Folder_Icons_Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Add_Folder_Icons-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = /Applications;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MARKETING_VERSION = 3.1.0;
 				OTHER_CFLAGS = "-DUPDATABLE";
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.org.pond.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Add Folder Icons";
@@ -962,11 +982,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 2025.06.18;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = XT4V976D8Y;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -976,8 +1003,11 @@
 				GCC_PREFIX_HEADER = Add_Folder_Icons_Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "Add_Folder_Icons-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = /Applications;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MARKETING_VERSION = 3.1.0;
 				OTHER_CFLAGS = "-DUPDATABLE";
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.org.pond.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Add Folder Icons";
@@ -1002,12 +1032,14 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1046,12 +1078,14 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

@@ -892,6 +892,7 @@
 				INFOPLIST_FILE = "Add_Folder_Icons-Info.plist";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = /Applications;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.org.pond.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Add Folder Icons";
@@ -919,6 +920,7 @@
 				INFOPLIST_FILE = "Add_Folder_Icons-Info.plist";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = /Applications;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.org.pond.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Add Folder Icons";
@@ -950,6 +952,7 @@
 				INFOPLIST_FILE = "Add_Folder_Icons-Info.plist";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = /Applications;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				OTHER_CFLAGS = "-DUPDATABLE";
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.org.pond.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Add Folder Icons";
@@ -978,6 +981,7 @@
 				INFOPLIST_FILE = "Add_Folder_Icons-Info.plist";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = /Applications;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				OTHER_CFLAGS = "-DUPDATABLE";
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.org.pond.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Add Folder Icons";

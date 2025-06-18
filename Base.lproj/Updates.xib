@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23727" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23727"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="UpdateHelper">
+            <connections>
+                <outlet property="checkForUpdatesMenuItem" destination="19" id="22"/>
+                <outlet property="helpAboutUpdaterMenuItem" destination="20" id="21"/>
+                <outlet property="view" destination="4" id="23"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application"/>
+        <customObject id="2" userLabel="Updater" customClass="SUUpdater"/>
+        <userDefaultsController representsSharedInstance="YES" id="3"/>
+        <customView id="4" userLabel="Updates">
+            <rect key="frame" x="0.0" y="0.0" width="440" height="97"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <button toolTip="Automatically check for updates, or only check when manually asked" imageHugsTitle="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7">
+                    <rect key="frame" x="18" y="58" width="266" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Automatically Check for Updates" bezelStyle="regularSquare" imagePosition="leading" alignment="left" inset="2" id="8">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="2" name="value" keyPath="automaticallyChecksForUpdates" id="16"/>
+                        <outlet property="nextKeyView" destination="6" id="15"/>
+                    </connections>
+                </button>
+                <popUpButton toolTip="Choose the frequency of checks for updates" imageHugsTitle="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6">
+                    <rect key="frame" x="287" y="53" width="136" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Daily" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="86400" imageScaling="proportionallyDown" inset="2" selectedItem="13" id="9">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <menu key="menu" title="OtherViews" id="10">
+                            <items>
+                                <menuItem title="Daily" state="on" tag="86400" id="13"/>
+                                <menuItem title="Weekly" tag="604800" id="12"/>
+                                <menuItem title="Monthly" tag="2629800" id="11"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="2" name="selectedTag" keyPath="updateCheckInterval" id="17"/>
+                    </connections>
+                </popUpButton>
+                <button imageHugsTitle="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5">
+                    <rect key="frame" x="164" y="12" width="111" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="push" title="Check Now" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="14">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="checkForUpdates:" target="2" id="18"/>
+                    </connections>
+                </button>
+            </subviews>
+            <point key="canvasLocation" x="1" y="50"/>
+        </customView>
+        <menuItem title="Check for Updates..." id="19">
+            <modifierMask key="keyEquivalentModifierMask"/>
+            <connections>
+                <action selector="checkForUpdates:" target="2" id="24"/>
+            </connections>
+        </menuItem>
+        <menuItem title="Sparkle by Andy Matuschak and Others" toolTip="https://sparkle-project.org" id="20">
+            <modifierMask key="keyEquivalentModifierMask"/>
+        </menuItem>
+    </objects>
+</document>

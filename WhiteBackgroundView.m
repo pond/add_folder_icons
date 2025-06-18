@@ -18,9 +18,13 @@
      * see e.g.:
      *
      *   http://stackoverflow.com/questions/2962790/best-way-to-change-the-background-color-for-an-nsview
+     *
+     * The colour is defined via asset catalogue and will be black in Dark Mode.
+     * See catalogue Resources/Image assets/Application -> colour SplashWhite.
      */
 
-    [ [ NSColor whiteColor ] setFill ];
+    NSColor * whiteAdaptive = [ NSColor colorNamed: @"SplashWhite" ];
+    [ whiteAdaptive setFill ];
     NSRectFill( dirtyRect );
 }
 

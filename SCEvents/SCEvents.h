@@ -17,7 +17,7 @@
  *
  *  The above copyright notice and this permission notice shall be
  *  included in all copies or substantial portions of the Software.
- * 
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,7 +35,6 @@
 #import <CoreServices/CoreServices.h>
 #endif
 
-
 #import "SCEventListenerProtocol.h"
 
 @class SCEvent;
@@ -47,63 +46,47 @@
  *
  * An Objective-C wrapper for the FSEvents C API.
  */
-@interface SCEvents : NSObject 
-{
-    __unsafe_unretained id <NSObject, SCEventListenerProtocol> _delegate; 
-    
-    BOOL                 _isWatchingPaths;
-    BOOL                 _ignoreEventsFromSubDirs;
-	CFRunLoopRef         _runLoop;
-    FSEventStreamRef     _eventStream;
-    CFTimeInterval       _notificationLatency;
-	FSEventStreamEventId _resumeFromEventId;
-      
-    SCEvent              *_lastEvent;
-    NSArray              *_watchedPaths;
-    NSArray              *_excludedPaths;
-	
-    pthread_mutex_t      _eventsLock;
-}
+@interface SCEvents : NSObject
 
 /**
- * @property _delegate The delegate that SCEvents is to notify when events occur
+ * @property delegate The delegate that SCEvents is to notify when events occur
  */
-@property (readwrite, assign, getter=delegate, setter=setDelegate:) id <NSObject, SCEventListenerProtocol> _delegate;
+@property (weak) id <NSObject, SCEventListenerProtocol> delegate;
 
 /**
- * @property _isWatchingPaths Indicates whether the events stream is currently running
+ * @property isWatchingPaths Indicates whether the events stream is currently running
  */
-@property (readonly, getter=isWatchingPaths) BOOL _isWatchingPaths;
+@property (readonly) BOOL isWatchingPaths;
 
 /**
- * @property _ignoreEventsFromSubDirs Indicates whether events from sub-directories of the excluded paths are ignored. Defaults to YES.
+ * @property ignoreEventsFromSubDirs Indicates whether events from sub-directories of the excluded paths are ignored. Defaults to YES.
  */
-@property (readwrite, assign, getter=ignoreEventsFromSubDirs, setter=setIgnoreEventsFromSubDirs:) BOOL _ignoreEventsFromSubDirs;
+@property (assign) BOOL ignoreEventsFromSubDirs;
 
 /**
- * @property _lastEvent The last event that occurred and that was delivered to the delegate.
+ * @property lastEvent The last event that occurred and that was delivered to the delegate.
  */
-@property (readwrite, retain, getter=lastEvent, setter=setLastEvent:) SCEvent *_lastEvent;
+@property (strong) SCEvent *lastEvent;
 
 /**
- * @property _notificationLatency The latency time of which SCEvents is notified by FSEvents of events. Defaults to 3 seconds.
+ * @property notificationLatency The latency time of which SCEvents is notified by FSEvents of events. Defaults to 3 seconds.
  */
-@property (readwrite, assign, getter=notificationLatency, setter=setNotificationLatency:) double _notificationLatency;
+@property (assign) double notificationLatency;
 
 /**
- * @property _watchedPaths The paths that are to be watched for events.
+ * @property watchedPaths The paths that are to be watched for events.
  */
-@property (readwrite, retain, getter=watchedPaths, setter=setWatchedPaths:) NSArray *_watchedPaths;
+@property (copy) NSArray *watchedPaths;
 
 /**
- * @property _excludedPaths The paths that SCEvents should ignore events from and not deliver to the delegate.
+ * @property excludedPaths The paths that SCEvents should ignore events from and not deliver to the delegate.
  */
-@property (readwrite, retain, getter=excludedPaths, setter=setExcludedPaths:) NSArray *_excludedPaths;
+@property (copy) NSArray *excludedPaths;
 
 /**
- * @property _resumeFromEventId The event ID from which to resume from when the stream is started.
+ * @property resumeFromEventId The event ID from which to resume from when the stream is started.
  */
-@property (readwrite, assign, getter=resumeFromEventId, setter=setResumeFromEventId:) FSEventStreamEventId _resumeFromEventId;
+@property (assign) FSEventStreamEventId resumeFromEventId;
 
 - (BOOL)flushEventStreamSync;
 - (BOOL)flushEventStreamAsync;

@@ -467,13 +467,13 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="788"/>
-                            <menuItem title="Add Folder Icons Web Site" toolTip="http://afi.pond.org.uk/" id="789">
+                            <menuItem title="Add Folder Icons Web Site" toolTip="https://afi.pond.org.uk/" id="789">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="openWebSiteFromMenuItemToolTip:" target="790" id="793"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Hipposoft Web Site" toolTip="http://hipposoft.pond.org.uk/" id="791">
+                            <menuItem title="Hipposoft Web Site" toolTip="https://hipposoft.pond.org.uk/" id="791">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="openWebSiteFromMenuItemToolTip:" target="790" id="794"/>
@@ -492,7 +492,8 @@
                                     <action selector="openWebSiteFromMenuItemToolTip:" target="790" id="803"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="SCEvents by Stuart Connolly" toolTip="https://github.com/mz2/SCEvents" id="801">
+                            <menuItem title="Matias Piipari's fork of Stuart Connolly's SCEvents" toolTip="https://github.com/mz2/SCEvents" id="801">
+                                <attributedString key="attributedTitle"/>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="openWebSiteFromMenuItemToolTip:" target="790" id="806"/>

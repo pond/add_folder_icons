@@ -6,7 +6,7 @@ Add Folder Icons is a small Mac OS X utility that adds generated icons to batche
 - http://itunes.apple.com/app/add-folder-icons/id420629463
 
 <p align="center">
-  <img src="http://pond.org.uk/osx/add_folder_icons/images/n10.png?v=311" alt="Finder customised view screenshot" width="322" height="362">
+  <img src="http://pond.org.uk/osx/add_folder_icons/images/splash.png?v=311" alt="Splash" width="760" height="290">
 </p>
 
 For more, see:

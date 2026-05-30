@@ -49,6 +49,20 @@
 {
     [ super windowDidLoad ];
 
+    /* The main window's NIB sets "released when closed" to NO, but the splash
+     * window's NIB does not, so the splash window defaults to releasing itself
+     * on close. On modern macOS that is fatal: when the splash window is the
+     * key window and is closed, it is deallocated, yet AppKit's automatic
+     * focus-ring machinery still references it when first-responder status
+     * moves back to the main window. The result is a use-after-free crash in
+     * +[_NSAutomaticFocusRing _clearOldFocusRing] -> -[NSWindow
+     * _setNeedsDisplayInRegion:]. This controller owns the window for the
+     * lifetime of the application, so keep it alive on close, matching the
+     * behaviour already configured for the main window.
+     */
+
+    [ [ self window ] setReleasedWhenClosed: NO ];
+
     [ [ self window ] center ];
     [ [ self window ] makeKeyAndOrderFront: nil ];
 }
@@ -65,7 +79,13 @@
 - ( IBAction ) closeWindow: ( NSButton * ) sender
 {
     ( void ) sender;
-    [ self close ]; 
+
+    /* Resign first responder before the window goes away so that AppKit tears
+     * down any focus ring while the window is still a valid object.
+     */
+
+    [ [ self window ] makeFirstResponder: nil ];
+    [ self close ];
 }
 
 @end

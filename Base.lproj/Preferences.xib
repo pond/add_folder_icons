@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23727" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23727"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,11 +18,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="1" userLabel="General">
-            <rect key="frame" x="0.0" y="0.0" width="440" height="214"/>
+            <rect key="frame" x="0.0" y="0.0" width="440" height="244"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2">
-                    <rect key="frame" x="17" y="175" width="88" height="17"/>
+                    <rect key="frame" x="17" y="203" width="88" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Default style:" id="3">
                         <font key="font" metaFont="system"/>
@@ -31,7 +31,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton toolTip="The selected style will be assigned by default to folders added to the folder list" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4">
-                    <rect key="frame" x="107" y="170" width="316" height="26"/>
+                    <rect key="frame" x="107" y="198" width="316" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="(Icon style names go here via bindings)" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="7" id="5">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -59,7 +59,7 @@
                     </connections>
                 </popUpButton>
                 <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="147">
-                    <rect key="frame" x="17" y="137" width="406" height="17"/>
+                    <rect key="frame" x="17" y="165" width="406" height="17"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="When adding any folder to the list for processing:" id="148">
                         <font key="font" metaFont="system"/>
@@ -68,7 +68,7 @@
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="474">
-                    <rect key="frame" x="17" y="66" width="363" height="17"/>
+                    <rect key="frame" x="17" y="74" width="363" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="After icons have been successfully added:" id="475">
                         <font key="font" metaFont="system"/>
@@ -77,10 +77,10 @@
                     </textFieldCell>
                 </textField>
                 <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" translatesAutoresizingMaskIntoConstraints="NO" id="476">
-                    <rect key="frame" x="20" y="20" width="400" height="38"/>
+                    <rect key="frame" x="20" y="18" width="400" height="48"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    <size key="cellSize" width="400" height="18"/>
+                    <size key="cellSize" width="400" height="22"/>
                     <size key="intercellSpacing" width="4" height="2"/>
                     <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="477">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -104,10 +104,10 @@
                     </connections>
                 </matrix>
                 <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" translatesAutoresizingMaskIntoConstraints="NO" id="485">
-                    <rect key="frame" x="20" y="91" width="400" height="38"/>
+                    <rect key="frame" x="20" y="111" width="400" height="46"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    <size key="cellSize" width="400" height="18"/>
+                    <size key="cellSize" width="400" height="22"/>
                     <size key="intercellSpacing" width="4" height="2"/>
                     <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="486">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -241,19 +241,19 @@
                     </textFieldCell>
                 </textField>
             </subviews>
-            <point key="canvasLocation" x="39" y="415"/>
+            <point key="canvasLocation" x="39" y="425"/>
         </customView>
         <customView id="10" userLabel="Updates">
             <rect key="frame" x="0.0" y="0.0" width="440" height="97"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <point key="canvasLocation" x="39" y="-67"/>
+            <point key="canvasLocation" x="39" y="-75"/>
         </customView>
         <customView id="11" userLabel="Advanced">
-            <rect key="frame" x="0.0" y="0.0" width="440" height="272"/>
+            <rect key="frame" x="0.0" y="0.0" width="440" height="284"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="16">
-                    <rect key="frame" x="17" y="235" width="406" height="17"/>
+                    <rect key="frame" x="17" y="247" width="406" height="17"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Names of files recognised as cover art" id="17">
                         <font key="font" metaFont="system"/>
@@ -262,7 +262,7 @@
                     </textFieldCell>
                 </textField>
                 <scrollView toolTip="List of leafnames of pictures recognised as cover art files; double-click on an entry to change it" fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="18">
-                    <rect key="frame" x="20" y="95" width="400" height="132"/>
+                    <rect key="frame" x="20" y="107" width="400" height="132"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <clipView key="contentView" id="coa-tz-cae">
                         <rect key="frame" x="1" y="1" width="398" height="130"/>
@@ -316,7 +316,7 @@
                     </connections>
                 </scrollView>
                 <button toolTip="Treat any image with a Finder colour label assigned as a cover art file, regardless of its name" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="170">
-                    <rect key="frame" x="18" y="38" width="404" height="18"/>
+                    <rect key="frame" x="18" y="44" width="404" height="18"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Treat any colour labelled image as cover art too" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="171">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -327,7 +327,7 @@
                     </connections>
                 </button>
                 <button toolTip="Show the Splash screen when Add Folder Icons launches?" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="494">
-                    <rect key="frame" x="18" y="18" width="404" height="18"/>
+                    <rect key="frame" x="18" y="20" width="404" height="18"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Show splash screen at startup" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="495">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -338,7 +338,7 @@
                     </connections>
                 </button>
                 <button toolTip="Add a new entry to the list" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="367">
-                    <rect key="frame" x="20" y="63" width="32" height="25"/>
+                    <rect key="frame" x="20" y="75" width="32" height="25"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="370">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -351,7 +351,7 @@
                     </connections>
                 </button>
                 <button toolTip="Remove selected entries from the list" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="368">
-                    <rect key="frame" x="51" y="63" width="32" height="25"/>
+                    <rect key="frame" x="51" y="75" width="32" height="25"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="369">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>

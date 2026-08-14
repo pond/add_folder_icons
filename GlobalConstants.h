@@ -4,7 +4,7 @@
  * Global application constant definitions. Other hard-coded constant values of
  * interest can be found in the library code.
  *
- * (C) Hipposoft 2009-2025 <ahodgkin@rowing.org.uk>
+ * (C) Hipposoft 2009-2026 <ahodgkin@rowing.org.uk>
 \******************************************************************************/
 
 #import <Cocoa/Cocoa.h>
@@ -13,7 +13,7 @@
 
 #define PROGRAM_STRING "addfoldericons"
 #define AUTHOR_STRING  "Andrew Hodgkinson"
-#define VERSION_STRING "3.1.1.2025.06.19"
+#define VERSION_STRING "3.2.0.2026.08.14"
 
 /* Standard square icon canvas edge length in 'non-retina' pixels */
 

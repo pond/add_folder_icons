@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23727" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23727"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,22 +18,22 @@
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="800" height="500"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2056" height="1285"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2056" height="1289"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="800" height="500"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="786" customClass="WhiteBackgroundView">
-                        <rect key="frame" x="0.0" y="49" width="800" height="452"/>
+                        <rect key="frame" x="0.0" y="44" width="800" height="457"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="780">
-                                <rect key="frame" x="20" y="7" width="760" height="290"/>
+                                <rect key="frame" x="20" y="12" width="760" height="290"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageAlignment="top" image="splash" id="781"/>
                             </imageView>
                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="788">
-                                <rect key="frame" x="181" y="306" width="438" height="74"/>
+                                <rect key="frame" x="181" y="311" width="438" height="74"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" allowsEditingTextAttributes="YES" id="789">
                                     <font key="font" metaFont="system" size="13.699999999999999"/>
@@ -46,7 +46,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="212">
-                                <rect key="frame" x="20" y="396" width="760" height="36"/>
+                                <rect key="frame" x="20" y="401" width="760" height="36"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" alignment="center" title="Welcome to Add Folder Icons." id="213">
                                     <font key="font" metaFont="system" size="30"/>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23727" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23727"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -32,22 +32,22 @@
         <window title="Add Folder Icons" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="3">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="560" y="414" width="640" height="428"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2056" height="1285"/>
+            <rect key="contentRect" x="560" y="414" width="640" height="444"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2056" height="1289"/>
             <value key="minSize" type="size" width="480" height="370"/>
-            <view key="contentView" id="4">
-                <rect key="frame" x="0.0" y="0.0" width="640" height="428"/>
+            <view key="contentView" appearanceType="aqua" id="4">
+                <rect key="frame" x="0.0" y="0.0" width="640" height="444"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="34" horizontalPageScroll="10" verticalLineScroll="34" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6">
-                        <rect key="frame" x="20" y="83" width="600" height="273"/>
+                        <rect key="frame" x="20" y="98" width="600" height="276"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="IFR-UY-yUS">
-                            <rect key="frame" x="1" y="1" width="598" height="271"/>
+                            <rect key="frame" x="1" y="1" width="598" height="274"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" autosaveColumns="NO" rowHeight="32" headerView="xV7-5l-VcZ" id="28">
-                                    <rect key="frame" x="0.0" y="0.0" width="598" height="254"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="598" height="257"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -100,7 +100,7 @@
                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <tableHeaderView key="headerView" id="xV7-5l-VcZ">
+                        <tableHeaderView key="headerView" wantsLayer="YES" id="xV7-5l-VcZ">
                             <rect key="frame" x="0.0" y="0.0" width="598" height="17"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
@@ -108,7 +108,7 @@
                             <outlet property="nextKeyView" destination="11" id="50"/>
                         </connections>
                     </scrollView>
-                    <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="9">
+                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="9">
                         <rect key="frame" x="20" y="8" width="16" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     </progressIndicator>
@@ -122,7 +122,7 @@
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5">
-                        <rect key="frame" x="487" y="45" width="139" height="32"/>
+                        <rect key="frame" x="482" y="50" width="139" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="push" title="Add Icons" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="34">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -137,7 +137,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="11">
-                        <rect key="frame" x="20" y="51" width="32" height="25"/>
+                        <rect key="frame" x="20" y="54" width="32" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="14">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -149,7 +149,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="10">
-                        <rect key="frame" x="51" y="51" width="32" height="25"/>
+                        <rect key="frame" x="51" y="54" width="32" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="15">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -162,7 +162,7 @@ DQ
                         </connections>
                     </button>
                     <popUpButton toolTip="Change options for selected folders, change how folders are added or edit styles." verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8">
-                        <rect key="frame" x="82" y="51" width="56" height="25"/>
+                        <rect key="frame" x="82" y="54" width="56" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <popUpButtonCell key="cell" type="smallSquare" bezelStyle="smallSquare" alignment="center" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="16">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -204,7 +204,7 @@ DQ
                         </connections>
                     </popUpButton>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="100">
-                        <rect key="frame" x="348" y="45" width="139" height="32"/>
+                        <rect key="frame" x="331" y="50" width="139" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="push" title="Remove Icons" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="101">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -216,7 +216,7 @@ DQ
                         </connections>
                     </button>
                     <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="12">
-                        <rect key="frame" x="17" y="356" width="605" height="51"/>
+                        <rect key="frame" x="18" y="384" width="605" height="40"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" truncatesLastVisibleLine="YES" sendsActionOnEndEditing="YES" id="13">
                             <font key="font" metaFont="system"/>
@@ -233,18 +233,18 @@ DQ
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" visibleAtLaunch="NO" animationBehavior="default" id="80" userLabel="Panel (Progress indicator)" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" utility="YES" documentModal="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="185" y="410" width="367" height="131"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2056" height="1285"/>
+            <rect key="contentRect" x="185" y="410" width="367" height="133"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2056" height="1289"/>
             <view key="contentView" id="81">
-                <rect key="frame" x="0.0" y="0.0" width="367" height="131"/>
+                <rect key="frame" x="0.0" y="0.0" width="367" height="133"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <progressIndicator verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" bezeled="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="82">
-                        <rect key="frame" x="18" y="56" width="331" height="20"/>
+                    <progressIndicator wantsLayer="YES" verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" bezeled="NO" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="82">
+                        <rect key="frame" x="18" y="58" width="331" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </progressIndicator>
                     <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="85">
-                        <rect key="frame" x="17" y="94" width="333" height="17"/>
+                        <rect key="frame" x="17" y="96" width="333" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Doing something..." id="86">
                             <font key="font" metaFont="system"/>
@@ -253,7 +253,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="87">
-                        <rect key="frame" x="236" y="12" width="124" height="32"/>
+                        <rect key="frame" x="225" y="14" width="124" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Stopping..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="88">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -265,6 +265,7 @@ DQ
                     </button>
                 </subviews>
             </view>
+            <point key="canvasLocation" x="171" y="-55"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="47"/>
         <arrayController mode="entity" entityName="IconStyle" editable="NO" automaticallyPreparesContent="YES" selectsInsertedObjects="NO" avoidsEmptySelection="NO" id="58" userLabel="Styles" customClass="IconStyleArrayController">

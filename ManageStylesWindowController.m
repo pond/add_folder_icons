@@ -36,7 +36,7 @@
 {
     /* Attributes for a link to the SlipCover web site */
 
-    NSString     * url     = NSLocalizedString( @"http://www.macupdate.com/app/mac/31676/slipcover", @"SlipCover web site URL" );
+    NSString     * url     = NSLocalizedString( @"https://slipcover.en.softonic.com/mac/download", @"SlipCover download URL" );
     NSNumber     * uFlags  = @( ( NSUInteger ) ( NSUnderlinePatternSolid | NSUnderlineStyleSingle ) );
     NSDictionary * attrs   =
     @{

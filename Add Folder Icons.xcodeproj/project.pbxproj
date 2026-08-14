@@ -57,6 +57,8 @@
 		23AED30B12FF54EA003181D8 /* CaseDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED2FD12FF2601003181D8 /* CaseDefinition.m */; };
 		23AED32A12FFF104003181D8 /* SCEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32612FFF104003181D8 /* SCEvent.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		23AED32B12FFF104003181D8 /* SCEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 23AED32912FFF104003181D8 /* SCEvents.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		23B1188F302EEFD500A20830 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 23B1188E302EEFD500A20830 /* AppIcon.icon */; };
+		23B11890302EEFD500A20830 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 23B1188E302EEFD500A20830 /* AppIcon.icon */; };
 		23BD71AF12E8A1D700BE620C /* IconStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 23BD71AE12E8A1D700BE620C /* IconStyle.m */; };
 		23BD73F412E9FFA100BE620C /* CoreDataObjectIDTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 23BD73F312E9FFA100BE620C /* CoreDataObjectIDTransformer.m */; };
 		23C831271937521700486A48 /* ConcurrentPathProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 234912AF12F3857C00A59086 /* ConcurrentPathProcessor.m */; };
@@ -233,6 +235,7 @@
 		23AED32712FFF104003181D8 /* SCEventListenerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCEventListenerProtocol.h; sourceTree = "<group>"; };
 		23AED32812FFF104003181D8 /* SCEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCEvents.h; sourceTree = "<group>"; };
 		23AED32912FFF104003181D8 /* SCEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCEvents.m; sourceTree = "<group>"; };
+		23B1188E302EEFD500A20830 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		23BD71AD12E8A1D700BE620C /* IconStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconStyle.h; sourceTree = "<group>"; };
 		23BD71AE12E8A1D700BE620C /* IconStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconStyle.m; sourceTree = "<group>"; };
 		23BD73F212E9FFA100BE620C /* CoreDataObjectIDTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataObjectIDTransformer.h; sourceTree = "<group>"; };
@@ -451,6 +454,7 @@
 			isa = PBXGroup;
 			children = (
 				23420A911C917465009F40F9 /* Application.xcassets */,
+				23B1188E302EEFD500A20830 /* AppIcon.icon */,
 				2382900A1571414B005C60A5 /* splash.png */,
 				2389C660114D6AC3003466DE /* Sparkle.icns */,
 				2364B21D12EEE058007C6521 /* tb_cd.png */,
@@ -626,6 +630,7 @@
 				23D3FB8013055B6B004FDA09 /* CreditsTop.rtf in Resources */,
 				2382900915712962005C60A5 /* SplashWindow.xib in Resources */,
 				2382900C1571414B005C60A5 /* splash.png in Resources */,
+				23B1188F302EEFD500A20830 /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -648,6 +653,7 @@
 				2364B22212EEE058007C6521 /* tb_dvd.png in Resources */,
 				23FF74DE1301D1C700D656DB /* Preview in Resources */,
 				23D3FB7913055B6B004FDA09 /* CreditsBottom.rtf in Resources */,
+				23B11890302EEFD500A20830 /* AppIcon.icon in Resources */,
 				23420A921C917465009F40F9 /* Application.xcassets in Resources */,
 				23D3FB7D13055B6B004FDA09 /* CreditsPOU.rtf in Resources */,
 				23D3FB7F13055B6B004FDA09 /* CreditsTop.rtf in Resources */,
@@ -869,6 +875,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
@@ -907,6 +914,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
@@ -942,7 +950,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";
@@ -983,7 +991,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "Add Folder Icons.entitlements";

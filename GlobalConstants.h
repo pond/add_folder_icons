@@ -13,7 +13,7 @@
 
 #define PROGRAM_STRING "addfoldericons"
 #define AUTHOR_STRING  "Andrew Hodgkinson"
-#define VERSION_STRING "3.2.0.2026.08.14"
+#define VERSION_STRING "3.2.1.2026.09.21"
 
 /* Standard square icon canvas edge length in 'non-retina' pixels */
 
